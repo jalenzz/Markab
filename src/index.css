@@ -1,0 +1,50 @@
+@import url('https://gw.alipayobjects.com/os/k/font/lxgwwenkaiscreenr.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        backface-visibility: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+
+        font-synthesis: none;
+        perspective: 1000px;
+        text-rendering: optimizeLegibility;
+
+        transform: translateZ(0);
+    }
+
+    body {
+        @apply m-0 h-screen min-h-screen w-full min-w-80 p-0;
+        @apply font-primary text-base leading-relaxed;
+        @apply text-newtab-text-primary-light dark:text-newtab-text-primary-dark;
+        -webkit-overflow-scrolling: touch;
+
+        scroll-behavior: smooth;
+    }
+
+    #root {
+        @apply m-0 h-full w-full p-0;
+    }
+
+    /* 隐藏滚动条但保持滚动功能 */
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* 对于Firefox */
+    html {
+        scrollbar-width: none;
+    }
+
+    ::selection {
+        @apply bg-newtab-accent-primary/20 text-newtab-text-primary-light;
+    }
+
+    :focus-visible {
+        @apply outline-none ring-2 ring-newtab-accent-primary/50 ring-offset-2 ring-offset-transparent;
+    }
+}
