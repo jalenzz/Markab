@@ -1,4 +1,4 @@
-# <img src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-2/latest/files/assets/1f60d.webp" width="25"> Markab - Bookmark New Tab 
+# <img src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-2/latest/files/assets/1f60d.webp" width="25"> Markab - Bookmark New Tab
 
 A new tab extension focused on providing clean, elegant bookmark display experience.
 
@@ -14,7 +14,6 @@ A new tab extension focused on providing clean, elegant bookmark display experie
 - **Flexible Layout** - Freely reorganize folders by dragging to customize your bookmark layout
 - **State Memory** - Intelligently saves layout preferences and folder expand states
 - **Animated Emoji** - Add lively animated emoji icons to each folder <img src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-2/latest/files/assets/1f60d.webp" width="25"> <img src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-1/latest/files/assets/1f31f.webp" width="25"> <img src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-3/latest/files/assets/1f916.webp" width="25">
-
 
 ## 🛠️ Development
 

@@ -4,7 +4,7 @@ import { useDrag } from 'react-dnd';
 
 import { ANIMATION_CONFIG, COLOR_CONFIG } from '../config';
 import type { FolderItem, FolderStateType } from '../types';
-import { FaviconImage } from './';
+import { BookmarkItem } from './';
 import { Emoji } from './Emoji';
 
 interface BookmarkFolderProps {
@@ -111,45 +111,11 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
                                 <>
                                     <div className="space-y-0.5">
                                         {folderBookmarks.map((bookmark, index) => (
-                                            <motion.div
+                                            <BookmarkItem
                                                 key={bookmark.id}
-                                                className="block"
-                                                initial={{ opacity: 0, x: -5 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -5 }}
-                                                transition={{
-                                                    ...ANIMATION_CONFIG.transitions.ease,
-                                                    delay: index * ANIMATION_CONFIG.delays.stagger,
-                                                }}
-                                            >
-                                                <motion.a
-                                                    href={bookmark.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="group/bookmark inline-flex cursor-pointer items-center gap-3 rounded-lg px-2 py-1 text-newtab-text-secondary-light no-underline hover:no-underline dark:text-newtab-text-secondary-dark"
-                                                    title={bookmark.title}
-                                                    whileHover={{
-                                                        backgroundColor:
-                                                            COLOR_CONFIG.hoverBackground,
-                                                    }}
-                                                    transition={ANIMATION_CONFIG.transitions.ease}
-                                                >
-                                                    {bookmark.url && (
-                                                        <div className="flex-shrink-0">
-                                                            <FaviconImage
-                                                                url={bookmark.url}
-                                                                title={bookmark.title}
-                                                                size={16}
-                                                            />
-                                                        </div>
-                                                    )}
-                                                    <span className="text-sm font-medium leading-relaxed">
-                                                        {bookmark.title.length > 20
-                                                            ? `${bookmark.title.slice(0, 20)}...`
-                                                            : bookmark.title}
-                                                    </span>
-                                                </motion.a>
-                                            </motion.div>
+                                                bookmark={bookmark}
+                                                index={index}
+                                            />
                                         ))}
                                     </div>
                                 </>
