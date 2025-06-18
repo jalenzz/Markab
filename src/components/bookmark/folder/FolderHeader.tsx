@@ -1,0 +1,69 @@
+import { motion } from 'motion/react';
+import React from 'react';
+
+import { ANIMATION_CONFIG, COLOR_CONFIG } from '../../../config';
+import { Emoji } from './Emoji';
+
+interface FolderHeaderProps {
+    title: string;
+    emoji: string;
+    isExpanded: boolean;
+    isHovered: boolean;
+    onTitleClick: () => void;
+    onEmojiChange: (emoji: string) => void;
+    onMouseEnter: () => void;
+    onMouseLeave: () => void;
+}
+
+export const FolderHeader: React.FC<FolderHeaderProps> = ({
+    title,
+    emoji,
+    isExpanded,
+    isHovered,
+    onTitleClick,
+    onEmojiChange,
+    onMouseEnter,
+    onMouseLeave,
+}) => {
+    return (
+        <motion.div
+            className="flex cursor-pointer items-center space-x-4 rounded-lg px-1 py-2"
+            onClick={onTitleClick}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            animate={{
+                backgroundColor: isHovered ? COLOR_CONFIG.hoverBackground : 'transparent',
+            }}
+            transition={ANIMATION_CONFIG.transitions.ease}
+        >
+            <Emoji value={emoji} onChange={onEmojiChange} />
+
+            <div className="flex flex-1 items-center justify-between">
+                <h3 className="truncate text-xl font-semibold">{title}</h3>
+
+                <motion.div
+                    animate={{
+                        rotate: isExpanded ? 90 : 0,
+                    }}
+                    transition={ANIMATION_CONFIG.transitions.ease}
+                >
+                    <svg
+                        className="h-4 w-4 text-newtab-text-muted-light opacity-60 dark:text-newtab-text-muted-dark"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M9 5l7 7-7 7"
+                        />
+                    </svg>
+                </motion.div>
+            </div>
+        </motion.div>
+    );
+};
+
+export default FolderHeader;

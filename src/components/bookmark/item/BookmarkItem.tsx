@@ -1,8 +1,8 @@
 import { motion } from 'motion/react';
 import React from 'react';
 
-import { ANIMATION_CONFIG, COLOR_CONFIG } from '../config';
-import type { BookmarkItem as BookmarkItemType } from '../types';
+import { ANIMATION_CONFIG, COLOR_CONFIG } from '../../../config';
+import type { BookmarkItem as BookmarkItemType } from '../../../types';
 
 interface BookmarkItemProps {
     bookmark: BookmarkItemType;

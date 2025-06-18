@@ -1,0 +1,92 @@
+import { motion } from 'motion/react';
+import React from 'react';
+import { useDrag } from 'react-dnd';
+
+import { ANIMATION_CONFIG } from '../../../config';
+import type { FolderItem, FolderStateType } from '../../../types';
+import { BookmarkList } from '../layout';
+import { FolderHeader } from './FolderHeader';
+
+interface BookmarkFolderProps {
+    folder: FolderItem;
+    folderState: FolderStateType;
+    onFolderClick: (folder: FolderItem) => void;
+    onEmojiChange: (folderId: string, emoji: string) => void;
+    columnIndex: number;
+    folderIndex: number;
+}
+
+export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
+    folder,
+    folderState,
+    onFolderClick,
+    onEmojiChange,
+    columnIndex,
+    folderIndex,
+}) => {
+    const folderStateData = folderState[folder.id] || {};
+    const isExpanded = folderStateData.isExpanded || false;
+    const currentEmoji = folderStateData.emoji || '⭐';
+    const [isHovered, setIsHovered] = React.useState(false);
+
+    const [{ isDragging }, drag] = useDrag(
+        () => ({
+            type: 'item',
+            item: {
+                folderId: folder.id,
+                sourceCol: columnIndex,
+                sourceIndex: folderIndex,
+            },
+            collect: (monitor) => ({
+                isDragging: monitor.isDragging(),
+            }),
+        }),
+        [folder.id, columnIndex, folderIndex],
+    );
+
+    const folderBookmarks = folder.children || [];
+
+    const handleFolderClick = () => {
+        onFolderClick(folder);
+    };
+
+    const handleEmojiChange = (emoji: string) => {
+        onEmojiChange(folder.id, emoji);
+        // 选择 emoji 后重置 hover 状态
+        setIsHovered(false);
+    };
+
+    return (
+        <div
+            ref={drag as never}
+            className={`group min-w-0 flex-1 ${isDragging ? 'opacity-50' : ''}`}
+        >
+            <div>
+                <FolderHeader
+                    title={folder.title}
+                    emoji={currentEmoji}
+                    isExpanded={isExpanded}
+                    isHovered={isHovered}
+                    onTitleClick={handleFolderClick}
+                    onEmojiChange={handleEmojiChange}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                />
+
+                <motion.div
+                    initial={false}
+                    animate={{
+                        height: isExpanded ? 'auto' : 0,
+                        opacity: isExpanded ? 1 : 0,
+                    }}
+                    transition={ANIMATION_CONFIG.transitions.ease}
+                    className="overflow-hidden"
+                >
+                    <BookmarkList bookmarks={folderBookmarks} isExpanded={isExpanded} />
+                </motion.div>
+            </div>
+        </div>
+    );
+};
+
+export default BookmarkFolder;

@@ -1,10 +1,10 @@
 import { motion } from 'motion/react';
 import React from 'react';
 
-import { ANIMATION_CONFIG } from '../config';
-import { useBookmarks } from '../hooks';
-import { BookmarkColumn } from './';
-import { DropZoneInColumn } from './DropZoneInColumn';
+import { ANIMATION_CONFIG } from '../../../config';
+import { useBookmarks } from '../../../hooks';
+import { DropZoneInColumn } from '../../dnd';
+import { BookmarkColumn } from './BookmarkColumn';
 
 export const BookmarkDashboard: React.FC = () => {
     const { folderColumns, folderState, handleFolderClick, handleEmojiChange, handleFolderDrop } =

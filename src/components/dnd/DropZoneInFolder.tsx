@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDrop } from 'react-dnd';
 
-import type { DragItem } from '../types';
+import type { DragItem } from '../../types';
 
 interface DropZoneInFolderProps {
     columnIndex: number;

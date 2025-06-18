@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
-import { ANIMATION_CONFIG } from '../config';
-import type { DragItem, FolderItem, FolderStateType } from '../types';
-import { BookmarkFolder } from './BookmarkFolder';
-import { DropZoneInFolder } from './DropZoneInFolder';
+import { ANIMATION_CONFIG } from '../../../config';
+import type { DragItem, FolderItem, FolderStateType } from '../../../types';
+import { DropZoneInFolder } from '../../dnd';
+import { BookmarkFolder } from '../folder';
 
 interface BookmarkColumnProps {
     folders: FolderItem[];

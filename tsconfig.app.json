@@ -13,7 +13,7 @@
             "@/*": ["src/*"]
         },
         "types": ["vite/client", "chrome"],
-        "allowImportingTsExtensions": true,
+        "allowImportingTsExtensions": false,
         "strict": true,
         "noFallthroughCasesInSwitch": true,
         "noUnusedLocals": true,
