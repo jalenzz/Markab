@@ -86,7 +86,7 @@ export const Emoji: React.FC<EmojiProps> = ({ value, onChange }) => {
                 {isPickerOpen && (
                     <motion.div
                         ref={pickerRef}
-                        className={`absolute left-0 z-50 overflow-hidden rounded-lg shadow-lg ${
+                        className={`absolute left-0 z-50 overflow-hidden rounded-default shadow-lg ${
                             pickerPosition === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
                         }`}
                         initial={{ opacity: 0 }}

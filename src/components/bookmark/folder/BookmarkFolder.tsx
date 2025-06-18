@@ -27,7 +27,6 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
     const folderStateData = folderState[folder.id] || {};
     const isExpanded = folderStateData.isExpanded || false;
     const currentEmoji = folderStateData.emoji || '⭐';
-    const [isHovered, setIsHovered] = React.useState(false);
 
     const [{ isDragging }, drag] = useDrag(
         () => ({
@@ -52,8 +51,6 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
 
     const handleEmojiChange = (emoji: string) => {
         onEmojiChange(folder.id, emoji);
-        // 选择 emoji 后重置 hover 状态
-        setIsHovered(false);
     };
 
     return (
@@ -66,11 +63,8 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
                     title={folder.title}
                     emoji={currentEmoji}
                     isExpanded={isExpanded}
-                    isHovered={isHovered}
                     onTitleClick={handleFolderClick}
                     onEmojiChange={handleEmojiChange}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
                 />
 
                 <motion.div

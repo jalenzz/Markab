@@ -13,9 +13,4 @@ export const ANIMATION_CONFIG = {
     },
 } as const;
 
-export const COLOR_CONFIG = {
-    hoverBackground: 'rgba(59, 130, 246, 0.1)',
-} as const;
-
 export type AnimationConfig = typeof ANIMATION_CONFIG;
-export type ColorConfig = typeof COLOR_CONFIG;

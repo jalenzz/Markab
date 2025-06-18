@@ -1,45 +1,36 @@
 import { motion } from 'motion/react';
 import React from 'react';
 
-import { ANIMATION_CONFIG, COLOR_CONFIG } from '../../../config';
+import { ANIMATION_CONFIG } from '../../../config';
 import { Emoji } from './Emoji';
 
 interface FolderHeaderProps {
     title: string;
     emoji: string;
     isExpanded: boolean;
-    isHovered: boolean;
     onTitleClick: () => void;
     onEmojiChange: (emoji: string) => void;
-    onMouseEnter: () => void;
-    onMouseLeave: () => void;
 }
 
 export const FolderHeader: React.FC<FolderHeaderProps> = ({
     title,
     emoji,
     isExpanded,
-    isHovered,
     onTitleClick,
     onEmojiChange,
-    onMouseEnter,
-    onMouseLeave,
 }) => {
     return (
         <motion.div
-            className="flex cursor-pointer items-center space-x-4 rounded-lg px-1 py-2"
+            className="flex cursor-pointer items-center space-x-4 rounded-default px-1 py-2 hover:bg-newtab-hover-light dark:hover:bg-newtab-hover-dark"
             onClick={onTitleClick}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            animate={{
-                backgroundColor: isHovered ? COLOR_CONFIG.hoverBackground : 'transparent',
-            }}
             transition={ANIMATION_CONFIG.transitions.ease}
         >
             <Emoji value={emoji} onChange={onEmojiChange} />
 
             <div className="flex flex-1 items-center justify-between">
-                <h3 className="truncate text-xl font-semibold">{title}</h3>
+                <h3 className="truncate text-title font-semibold text-newtab-text-primary-light dark:text-newtab-text-primary-dark">
+                    {title}
+                </h3>
 
                 <motion.div
                     animate={{
@@ -48,7 +39,7 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
                     transition={ANIMATION_CONFIG.transitions.ease}
                 >
                     <svg
-                        className="h-4 w-4 text-newtab-text-muted-light opacity-60 dark:text-newtab-text-muted-dark"
+                        className="h-4 w-4 text-newtab-text-secondary-light opacity-60 dark:text-newtab-text-secondary-dark"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"

@@ -41,7 +41,9 @@ export const DropZoneInFolder: React.FC<DropZoneInFolderProps> = ({
 
     return (
         <div ref={drop as never} className="flex h-6 items-center transition-colors duration-200">
-            {showDropIndicator && <div className="h-1 w-full bg-newtab-bg-drop-indicator" />}
+            {showDropIndicator && (
+                <div className="h-1 w-full bg-newtab-theme-light dark:bg-newtab-theme-dark" />
+            )}
         </div>
     );
 };

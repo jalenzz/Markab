@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import React from 'react';
 
-import { ANIMATION_CONFIG, COLOR_CONFIG } from '../../../config';
+import { ANIMATION_CONFIG } from '../../../config';
 import type { BookmarkItem as BookmarkItemType } from '../../../types';
 
 interface BookmarkItemProps {
@@ -33,11 +33,8 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
                 href={bookmark.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group/bookmark inline-flex cursor-pointer items-center gap-3 rounded-lg px-2 py-1 text-newtab-text-secondary-light no-underline hover:no-underline dark:text-newtab-text-secondary-dark"
+                className="group/bookmark inline-flex cursor-pointer items-center gap-3 rounded-default px-2 py-1 text-newtab-text-secondary-light no-underline hover:bg-newtab-hover-light hover:no-underline dark:text-newtab-text-secondary-dark dark:hover:bg-newtab-hover-dark"
                 title={bookmark.title}
-                whileHover={{
-                    backgroundColor: COLOR_CONFIG.hoverBackground,
-                }}
                 transition={ANIMATION_CONFIG.transitions.ease}
             >
                 {bookmark.url && (
@@ -51,7 +48,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
                         />
                     </div>
                 )}
-                <span className="text-sm font-medium leading-relaxed">
+                <span className="text-body font-medium leading-relaxed">
                     {bookmark.title.length > 20
                         ? `${bookmark.title.slice(0, 20)}...`
                         : bookmark.title}
