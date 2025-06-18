@@ -27,6 +27,7 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
     const folderStateData = folderState[folder.id] || {};
     const isExpanded = folderStateData.isExpanded || false;
     const currentEmoji = folderStateData.emoji || '⭐';
+    const [isHovered, setIsHovered] = React.useState(false);
 
     const [{ isDragging }, drag] = useDrag(
         () => ({
@@ -43,7 +44,6 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
         [folder.id, columnIndex, folderIndex],
     );
 
-    // FolderItem.children 已经只包含 BookmarkItem，不需要过滤
     const folderBookmarks = folder.children || [];
 
     const handleFolderClick = () => {
@@ -52,6 +52,9 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
 
     const handleEmojiChange = (emoji: string) => {
         onEmojiChange(folder.id, emoji);
+
+        // 选择 emoji 后重置 hover 状态
+        setIsHovered(false);
     };
 
     return (
@@ -63,8 +66,10 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
                 <motion.div
                     className="flex cursor-pointer items-center space-x-4 rounded-lg px-1 py-2"
                     onClick={handleFolderClick}
-                    whileHover={{
-                        backgroundColor: COLOR_CONFIG.hoverBackground,
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    animate={{
+                        backgroundColor: isHovered ? COLOR_CONFIG.hoverBackground : 'transparent',
                     }}
                     transition={ANIMATION_CONFIG.transitions.ease}
                 >
