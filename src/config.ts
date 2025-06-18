@@ -11,6 +11,26 @@ export const ANIMATION_CONFIG = {
         stagger: 0.03, // 书签项错开动画延迟
         empty: 0.2, // 空状态显示延迟
     },
+
+    // 预设动画配置
+    presets: {
+        // 书签项滑入动画
+        slideInLeft: {
+            initial: { opacity: 0, x: -5 },
+            animate: { opacity: 1, x: 0 },
+            exit: { opacity: 0, x: -5 },
+        },
+        // 文件夹滑入动画
+        slideInUp: {
+            initial: { opacity: 0, y: -20 },
+            animate: { opacity: 1, y: 0 },
+            exit: { opacity: 0, y: -20 },
+        },
+        // 箭头旋转动画
+        rotate: (isRotated: boolean) => ({
+            animate: { rotate: isRotated ? 90 : 0 },
+        }),
+    },
 } as const;
 
 export type AnimationConfig = typeof ANIMATION_CONFIG;

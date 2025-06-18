@@ -21,21 +21,18 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
         <motion.div
             key={bookmark.id}
             className="block"
-            initial={{ opacity: 0, x: -5 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -5 }}
+            {...ANIMATION_CONFIG.presets.slideInLeft}
             transition={{
                 ...ANIMATION_CONFIG.transitions.ease,
                 delay: index * ANIMATION_CONFIG.delays.stagger,
             }}
         >
-            <motion.a
+            <a
                 href={bookmark.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group/bookmark inline-flex cursor-pointer items-center gap-3 rounded-default px-2 py-1 text-newtab-text-secondary-light no-underline hover:bg-newtab-hover-light hover:no-underline dark:text-newtab-text-secondary-dark dark:hover:bg-newtab-hover-dark"
+                className="group/bookmark inline-flex cursor-pointer items-center gap-3 rounded-default px-2 py-1 text-newtab-text-secondary-light no-underline transition-colors duration-default hover:bg-newtab-hover-light hover:no-underline dark:text-newtab-text-secondary-dark dark:hover:bg-newtab-hover-dark"
                 title={bookmark.title}
-                transition={ANIMATION_CONFIG.transitions.ease}
             >
                 {bookmark.url && (
                     <div className="flex-shrink-0">
@@ -53,7 +50,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
                         ? `${bookmark.title.slice(0, 20)}...`
                         : bookmark.title}
                 </span>
-            </motion.a>
+            </a>
         </motion.div>
     );
 };

@@ -40,13 +40,8 @@ export const BookmarkColumn: React.FC<BookmarkColumnProps> = ({
                         key={folder.id}
                         layoutId={`folder-${folder.id}`}
                         layout
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{
-                            layout: ANIMATION_CONFIG.transitions.ease,
-                            opacity: ANIMATION_CONFIG.transitions.ease,
-                        }}
+                        {...ANIMATION_CONFIG.presets.slideInUp}
+                        transition={ANIMATION_CONFIG.transitions.ease}
                     >
                         <BookmarkFolder
                             folder={folder}

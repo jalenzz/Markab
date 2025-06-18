@@ -26,6 +26,10 @@ export default {
                 default: '0.5rem',
             },
 
+            transitionDuration: {
+                default: '150ms',
+            },
+
             colors: {
                 newtab: {
                     'theme-light': 'rgb(0, 122, 255)',

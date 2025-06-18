@@ -21,7 +21,7 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
 }) => {
     return (
         <motion.div
-            className="flex cursor-pointer items-center space-x-4 rounded-default px-1 py-2 hover:bg-newtab-hover-light dark:hover:bg-newtab-hover-dark"
+            className="flex cursor-pointer items-center space-x-4 rounded-default px-1 py-2 transition-colors duration-default hover:bg-newtab-hover-light dark:hover:bg-newtab-hover-dark"
             onClick={onTitleClick}
             transition={ANIMATION_CONFIG.transitions.ease}
         >
@@ -33,9 +33,7 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
                 </h3>
 
                 <motion.div
-                    animate={{
-                        rotate: isExpanded ? 90 : 0,
-                    }}
+                    {...ANIMATION_CONFIG.presets.rotate(isExpanded)}
                     transition={ANIMATION_CONFIG.transitions.ease}
                 >
                     <svg
