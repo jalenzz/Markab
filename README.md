@@ -25,4 +25,4 @@ bun run dev
 
 ## 📝 License
 
-[Apache License 2.0 License](LICENSE)
+[Apache License 2.0](LICENSE)
