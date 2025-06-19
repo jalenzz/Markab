@@ -29,7 +29,6 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
         >
             <a
                 href={bookmark.url}
-                target="_blank"
                 rel="noopener noreferrer"
                 className="group/bookmark inline-flex cursor-pointer items-center gap-3 rounded-default px-2 py-1 text-newtab-text-secondary-light no-underline transition-colors duration-default hover:bg-newtab-hover-light hover:no-underline dark:text-newtab-text-secondary-dark dark:hover:bg-newtab-hover-dark"
                 title={bookmark.title}
