@@ -6,7 +6,6 @@ export default {
         extend: {
             fontFamily: {
                 primary: [
-                    'LXGW WenKai Screen R',
                     'system-ui',
                     '-apple-system',
                     'BlinkMacSystemFont',
