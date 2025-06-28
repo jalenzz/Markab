@@ -36,12 +36,12 @@ export interface DragItem {
 // 设置相关类型
 export interface AppSettings {
     theme: 'auto' | 'light' | 'dark';
-    fontSize: number;
     fontFamily: string;
+    fontSize: number;
     showMostVisited: boolean;
     showRecentlyClosed: boolean;
     lockLayout: boolean;
-    linkOpenBehavior: 'current-tab' | 'new-tab';
+    linkOpen: 'current-tab' | 'new-tab';
 }
 
 // 设置项配置类型定义

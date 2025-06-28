@@ -20,7 +20,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
         return iconUrl.toString();
     };
 
-    const linkTarget = settings.linkOpenBehavior === 'new-tab' ? '_blank' : undefined;
+    const linkTarget = settings.linkOpen === 'new-tab' ? '_blank' : undefined;
 
     return (
         <motion.div

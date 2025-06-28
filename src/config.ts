@@ -40,12 +40,12 @@ export type AnimationConfig = typeof ANIMATION_CONFIG;
 // 默认设置配置
 export const DEFAULT_SETTINGS = {
     theme: 'auto' as const,
+    fontFamily: '',
     fontSize: 14,
-    fontFamily: 'system-ui',
     showMostVisited: true,
     showRecentlyClosed: true,
     lockLayout: false,
-    linkOpenBehavior: 'current-tab' as const,
+    linkOpen: 'current-tab' as const,
 } as const;
 
 // 设置配置
@@ -61,6 +61,12 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         ],
     },
     {
+        key: 'fontFamily',
+        label: 'Font',
+        type: 'input',
+        placeholder: 'Font name',
+    },
+    {
         key: 'fontSize',
         label: 'Font Size',
         type: 'slider',
@@ -68,12 +74,6 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         max: 24,
         step: 1,
         showValue: true,
-    },
-    {
-        key: 'fontFamily',
-        label: 'Font Family',
-        type: 'input',
-        placeholder: 'e.g., Arial, "Times New Roman", serif',
     },
     {
         key: 'showMostVisited',
@@ -91,8 +91,8 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         type: 'toggle',
     },
     {
-        key: 'linkOpenBehavior',
-        label: 'Link Open Behavior',
+        key: 'linkOpen',
+        label: 'Link Open',
         type: 'select',
         options: [
             { value: 'current-tab', label: 'Current Tab' },
