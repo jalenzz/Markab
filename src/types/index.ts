@@ -78,4 +78,8 @@ export interface InputSettingConfig extends BaseSettingConfig {
     placeholder?: string;
 }
 
-export type SettingConfig = SelectSettingConfig | ToggleSettingConfig | SliderSettingConfig | InputSettingConfig;
+export type SettingConfig =
+    | SelectSettingConfig
+    | ToggleSettingConfig
+    | SliderSettingConfig
+    | InputSettingConfig;

@@ -1,3 +1,3 @@
 export { BookmarkFolder } from './BookmarkFolder';
-export { Emoji } from './Emoji';
+export { FluentEmoji } from './FluentEmoji';
 export { FolderHeader } from './FolderHeader';
