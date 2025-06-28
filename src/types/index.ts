@@ -6,7 +6,7 @@ export interface BookmarkItem {
     parentId?: string;
 }
 
-// 文件夹类型 - 扁平化展示
+// 文件夹类型
 export interface FolderItem {
     id: string;
     title: string;
@@ -32,3 +32,50 @@ export interface DragItem {
     sourceCol: number;
     sourceIndex: number;
 }
+
+// 设置相关类型
+export interface AppSettings {
+    theme: 'auto' | 'light' | 'dark';
+    fontSize: number;
+    fontFamily: string;
+    showMostVisited: boolean;
+    showRecentlyClosed: boolean;
+    lockLayout: boolean;
+    linkOpenBehavior: 'current-tab' | 'new-tab';
+}
+
+// 设置项配置类型定义
+export interface SettingOption {
+    value: string;
+    label: string;
+}
+
+export interface BaseSettingConfig {
+    key: string;
+    label: string;
+    type: 'select' | 'toggle' | 'slider' | 'input';
+}
+
+export interface SelectSettingConfig extends BaseSettingConfig {
+    type: 'select';
+    options: SettingOption[];
+}
+
+export interface ToggleSettingConfig extends BaseSettingConfig {
+    type: 'toggle';
+}
+
+export interface SliderSettingConfig extends BaseSettingConfig {
+    type: 'slider';
+    min: number;
+    max: number;
+    step?: number;
+    showValue?: boolean;
+}
+
+export interface InputSettingConfig extends BaseSettingConfig {
+    type: 'input';
+    placeholder?: string;
+}
+
+export type SettingConfig = SelectSettingConfig | ToggleSettingConfig | SliderSettingConfig | InputSettingConfig;

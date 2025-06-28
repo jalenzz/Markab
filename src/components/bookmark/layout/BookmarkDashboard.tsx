@@ -1,14 +1,26 @@
 import { motion } from 'motion/react';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { ANIMATION_CONFIG } from '../../../config';
 import { useBookmarks } from '../../../hooks';
 import { DropZoneInColumn } from '../../dnd';
+import { SettingsButton, SettingsPanel } from '../../settings';
 import { BookmarkColumn } from './BookmarkColumn';
 
 export const BookmarkDashboard: React.FC = () => {
     const { folderColumns, folderState, handleFolderClick, handleEmojiChange, handleFolderDrop } =
         useBookmarks();
+
+    // 设置面板状态
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+    const handleSettingsToggle = (isOpen: boolean) => {
+        setIsSettingsOpen(isOpen);
+    };
+
+    const handleSettingsClose = () => {
+        setIsSettingsOpen(false);
+    };
 
     return (
         <motion.div
@@ -20,6 +32,12 @@ export const BookmarkDashboard: React.FC = () => {
                 ...ANIMATION_CONFIG.transitions.ease,
             }}
         >
+            {/* 设置按钮 */}
+            <SettingsButton onToggle={handleSettingsToggle} isOpen={isSettingsOpen} />
+
+            {/* 设置面板 */}
+            <SettingsPanel isOpen={isSettingsOpen} onClose={handleSettingsClose} />
+
             <main className="w-full py-12">
                 <div className="flex w-full flex-row items-start justify-evenly">
                     {/* 左边缘拖拽区域 */}

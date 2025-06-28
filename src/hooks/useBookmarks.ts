@@ -3,37 +3,50 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { browserApiService, rebuildLayout, updateFolderPositions } from '../services';
 import { storageService } from '../services/storageService';
 import type { DragItem, FolderColumnsType, FolderItem, FolderStateType } from '../types';
+import { useSettings } from './useSettings';
 
 export function useBookmarks() {
+    const { settings, isLoading } = useSettings();
     const [folderColumns, setFolderColumns] = useState<FolderColumnsType>([]);
     const [folderState, setFolderState] = useState<FolderStateType>({});
     const [error, setError] = useState<string | null>(null);
 
     const hasLoadedRef = useRef(false);
 
-    const loadBookmarks = useCallback(async () => {
-        if (hasLoadedRef.current) {
-            return;
-        }
+    const loadBookmarks = useCallback(
+        async (forceReload = false) => {
+            // 等待设置加载完成后再加载书签数据
+            if (isLoading) {
+                return;
+            }
 
-        try {
-            setError(null);
+            if (hasLoadedRef.current && !forceReload) {
+                return;
+            }
 
-            const savedFolderState = await storageService.loadConfig<FolderStateType>(
-                'folderState',
-                {},
-            );
-            setFolderState(savedFolderState);
+            try {
+                setError(null);
 
-            const displayFolders = await browserApiService.getAllFolders();
-            const columns = rebuildLayout(displayFolders, savedFolderState);
-            setFolderColumns(columns);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'load data failed');
-        } finally {
-            hasLoadedRef.current = true;
-        }
-    }, []);
+                const savedFolderState = await storageService.loadConfig<FolderStateType>(
+                    'folderState',
+                    {},
+                );
+                setFolderState(savedFolderState);
+
+                const displayFolders = await browserApiService.getAllFolders({
+                    showMostVisited: settings.showMostVisited,
+                    showRecentlyClosed: settings.showRecentlyClosed,
+                });
+                const columns = rebuildLayout(displayFolders, savedFolderState);
+                setFolderColumns(columns);
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'load data failed');
+            } finally {
+                hasLoadedRef.current = true;
+            }
+        },
+        [isLoading, settings.showMostVisited, settings.showRecentlyClosed],
+    );
 
     const handleFolderClick = useCallback((folder: FolderItem) => {
         setFolderState((prevState) => {
@@ -73,9 +86,19 @@ export function useBookmarks() {
         saveFolderState();
     }, [folderState]);
 
+    // 初始加载书签（等待设置加载完成）
     useEffect(() => {
-        loadBookmarks();
-    }, [loadBookmarks]);
+        if (!isLoading) {
+            loadBookmarks();
+        }
+    }, [isLoading, loadBookmarks]);
+
+    // 当设置变化时重新加载书签
+    useEffect(() => {
+        if (hasLoadedRef.current && !isLoading) {
+            loadBookmarks(true);
+        }
+    }, [settings.showMostVisited, settings.showRecentlyClosed, isLoading, loadBookmarks]);
 
     const handleFolderDrop = useCallback(
         (dragItem: DragItem, targetCol: number, targetIndex: number) => {
@@ -114,7 +137,7 @@ export function useBookmarks() {
                     // 如果源列变空了，移除空列并调整插入位置
                     if (newColumns[dragItem.sourceCol].length === 0) {
                         newColumns.splice(dragItem.sourceCol, 1);
-                        // 调整插入位置：如果新列要插入的位置在被删除列之后，需要减1
+                        // 调整插入位置：如果新列要插入的位置在被删除列之后，需要减 1
                         if (targetIndex > dragItem.sourceCol) {
                             targetIndex = targetIndex - 1;
                         }

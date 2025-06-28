@@ -7,6 +7,11 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
+
+        /* 默认字体变量 */
+        --font-size-title: 1.25rem;
+        --font-size-body: 0.875rem;
+        --font-family-primary: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
     }
 
     body {

@@ -129,9 +129,12 @@ class BrowserApiService {
     }
 
     /**
-     * 获取所有有效的文件夹（包括特殊文件夹）
+     * 获取所有有效的文件夹
      */
-    async getAllFolders(): Promise<FolderItem[]> {
+    async getAllFolders(options?: {
+        showMostVisited?: boolean;
+        showRecentlyClosed?: boolean;
+    }): Promise<FolderItem[]> {
         const [bookmarkFolders, topSitesFolder, recentlyClosedFolder] = await Promise.all([
             this.getBookmarkFolders(),
             this.getTopSitesAsBookmarkFolder(),
@@ -141,8 +144,9 @@ class BrowserApiService {
         const folders: FolderItem[] = [...bookmarkFolders];
 
         // 添加特殊文件夹到开头
-        if (recentlyClosedFolder) folders.unshift(recentlyClosedFolder);
-        if (topSitesFolder) folders.unshift(topSitesFolder);
+        if (options?.showRecentlyClosed && recentlyClosedFolder)
+            folders.unshift(recentlyClosedFolder);
+        if (options?.showMostVisited && topSitesFolder) folders.unshift(topSitesFolder);
 
         return folders;
     }

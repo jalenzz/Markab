@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import React from 'react';
 
 import { ANIMATION_CONFIG } from '../../../config';
+import { useSettings } from '../../../hooks';
 import type { BookmarkItem as BookmarkItemType } from '../../../types';
 
 interface BookmarkItemProps {
@@ -10,12 +11,16 @@ interface BookmarkItemProps {
 }
 
 export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) => {
+    const { settings } = useSettings();
+
     const getFaviconUrl = (url: string) => {
         const iconUrl = new URL(chrome.runtime.getURL('/_favicon/'));
         iconUrl.searchParams.set('pageUrl', url);
         iconUrl.searchParams.set('size', '32');
         return iconUrl.toString();
     };
+
+    const linkTarget = settings.linkOpenBehavior === 'new-tab' ? '_blank' : undefined;
 
     return (
         <motion.div
@@ -29,6 +34,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
         >
             <a
                 href={bookmark.url}
+                target={linkTarget}
                 rel="noopener noreferrer"
                 className="group/bookmark inline-flex cursor-pointer items-center gap-3 rounded-default px-2 py-1 text-newtab-text-secondary-light no-underline transition-colors duration-default hover:bg-newtab-hover-light hover:no-underline dark:text-newtab-text-secondary-dark dark:hover:bg-newtab-hover-dark"
                 title={bookmark.title}

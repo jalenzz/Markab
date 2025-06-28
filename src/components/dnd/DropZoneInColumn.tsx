@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDrop } from 'react-dnd';
 
+import { useSettings } from '../../hooks';
 import { type DragItem } from '../../types';
 
 interface DropZoneInColumnProps {
@@ -16,6 +17,9 @@ export const DropZoneInColumn: React.FC<DropZoneInColumnProps> = ({
     isEdge = false,
     edgeType,
 }) => {
+    const { settings } = useSettings();
+    const isDragEnabled = !settings.lockLayout;
+
     const [{ isOver, canDrop }, drop] = useDrop(
         {
             accept: 'item',
@@ -24,14 +28,14 @@ export const DropZoneInColumn: React.FC<DropZoneInColumnProps> = ({
                 onFolderDrop(item, -1, insertIndex);
             },
             canDrop: () => {
-                return true;
+                return isDragEnabled;
             },
             collect: (monitor) => ({
                 isOver: monitor.isOver(),
                 canDrop: monitor.canDrop(),
             }),
         },
-        [insertIndex, onFolderDrop, isEdge, edgeType],
+        [insertIndex, onFolderDrop, isEdge, edgeType, isDragEnabled],
     );
 
     const showDropIndicator = isOver && canDrop;

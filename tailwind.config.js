@@ -1,24 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 export default {
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-    darkMode: 'media',
+    darkMode: 'class',
     theme: {
         extend: {
             fontFamily: {
-                primary: [
-                    'system-ui',
-                    '-apple-system',
-                    'BlinkMacSystemFont',
-                    'Segoe UI',
-                    'PingFang SC',
-                    'Microsoft YaHei',
-                    'sans-serif',
-                ],
+                primary: 'var(--font-family-primary)',
             },
 
             fontSize: {
-                title: '1.25rem',
-                body: '0.875rem',
+                title: 'var(--font-size-title)',
+                body: 'var(--font-size-body)',
             },
 
             borderRadius: {

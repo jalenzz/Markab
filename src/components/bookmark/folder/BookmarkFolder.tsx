@@ -3,6 +3,7 @@ import React from 'react';
 import { useDrag } from 'react-dnd';
 
 import { ANIMATION_CONFIG } from '../../../config';
+import { useSettings } from '../../../hooks';
 import type { FolderItem, FolderStateType } from '../../../types';
 import { BookmarkList } from '../layout';
 import { FolderHeader } from './FolderHeader';
@@ -24,23 +25,30 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
     columnIndex,
     folderIndex,
 }) => {
+    const { settings } = useSettings();
     const folderStateData = folderState[folder.id] || {};
     const isExpanded = folderStateData.isExpanded || false;
     const currentEmoji = folderStateData.emoji || '⭐';
 
+    // 根据设置决定是否启用拖拽功能
+    const isDragEnabled = !settings.lockLayout;
+
     const [{ isDragging }, drag] = useDrag(
         () => ({
             type: 'item',
-            item: {
-                folderId: folder.id,
-                sourceCol: columnIndex,
-                sourceIndex: folderIndex,
-            },
+            item: isDragEnabled
+                ? {
+                      folderId: folder.id,
+                      sourceCol: columnIndex,
+                      sourceIndex: folderIndex,
+                  }
+                : null,
+            canDrag: isDragEnabled,
             collect: (monitor) => ({
                 isDragging: monitor.isDragging(),
             }),
         }),
-        [folder.id, columnIndex, folderIndex],
+        [folder.id, columnIndex, folderIndex, isDragEnabled],
     );
 
     const folderBookmarks = folder.children || [];
