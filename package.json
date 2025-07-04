@@ -7,6 +7,7 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc -b && vite build",
+        "build:analyze": "tsc -b && ANALYZE=true vite build",
         "preview": "vite preview",
         "lint": "eslint . && stylelint \"src/**/*.{css,scss,less}\"",
         "lint:fix": "eslint . --fix && stylelint \"src/**/*.{css,scss,less}\" --fix && prettier --write .",
@@ -40,6 +41,7 @@
         "postcss": "^8.5.5",
         "prettier": "^3.5.3",
         "prettier-plugin-tailwindcss": "^0.6.12",
+        "rollup-plugin-visualizer": "^6.0.3",
         "stylelint": "^16.20.0",
         "stylelint-config-tailwindcss": "^1.0.0",
         "stylelint-order": "^7.0.0",
