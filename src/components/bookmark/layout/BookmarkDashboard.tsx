@@ -1,7 +1,5 @@
-import { motion } from 'motion/react';
 import React, { useState } from 'react';
 
-import { ANIMATION_CONFIG } from '../../../config';
 import { useBookmarks } from '../../../hooks';
 import { DropZoneInColumn } from '../../dnd';
 import { SettingsButton, SettingsPanel } from '../../settings';
@@ -23,15 +21,7 @@ export const BookmarkDashboard: React.FC = () => {
     };
 
     return (
-        <motion.div
-            className="w-full"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-                delay: ANIMATION_CONFIG.delays.page,
-                ...ANIMATION_CONFIG.transitions.ease,
-            }}
-        >
+        <div className="w-full">
             {/* 设置按钮 */}
             <SettingsButton onToggle={handleSettingsToggle} isOpen={isSettingsOpen} />
 
@@ -84,7 +74,7 @@ export const BookmarkDashboard: React.FC = () => {
                     })}
                 </div>
             </main>
-        </motion.div>
+        </div>
     );
 };
 

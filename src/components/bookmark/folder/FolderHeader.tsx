@@ -2,7 +2,6 @@ import Picker from '@emoji-mart/react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { ANIMATION_CONFIG } from '../../../config';
 import { FluentEmoji } from './FluentEmoji';
 
 interface FolderHeaderProps {
@@ -85,10 +84,9 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
     };
 
     return (
-        <motion.div
+        <div
             className="flex cursor-pointer items-center space-x-4 rounded-default px-1 py-2 transition-colors duration-default hover:bg-newtab-hover-light dark:hover:bg-newtab-hover-dark"
             onClick={onTitleClick}
-            transition={ANIMATION_CONFIG.transitions.ease}
         >
             <div
                 ref={emojiRef}
@@ -107,6 +105,7 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
                             }`}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             <Picker
@@ -132,9 +131,8 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
                     {title}
                 </h3>
 
-                <motion.div
-                    {...ANIMATION_CONFIG.presets.rotate(isExpanded)}
-                    transition={ANIMATION_CONFIG.transitions.ease}
+                <div
+                    className={`arrow-icon transition-transform duration-150 ease-out ${isExpanded ? 'rotate-90' : ''}`}
                 >
                     <svg
                         className="h-4 w-4 text-newtab-text-secondary-light opacity-60 dark:text-newtab-text-secondary-dark"
@@ -149,9 +147,9 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
                             d="M9 5l7 7-7 7"
                         />
                     </svg>
-                </motion.div>
+                </div>
             </div>
-        </motion.div>
+        </div>
     );
 };
 
