@@ -1,3 +1,3 @@
 export { BookmarkColumn } from './BookmarkColumn';
-export { BookmarkDashboard } from './BookmarkDashboard';
+export { BookmarkGrid } from './BookmarkGrid';
 export { BookmarkList } from './BookmarkList';
