@@ -4,6 +4,8 @@ A new tab extension focused on providing clean, elegant bookmark display experie
 
 > Never forget your bookmarks again
 
+[Chrome Extensions](https://chromewebstore.google.com/detail/markab/edenohjoklbajppddnaimojnemafnkkg)
+
 ![banner](public/banner.png)
 
 ## ✨ Features
