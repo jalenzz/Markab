@@ -3,12 +3,27 @@ import { AnimatePresence, motion } from 'motion/react';
 import { ANIMATION_CONFIG, SETTINGS_CONFIG } from '../../config';
 import { useModal, useSettings } from '../../hooks';
 import type { AppSettings } from '../../types';
-import { SettingItem } from '.';
+import {
+    InputControl,
+    MultiSelectControl,
+    SelectControl,
+    SliderControl,
+    ToggleControl,
+} from './controls';
 
 interface SettingsPanelProps {
     isOpen: boolean;
     onClose: () => void;
 }
+
+// 配置类型到控件组件的映射
+const controlComponents = {
+    'toggle': ToggleControl,
+    'select': SelectControl,
+    'slider': SliderControl,
+    'input': InputControl,
+    'multi-select': MultiSelectControl,
+} as const;
 
 /**
  * 设置面板组件
@@ -44,19 +59,25 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
 
                     {/* 设置项列表 */}
                     <div className="mb-6">
-                        {SETTINGS_CONFIG.map((setting) => (
-                            <SettingItem
-                                key={setting.key}
-                                config={setting}
-                                value={getSettingValue(setting.key as keyof AppSettings)}
-                                onChange={(value) =>
-                                    updateSetting(
-                                        setting.key as keyof AppSettings,
-                                        value as AppSettings[keyof AppSettings],
-                                    )
-                                }
-                            />
-                        ))}
+                        {SETTINGS_CONFIG.map((setting) => {
+                            const ControlComponent = controlComponents[setting.type];
+                            if (!ControlComponent) return null;
+
+                            const settingKey = setting.key as keyof AppSettings;
+                            const value = getSettingValue(settingKey);
+                            const onChange = (newValue: AppSettings[keyof AppSettings]) =>
+                                updateSetting(settingKey, newValue);
+
+                            // 使用映射直接渲染控件
+                            return (
+                                <ControlComponent
+                                    key={setting.key}
+                                    config={setting}
+                                    value={value}
+                                    onChange={onChange}
+                                />
+                            );
+                        })}
                     </div>
 
                     {/* Reset button */}
