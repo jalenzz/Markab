@@ -38,10 +38,9 @@ export interface AppSettings {
     theme: 'auto' | 'light' | 'dark';
     fontFamily: string;
     fontSize: number;
-    showMostVisited: boolean;
-    showRecentlyClosed: boolean;
     lockLayout: boolean;
     linkOpen: 'current-tab' | 'new-tab';
+    hiddenFolders: string[];
 }
 
 // 设置项配置类型定义
@@ -53,7 +52,7 @@ export interface SettingOption {
 export interface BaseSettingConfig {
     key: string;
     label: string;
-    type: 'select' | 'toggle' | 'slider' | 'input';
+    type: 'select' | 'toggle' | 'slider' | 'input' | 'multi-select';
 }
 
 export interface SelectSettingConfig extends BaseSettingConfig {
@@ -78,8 +77,13 @@ export interface InputSettingConfig extends BaseSettingConfig {
     placeholder?: string;
 }
 
+export interface MultiSelectSettingConfig extends BaseSettingConfig {
+    type: 'multi-select';
+}
+
 export type SettingConfig =
     | SelectSettingConfig
     | ToggleSettingConfig
     | SliderSettingConfig
-    | InputSettingConfig;
+    | InputSettingConfig
+    | MultiSelectSettingConfig;

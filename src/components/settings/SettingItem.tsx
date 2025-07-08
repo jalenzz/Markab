@@ -1,9 +1,10 @@
 import type { SettingConfig } from '../../types';
+import { MultiSelect } from './MultiSelect';
 
 interface SettingItemProps {
     config: SettingConfig;
-    value: string | number | boolean;
-    onChange: (value: string | number | boolean) => void;
+    value: string | number | boolean | string[];
+    onChange: (value: string | number | boolean | string[]) => void;
 }
 
 /**
@@ -100,14 +101,30 @@ export function SettingItem({ config, value, onChange }: SettingItemProps) {
                     </div>
                 );
 
+            case 'multi-select':
+                return (
+                    <div className="w-full">
+                        <MultiSelect
+                            value={value as string[]}
+                            onChange={(newValue) => onChange(newValue)}
+                        />
+                    </div>
+                );
+
             default:
                 return null;
         }
     };
 
+    const isVerticalLayout = config.type === 'multi-select';
+
     return (
-        <div className="flex items-center justify-between py-3">
-            <label className="mr-3 flex-1 text-body text-newtab-text-secondary-light dark:text-newtab-text-secondary-dark">
+        <div
+            className={`py-3 ${isVerticalLayout ? 'space-y-2' : 'flex items-center justify-between'}`}
+        >
+            <label
+                className={`text-body text-newtab-text-secondary-light dark:text-newtab-text-secondary-dark ${isVerticalLayout ? '' : 'mr-3 flex-1'}`}
+            >
                 {config.label}
             </label>
             {renderControl()}

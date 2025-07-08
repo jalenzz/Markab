@@ -91,7 +91,14 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
                     'appSettings',
                     DEFAULT_SETTINGS,
                 );
-                dispatch({ type: 'LOAD_SETTINGS', payload: savedSettings });
+
+                // 确保所有默认字段都存在，合并默认设置和保存的设置
+                const mergedSettings = {
+                    ...DEFAULT_SETTINGS,
+                    ...savedSettings,
+                };
+
+                dispatch({ type: 'LOAD_SETTINGS', payload: mergedSettings });
             } catch (error) {
                 console.error('Failed to load settings:', error);
                 dispatch({ type: 'LOAD_SETTINGS', payload: DEFAULT_SETTINGS });

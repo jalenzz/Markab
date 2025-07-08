@@ -37,10 +37,9 @@ export const DEFAULT_SETTINGS = {
     theme: 'auto' as const,
     fontFamily: '',
     fontSize: 14,
-    showMostVisited: true,
-    showRecentlyClosed: true,
     lockLayout: false,
     linkOpen: 'current-tab' as const,
+    hiddenFolders: [] as string[],
 } as const;
 
 // 设置配置
@@ -71,16 +70,6 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         showValue: true,
     },
     {
-        key: 'showMostVisited',
-        label: 'Show Most Visited',
-        type: 'toggle',
-    },
-    {
-        key: 'showRecentlyClosed',
-        label: 'Show Recently Closed',
-        type: 'toggle',
-    },
-    {
         key: 'lockLayout',
         label: 'Lock Layout',
         type: 'toggle',
@@ -93,5 +82,10 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
             { value: 'current-tab', label: 'Current Tab' },
             { value: 'new-tab', label: 'New Tab' },
         ],
+    },
+    {
+        key: 'hiddenFolders',
+        label: 'Show Folders',
+        type: 'multi-select',
     },
 ];
