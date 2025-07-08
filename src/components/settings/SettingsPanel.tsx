@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'motion/react';
 
 import { ANIMATION_CONFIG, SETTINGS_CONFIG } from '../../config';
 import { useModal, useSettings } from '../../hooks';
-import type { AppSettings } from '../../types';
+import type { AppSettings, SettingConfig } from '../../types';
 import {
     InputControl,
     MultiSelectControl,
@@ -16,14 +16,21 @@ interface SettingsPanelProps {
     onClose: () => void;
 }
 
-// 配置类型到控件组件的映射
-const controlComponents = {
-    'toggle': ToggleControl,
-    'select': SelectControl,
-    'slider': SliderControl,
-    'input': InputControl,
-    'multi-select': MultiSelectControl,
-} as const;
+interface ControlComponentProps {
+    config: SettingConfig;
+    value: AppSettings[keyof AppSettings];
+    onChange: (value: AppSettings[keyof AppSettings]) => void;
+}
+
+type ControlComponent = React.ComponentType<ControlComponentProps>;
+
+const controlComponents: Record<SettingConfig['type'], ControlComponent> = {
+    'toggle': ToggleControl as ControlComponent,
+    'select': SelectControl as ControlComponent,
+    'slider': SliderControl as ControlComponent,
+    'input': InputControl as ControlComponent,
+    'multi-select': MultiSelectControl as ControlComponent,
+};
 
 /**
  * 设置面板组件
@@ -38,9 +45,9 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                 <motion.div
                     ref={modalRef}
                     className="fixed right-4 top-4 z-50 w-80 rounded-default border border-transparent bg-newtab-bg-light p-6 shadow-lg shadow-black/10 backdrop-blur-sm dark:border-white/5 dark:bg-newtab-bg-dark dark:shadow-white/10"
-                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
                     transition={ANIMATION_CONFIG.transitions.ease}
                 >
                     {/* 面板标题 */}
@@ -68,7 +75,6 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                             const onChange = (newValue: AppSettings[keyof AppSettings]) =>
                                 updateSetting(settingKey, newValue);
 
-                            // 使用映射直接渲染控件
                             return (
                                 <ControlComponent
                                     key={setting.key}

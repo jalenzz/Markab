@@ -19,14 +19,16 @@ export default defineConfig({
         react(),
         crx({ manifest }),
         zip({ outDir: 'release', outFileName: `crx-${name}-${version}.zip` }),
-        ...(process.env.ANALYZE ? [
-            visualizer({
-                filename: 'dist/stats.html',
-                open: true,
-                gzipSize: true,
-                brotliSize: true,
-            }) as PluginOption,
-        ] : []),
+        ...(process.env.ANALYZE
+            ? [
+                  visualizer({
+                      filename: 'dist/stats.html',
+                      open: true,
+                      gzipSize: true,
+                      brotliSize: true,
+                  }) as PluginOption,
+              ]
+            : []),
     ],
     server: {
         cors: {

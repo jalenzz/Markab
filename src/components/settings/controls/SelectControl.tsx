@@ -6,14 +6,10 @@ interface SelectControlProps {
     onChange: (value: string) => void;
 }
 
-/**
- * 选择控件组件
- * 提供多选项按钮组功能的UI控件，包含标签显示
- */
 export function SelectControl({ config, value, onChange }: SelectControlProps) {
     return (
-        <div className="py-3 flex items-center justify-between">
-            <label className="text-body text-newtab-text-secondary-light dark:text-newtab-text-secondary-dark mr-3 flex-1">
+        <div className="flex items-center justify-between py-3">
+            <label className="mr-3 flex-1 text-body text-newtab-text-primary-light dark:text-newtab-text-primary-dark">
                 {config.label}
             </label>
             <div className="flex-shrink-0">
@@ -22,10 +18,10 @@ export function SelectControl({ config, value, onChange }: SelectControlProps) {
                         <div key={option.value} className="flex">
                             <button
                                 onClick={() => onChange(option.value)}
-                                className={`px-3 py-1 text-body transition-colors duration-default ${
+                                className={`px-2 py-0.5 text-body transition-colors duration-default ${
                                     value === option.value
                                         ? 'bg-newtab-theme-light text-white dark:bg-newtab-theme-dark'
-                                        : 'bg-newtab-text-secondary-light/5 text-newtab-text-secondary-light hover:bg-newtab-text-secondary-light/15 dark:bg-newtab-text-secondary-dark/5 dark:text-newtab-text-secondary-dark dark:hover:bg-newtab-text-secondary-dark/15'
+                                        : 'bg-newtab-text-secondary-light/5 text-newtab-text-primary-light hover:bg-newtab-text-secondary-light/15 dark:bg-newtab-text-secondary-dark/5 dark:text-newtab-text-primary-dark dark:hover:bg-newtab-text-secondary-dark/15'
                                 }`}
                             >
                                 {option.label}
