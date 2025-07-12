@@ -1,7 +1,7 @@
 {
     "name": "markab",
     "private": true,
-    "version": "0.3.0",
+    "version": "0.4.0",
     "type": "module",
     "description": "Bookmark New Tab, Never forget your bookmarks",
     "scripts": {
