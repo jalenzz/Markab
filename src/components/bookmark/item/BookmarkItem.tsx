@@ -50,10 +50,8 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
                         />
                     </div>
                 )}
-                <span className="text-body font-medium leading-relaxed">
-                    {bookmark.title.length > 20
-                        ? `${bookmark.title.slice(0, 20)}...`
-                        : bookmark.title}
+                <span className="max-w-[200px] truncate text-body font-medium leading-relaxed">
+                    {bookmark.title}
                 </span>
             </a>
         </motion.div>
