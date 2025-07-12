@@ -14,6 +14,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
     const { settings } = useSettings();
 
     const getFaviconUrl = (url: string) => {
+        if (!url) url = 'none'; // 对于窗口恢复项没有 url，使用默认图标
         const iconUrl = new URL(chrome.runtime.getURL('/_favicon/'));
         iconUrl.searchParams.set('pageUrl', url);
         iconUrl.searchParams.set('size', '32');
@@ -21,6 +22,13 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
     };
 
     const linkTarget = settings.linkOpen === 'new-tab' ? '_blank' : undefined;
+
+    const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (bookmark.action) {
+            e.preventDefault();
+            await bookmark.action();
+        }
+    };
 
     return (
         <motion.div
@@ -36,20 +44,19 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
                 href={bookmark.url}
                 target={linkTarget}
                 rel="noopener noreferrer"
+                onClick={handleClick}
                 className="group/bookmark inline-flex cursor-pointer items-center gap-3 rounded-default px-2 py-1 text-newtab-text-secondary-light no-underline transition-colors duration-default hover:bg-newtab-hover-light hover:no-underline dark:text-newtab-text-secondary-dark dark:hover:bg-newtab-hover-dark"
                 title={bookmark.title}
             >
-                {bookmark.url && (
-                    <div className="flex-shrink-0">
-                        <img
-                            src={getFaviconUrl(bookmark.url)}
-                            alt={`${bookmark.title} icon`}
-                            width={16}
-                            height={16}
-                            className="rounded-sm"
-                        />
-                    </div>
-                )}
+                <div className="flex-shrink-0">
+                    <img
+                        src={getFaviconUrl(bookmark.url)}
+                        alt={`${bookmark.title} icon`}
+                        width={16}
+                        height={16}
+                        className="rounded-sm"
+                    />
+                </div>
                 <span className="max-w-[200px] truncate text-body font-medium leading-relaxed">
                     {bookmark.title}
                 </span>

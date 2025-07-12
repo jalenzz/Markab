@@ -32,25 +32,21 @@ class BrowserApiService {
             const recentTabs: BookmarkItem[] = [];
 
             sessions.forEach((session, sessionIndex) => {
-                if (session.tab) {
-                    // 单个标签页
-                    recentTabs.push({
-                        id: `recent-tab-${sessionIndex}`,
-                        title: session.tab.title || 'unnamed',
-                        url: session.tab.url || '',
-                        parentId: 'recent-folder',
-                    });
-                } else if (session.window?.tabs) {
-                    // 窗口中的多个标签页
-                    session.window.tabs.forEach((tab, tabIndex) => {
-                        recentTabs.push({
-                            id: `recent-window-${sessionIndex}-tab-${tabIndex}`,
-                            title: tab.title || 'unnamed',
-                            url: tab.url || '',
-                            parentId: 'recent-folder',
-                        });
-                    });
-                }
+                const isWindow = session.window?.tabs && session.window.tabs.length > 1;
+
+                recentTabs.push({
+                    id: `recent-${sessionIndex}`,
+                    title: isWindow
+                        ? `${session.window?.tabs?.length || 0} tabs`
+                        : session.tab?.title || 'unnamed',
+                    url: session.tab?.url || '',
+                    parentId: 'recent-folder',
+                    ...(isWindow && {
+                        action: async () => {
+                            await chrome.sessions.restore(session.window?.sessionId);
+                        },
+                    }),
+                });
             });
 
             if (recentTabs.length === 0) return null;

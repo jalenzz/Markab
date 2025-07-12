@@ -4,6 +4,7 @@ export interface BookmarkItem {
     title: string;
     url: string;
     parentId?: string;
+    action?: () => Promise<void> | void; // 可选的点击回调函数，处理多标签页窗口恢复
 }
 
 // 文件夹类型
