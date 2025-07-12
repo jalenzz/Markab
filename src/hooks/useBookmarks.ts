@@ -33,7 +33,10 @@ export function useBookmarks() {
                 );
                 setFolderState(savedFolderState);
 
-                const allFolders = await browserApiService.getAllFolders();
+                const allFolders = await browserApiService.getAllFolders(
+                    settings.maxTopSites,
+                    settings.maxRecentTabs,
+                );
 
                 // 过滤掉隐藏的文件夹
                 const displayFolders = allFolders.filter(
@@ -48,7 +51,7 @@ export function useBookmarks() {
                 hasLoadedRef.current = true;
             }
         },
-        [isLoading, settings.hiddenFolders],
+        [isLoading, settings.hiddenFolders, settings.maxTopSites, settings.maxRecentTabs],
     );
 
     const handleFolderClick = useCallback((folder: FolderItem) => {
@@ -101,7 +104,7 @@ export function useBookmarks() {
         if (hasLoadedRef.current && !isLoading) {
             loadBookmarks(true);
         }
-    }, [settings.hiddenFolders, isLoading, loadBookmarks]);
+    }, [settings.hiddenFolders, settings.maxTopSites, settings.maxRecentTabs, isLoading, loadBookmarks]);
 
     const handleFolderDrop = useCallback(
         (dragItem: DragItem, targetCol: number, targetIndex: number) => {

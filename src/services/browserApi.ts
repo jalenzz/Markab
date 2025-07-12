@@ -1,12 +1,12 @@
 import type { BookmarkItem, FolderItem } from '../types';
 
 class BrowserApiService {
-    async getTopSitesAsBookmarkFolder(): Promise<FolderItem | null> {
+    async getTopSitesAsBookmarkFolder(maxTopSites: number = 10): Promise<FolderItem | null> {
         try {
             const topSites = await chrome.topSites.get();
             if (topSites.length === 0) return null;
 
-            const limitedTopSites = topSites.slice(0, 10);
+            const limitedTopSites = topSites.slice(0, maxTopSites);
 
             const children: BookmarkItem[] = limitedTopSites.map((site, index) => ({
                 id: `topsite-${index}`,
@@ -26,9 +26,9 @@ class BrowserApiService {
         }
     }
 
-    async getRecentlyClosedAsBookmarkFolder(): Promise<FolderItem | null> {
+    async getRecentlyClosedAsBookmarkFolder(maxRecentTabs: number = 10): Promise<FolderItem | null> {
         try {
-            const sessions = await chrome.sessions.getRecentlyClosed();
+            const sessions = await chrome.sessions.getRecentlyClosed({ maxResults: maxRecentTabs });
             const recentTabs: BookmarkItem[] = [];
 
             sessions.forEach((session, sessionIndex) => {
@@ -51,12 +51,10 @@ class BrowserApiService {
 
             if (recentTabs.length === 0) return null;
 
-            const limitedRecentTabs = recentTabs.slice(0, 10);
-
             return {
                 id: 'recent-folder',
                 title: 'Recently Closed',
-                children: limitedRecentTabs,
+                children: recentTabs,
             };
         } catch (error) {
             console.error('getRecentlyClosedAsBookmarkFolder failed: ', error);
@@ -127,11 +125,11 @@ class BrowserApiService {
     /**
      * 获取所有有效的文件夹
      */
-    async getAllFolders(): Promise<FolderItem[]> {
+    async getAllFolders(maxTopSites: number = 10, maxRecentTabs: number = 10): Promise<FolderItem[]> {
         const [bookmarkFolders, topSitesFolder, recentlyClosedFolder] = await Promise.all([
             this.getBookmarkFolders(),
-            this.getTopSitesAsBookmarkFolder(),
-            this.getRecentlyClosedAsBookmarkFolder(),
+            this.getTopSitesAsBookmarkFolder(maxTopSites),
+            this.getRecentlyClosedAsBookmarkFolder(maxRecentTabs),
         ]);
 
         const folders: FolderItem[] = [...bookmarkFolders];

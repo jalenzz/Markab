@@ -39,6 +39,8 @@ export interface AppSettings {
     theme: 'auto' | 'light' | 'dark';
     fontFamily: string;
     fontSize: number;
+    maxTopSites: number;
+    maxRecentTabs: number;
     lockLayout: boolean;
     linkOpen: 'current-tab' | 'new-tab';
     hiddenFolders: string[];
