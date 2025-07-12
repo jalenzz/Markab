@@ -18,7 +18,7 @@ export default {
             },
 
             transitionDuration: {
-                default: '150ms',
+                default: '100ms',
             },
 
             colors: {
