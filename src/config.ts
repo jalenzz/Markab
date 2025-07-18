@@ -42,6 +42,8 @@ export const DEFAULT_SETTINGS = {
     lockLayout: false,
     linkOpen: 'current-tab' as const,
     hiddenFolders: [] as string[],
+    backgroundImage: null as string | null,
+    backgroundOpacity: 0.3,
 } as const;
 
 // 设置配置
@@ -107,5 +109,19 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         key: 'hiddenFolders',
         label: 'Show Folders',
         type: 'multi-select',
+    },
+    {
+        key: 'backgroundImage',
+        label: 'Background Image',
+        type: 'image-upload',
+    },
+    {
+        key: 'backgroundOpacity',
+        label: 'Background Opacity',
+        type: 'slider',
+        min: 0.1,
+        max: 1,
+        step: 0.1,
+        showValue: true,
     },
 ];

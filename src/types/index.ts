@@ -44,6 +44,8 @@ export interface AppSettings {
     lockLayout: boolean;
     linkOpen: 'current-tab' | 'new-tab';
     hiddenFolders: string[];
+    backgroundImage: string | null;
+    backgroundOpacity: number;
 }
 
 // 设置项配置类型定义
@@ -55,7 +57,7 @@ export interface SettingOption {
 export interface BaseSettingConfig {
     key: string;
     label: string;
-    type: 'select' | 'toggle' | 'slider' | 'input' | 'multi-select';
+    type: 'select' | 'toggle' | 'slider' | 'input' | 'multi-select' | 'image-upload';
 }
 
 export interface SelectSettingConfig extends BaseSettingConfig {
@@ -84,9 +86,14 @@ export interface MultiSelectSettingConfig extends BaseSettingConfig {
     type: 'multi-select';
 }
 
+export interface ImageUploadSettingConfig extends BaseSettingConfig {
+    type: 'image-upload';
+}
+
 export type SettingConfig =
     | SelectSettingConfig
     | ToggleSettingConfig
     | SliderSettingConfig
     | InputSettingConfig
-    | MultiSelectSettingConfig;
+    | MultiSelectSettingConfig
+    | ImageUploadSettingConfig;

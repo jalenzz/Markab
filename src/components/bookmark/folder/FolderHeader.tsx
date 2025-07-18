@@ -127,7 +127,7 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
             </div>
 
             <div className="flex flex-1 items-center justify-between">
-                <h3 className="truncate text-title font-semibold text-newtab-text-primary-light dark:text-newtab-text-primary-dark">
+                <h3 className="[data-has-background='true']:[text-shadow:0_1px_3px_rgba(0,0,0,0.4)] [data-has-background='true']:dark:[text-shadow:0_1px_3px_rgba(0,0,0,0.8)] truncate text-title font-semibold text-newtab-text-primary-light dark:text-newtab-text-primary-dark">
                     {title}
                 </h3>
 

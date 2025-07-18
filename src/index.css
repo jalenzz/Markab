@@ -1,3 +1,4 @@
+@import './styles/background-enhancements.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

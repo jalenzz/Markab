@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { BookmarkGrid, SettingsButton, SettingsPanel } from './components';
+import { Background, BookmarkGrid, SettingsButton, SettingsPanel } from './components';
 import { SettingsProvider, useSettings, useSettingsEffects } from './hooks';
 
 function AppContent() {
@@ -25,6 +25,7 @@ function AppContent() {
     return (
         <DndProvider backend={HTML5Backend}>
             <div className="relative min-h-screen w-full overflow-hidden">
+                <Background />
                 <SettingsButton onToggle={handleSettingsToggle} isOpen={isSettingsOpen} />
                 <SettingsPanel isOpen={isSettingsOpen} onClose={handleSettingsClose} />
 

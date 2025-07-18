@@ -1,0 +1,80 @@
+/* Background enhancements for better readability */
+
+[data-has-background='true'] {
+    /* Enhanced text shadows for better contrast */
+    --text-shadow-light: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 0, 0, 0.1);
+    --text-shadow-dark: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.2);
+
+    /* Enhanced background colors with better contrast */
+    --bg-overlay-light: rgba(255, 255, 255, 0.95);
+    --bg-overlay-dark: rgba(30, 30, 30, 0.95);
+    --bg-overlay-hover-light: rgba(255, 255, 255, 0.98);
+    --bg-overlay-hover-dark: rgba(40, 40, 40, 0.98);
+}
+
+/* Apply enhanced styles when background is active */
+[data-has-background='true'] .bookmark-item {
+    text-shadow: var(--text-shadow-light);
+}
+
+[data-has-background='true'][data-theme='dark'] .bookmark-item,
+[data-has-background='true'][class*='dark'] .bookmark-item {
+    text-shadow: var(--text-shadow-dark);
+}
+
+[data-has-background='true'] .folder-header h3 {
+    text-shadow: var(--text-shadow-light);
+}
+
+[data-has-background='true'][data-theme='dark'] .folder-header h3,
+[data-has-background='true'][class*='dark'] .folder-header h3 {
+    text-shadow: var(--text-shadow-dark);
+}
+
+/* Enhanced background for folder containers */
+[data-has-background='true'] .folder-container {
+    backdrop-filter: blur(10px);
+    background: var(--bg-overlay-light);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-has-background='true'][data-theme='dark'] .folder-container,
+[data-has-background='true'][class*='dark'] .folder-container {
+    background: var(--bg-overlay-dark);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced hover states */
+[data-has-background='true'] .bookmark-item:hover {
+    background: var(--bg-overlay-hover-light);
+    text-shadow: var(--text-shadow-light);
+}
+
+[data-has-background='true'][data-theme='dark'] .bookmark-item:hover,
+[data-has-background='true'][class*='dark'] .bookmark-item:hover {
+    background: var(--bg-overlay-hover-dark);
+    text-shadow: var(--text-shadow-dark);
+}
+
+/* Enhanced folder header */
+[data-has-background='true'] .folder-header:hover {
+    background: var(--bg-overlay-hover-light);
+}
+
+[data-has-background='true'][data-theme='dark'] .folder-header:hover,
+[data-has-background='true'][class*='dark'] .folder-header:hover {
+    background: var(--bg-overlay-hover-dark);
+}
+
+/* Settings panel enhancement */
+[data-has-background='true'] .settings-panel {
+    backdrop-filter: blur(20px);
+    background: var(--bg-overlay-light);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+[data-has-background='true'][data-theme='dark'] .settings-panel,
+[data-has-background='true'][class*='dark'] .settings-panel {
+    background: var(--bg-overlay-dark);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
