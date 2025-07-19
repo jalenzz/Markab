@@ -15,19 +15,7 @@ export function useSettingsEffects(settings: AppSettings) {
         // 应用主题设置
         if (settings.theme !== undefined) {
             if (settings.theme === 'auto') {
-                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-                const updateTheme = (e: MediaQueryListEvent | MediaQueryList) => {
-                    const newTheme = e.matches ? 'dark' : 'light';
-                    root.setAttribute('data-theme', newTheme);
-                };
-
-                updateTheme(mediaQuery);
-                mediaQuery.addEventListener('change', updateTheme);
-
-                cleanup = () => {
-                    mediaQuery.removeEventListener('change', updateTheme);
-                };
+                root.removeAttribute('data-theme');
             } else {
                 root.setAttribute('data-theme', settings.theme);
             }
