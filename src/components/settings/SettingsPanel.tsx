@@ -89,7 +89,7 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                     {/* Reset button */}
                     <button
                         onClick={resetSettings}
-                        className="w-full rounded-default px-4 py-2 text-body text-newtab-text-secondary-light transition-colors duration-default hover:bg-newtab-hover-light dark:text-newtab-text-secondary-dark dark:hover:bg-newtab-hover-dark"
+                        className="w-full rounded-default px-4 py-2 text-body text-newtab-text-secondary transition-colors duration-default hover:bg-newtab-surface-hover"
                     >
                         Reset All Settings
                     </button>
