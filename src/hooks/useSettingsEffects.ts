@@ -21,11 +21,9 @@ export function useSettingsEffects(settings: AppSettings) {
                 const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
                 const updateTheme = (e: MediaQueryListEvent | MediaQueryList) => {
-                    if (e.matches) {
-                        root.classList.add('dark');
-                    } else {
-                        root.classList.add('light');
-                    }
+                    const newTheme = e.matches ? 'dark' : 'light';
+                    root.classList.remove('light', 'dark');
+                    root.classList.add(newTheme);
                 };
 
                 updateTheme(mediaQuery);

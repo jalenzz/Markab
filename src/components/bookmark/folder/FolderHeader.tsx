@@ -85,7 +85,7 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
 
     return (
         <div
-            className="flex cursor-pointer items-center space-x-4 rounded-default px-1 py-2 transition-colors duration-default hover:bg-newtab-hover-light dark:hover:bg-newtab-hover-dark"
+            className="flex cursor-pointer items-center space-x-4 rounded-default px-1 py-2 transition-colors duration-default hover:bg-newtab-surface-hover"
             onClick={onTitleClick}
         >
             <div
@@ -127,7 +127,7 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
             </div>
 
             <div className="flex flex-1 items-center justify-between">
-                <h3 className="truncate text-title font-semibold text-newtab-text-primary-light dark:text-newtab-text-primary-dark">
+                <h3 className="truncate text-title font-semibold text-newtab-text-primary">
                     {title}
                 </h3>
 
@@ -135,7 +135,7 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
                     className={`arrow-icon transition-transform duration-150 ease-out ${isExpanded ? 'rotate-90' : ''}`}
                 >
                     <svg
-                        className="h-4 w-4 text-newtab-text-secondary-light opacity-60 dark:text-newtab-text-secondary-dark"
+                        className="h-4 w-4 text-newtab-text-secondary opacity-60"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
