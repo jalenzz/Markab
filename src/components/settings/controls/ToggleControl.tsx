@@ -9,9 +9,7 @@ interface ToggleControlProps {
 export function ToggleControl({ config, value, onChange }: ToggleControlProps) {
     return (
         <div className="flex items-center justify-between py-3">
-            <label className="mr-3 flex-1 text-body text-newtab-text-primary">
-                {config.label}
-            </label>
+            <label className="mr-3 flex-1 text-body text-newtab-text-primary">{config.label}</label>
             <div className="flex-shrink-0">
                 <label className="flex cursor-pointer items-center">
                     <input
@@ -22,9 +20,7 @@ export function ToggleControl({ config, value, onChange }: ToggleControlProps) {
                     />
                     <div
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-default ${
-                            value
-                                ? 'bg-newtab-primary'
-                                : 'bg-newtab-border'
+                            value ? 'bg-newtab-primary' : 'bg-newtab-border'
                         }`}
                     >
                         <span

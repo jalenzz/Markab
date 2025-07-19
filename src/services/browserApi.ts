@@ -26,7 +26,9 @@ class BrowserApiService {
         }
     }
 
-    async getRecentlyClosedAsBookmarkFolder(maxRecentTabs: number = 10): Promise<FolderItem | null> {
+    async getRecentlyClosedAsBookmarkFolder(
+        maxRecentTabs: number = 10,
+    ): Promise<FolderItem | null> {
         try {
             const sessions = await chrome.sessions.getRecentlyClosed({ maxResults: maxRecentTabs });
             const recentTabs: BookmarkItem[] = [];
@@ -125,7 +127,10 @@ class BrowserApiService {
     /**
      * 获取所有有效的文件夹
      */
-    async getAllFolders(maxTopSites: number = 10, maxRecentTabs: number = 10): Promise<FolderItem[]> {
+    async getAllFolders(
+        maxTopSites: number = 10,
+        maxRecentTabs: number = 10,
+    ): Promise<FolderItem[]> {
         const [bookmarkFolders, topSitesFolder, recentlyClosedFolder] = await Promise.all([
             this.getBookmarkFolders(),
             this.getTopSitesAsBookmarkFolder(maxTopSites),

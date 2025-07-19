@@ -9,9 +9,7 @@ interface SliderControlProps {
 export function SliderControl({ config, value, onChange }: SliderControlProps) {
     return (
         <div className="flex items-center justify-between py-3">
-            <label className="mr-3 flex-1 text-body text-newtab-text-primary">
-                {config.label}
-            </label>
+            <label className="mr-3 flex-1 text-body text-newtab-text-primary">{config.label}</label>
             <div className="flex-shrink-0">
                 <div className="flex items-center space-x-3">
                     <input

@@ -104,7 +104,13 @@ export function useBookmarks() {
         if (hasLoadedRef.current && !isLoading) {
             loadBookmarks(true);
         }
-    }, [settings.hiddenFolders, settings.maxTopSites, settings.maxRecentTabs, isLoading, loadBookmarks]);
+    }, [
+        settings.hiddenFolders,
+        settings.maxTopSites,
+        settings.maxRecentTabs,
+        isLoading,
+        loadBookmarks,
+    ]);
 
     const handleFolderDrop = useCallback(
         (dragItem: DragItem, targetCol: number, targetIndex: number) => {

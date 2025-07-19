@@ -26,7 +26,7 @@
         --color-border: rgba(74, 85, 104, 0.2);
     }
 
-    [data-theme="dark"] {
+    [data-theme='dark'] {
         --color-primary: rgb(10, 132, 255);
 
         --color-text-primary: rgb(247, 249, 252);
@@ -42,8 +42,8 @@
     body {
         @apply m-0 h-screen min-h-screen w-full min-w-80 p-0;
         @apply font-primary text-body leading-relaxed;
-        color: var(--color-text-primary);
         background-color: var(--color-surface);
+        color: var(--color-text-primary);
         -webkit-overflow-scrolling: touch;
         scroll-behavior: smooth;
     }

@@ -9,9 +9,7 @@ interface SelectControlProps {
 export function SelectControl({ config, value, onChange }: SelectControlProps) {
     return (
         <div className="flex items-center justify-between py-3">
-            <label className="mr-3 flex-1 text-body text-newtab-text-primary">
-                {config.label}
-            </label>
+            <label className="mr-3 flex-1 text-body text-newtab-text-primary">{config.label}</label>
             <div className="flex-shrink-0">
                 <div className="flex overflow-hidden rounded-default border border-newtab-border">
                     {config.options.map((option, index) => (
