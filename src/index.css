@@ -8,24 +8,72 @@
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
 
-        /* 默认字体变量 */
         --font-size-title: 1.25rem;
         --font-size-body: 0.875rem;
         --font-family-primary:
             system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
             'Microsoft YaHei', sans-serif;
+
+        --color-primary: rgb(0, 122, 255);
+
+        --color-text-primary: rgb(29, 35, 41);
+        --color-text-secondary: rgb(74, 85, 104);
+
+        --color-surface: rgb(248, 250, 252);
+        --color-surface-elevated: rgb(255, 255, 255);
+        --color-surface-hover: rgba(59, 130, 246, 0.08);
+
+        --color-border: rgba(74, 85, 104, 0.2);
+    }
+
+    html[data-theme="light"] {
+        --color-primary: rgb(0, 122, 255);
+
+        --color-text-primary: rgb(29, 35, 41);
+        --color-text-secondary: rgb(74, 85, 104);
+
+        --color-surface: rgb(248, 250, 252);
+        --color-surface-elevated: rgb(255, 255, 255);
+        --color-surface-hover: rgba(59, 130, 246, 0.08);
+
+        --color-border: rgba(74, 85, 104, 0.2);
+    }
+
+    html[data-theme="dark"] {
+        --color-primary: rgb(10, 132, 255);
+
+        --color-text-primary: rgb(247, 249, 252);
+        --color-text-secondary: rgb(203, 213, 224);
+
+        --color-surface: rgb(32, 33, 36);
+        --color-surface-elevated: rgb(41, 42, 45);
+        --color-surface-hover: rgba(59, 130, 246, 0.12);
+
+        --color-border: rgba(203, 213, 224, 0.2);
+    }
+
+    @media (prefers-color-scheme: dark) {
+        html:not([data-theme]) {
+            --color-primary: rgb(10, 132, 255);
+
+            --color-text-primary: rgb(247, 249, 252);
+            --color-text-secondary: rgb(203, 213, 224);
+
+            --color-surface: rgb(32, 33, 36);
+            --color-surface-elevated: rgb(41, 42, 45);
+            --color-surface-hover: rgba(59, 130, 246, 0.12);
+
+            --color-border: rgba(203, 213, 224, 0.2);
+        }
     }
 
     body {
         @apply m-0 h-screen min-h-screen w-full min-w-80 p-0;
         @apply font-primary text-body leading-relaxed;
-        @apply text-newtab-text-primary-light dark:text-newtab-text-primary-dark;
-        @apply bg-newtab-bg-light dark:bg-newtab-bg-dark;
+        background-color: var(--color-surface);
+        color: var(--color-text-primary);
         -webkit-overflow-scrolling: touch;
-
         scroll-behavior: smooth;
-
-        @apply m-0 h-full w-full p-0;
     }
 
     ::-webkit-scrollbar {

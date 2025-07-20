@@ -44,7 +44,7 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
             {isOpen && (
                 <motion.div
                     ref={modalRef}
-                    className="fixed right-4 top-4 z-50 w-80 rounded-default border border-transparent bg-newtab-bg-light p-6 shadow-lg shadow-black/10 backdrop-blur-sm dark:border-white/5 dark:bg-newtab-bg-dark dark:shadow-white/10"
+                    className="fixed right-4 top-4 z-50 w-80 rounded-default border border-newtab-border bg-newtab-surface-elevated p-6 shadow-lg backdrop-blur-sm"
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
@@ -52,12 +52,12 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                 >
                     {/* 面板标题 */}
                     <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-title font-semibold text-newtab-text-primary-light dark:text-newtab-text-primary-dark">
+                        <h2 className="text-title font-semibold text-newtab-text-primary">
                             Settings
                         </h2>
                         <button
                             onClick={onClose}
-                            className="rounded-default p-1 text-newtab-text-secondary-light transition-colors duration-default dark:text-newtab-text-secondary-dark"
+                            className="rounded-default p-1 text-newtab-text-secondary transition-colors duration-default hover:text-newtab-text-primary"
                             aria-label="Close Settings Panel"
                         >
                             ✕
@@ -89,7 +89,7 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                     {/* Reset button */}
                     <button
                         onClick={resetSettings}
-                        className="w-full rounded-default px-4 py-2 text-body text-newtab-text-secondary-light transition-colors duration-default hover:bg-newtab-hover-light dark:text-newtab-text-secondary-dark dark:hover:bg-newtab-hover-dark"
+                        className="w-full rounded-default px-4 py-2 text-body text-newtab-text-secondary transition-colors duration-default hover:bg-newtab-surface-hover"
                     >
                         Reset All Settings
                     </button>

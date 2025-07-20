@@ -45,9 +45,7 @@ export const DropZoneInColumn: React.FC<DropZoneInColumnProps> = ({
             ref={drop as never}
             className={`flex h-full min-h-96 w-8 items-center justify-center transition-colors duration-default ${isEdge ? 'w-16' : ''}`}
         >
-            {showDropIndicator && (
-                <div className="h-32 w-1 bg-newtab-theme-light dark:bg-newtab-theme-dark" />
-            )}
+            {showDropIndicator && <div className="h-32 w-1 bg-newtab-primary" />}
         </div>
     );
 };

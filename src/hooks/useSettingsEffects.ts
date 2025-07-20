@@ -14,28 +14,10 @@ export function useSettingsEffects(settings: AppSettings) {
 
         // 应用主题设置
         if (settings.theme !== undefined) {
-            root.classList.remove('light', 'dark');
-            root.setAttribute('data-theme', settings.theme);
-
             if (settings.theme === 'auto') {
-                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-                const updateTheme = (e: MediaQueryListEvent | MediaQueryList) => {
-                    if (e.matches) {
-                        root.classList.add('dark');
-                    } else {
-                        root.classList.add('light');
-                    }
-                };
-
-                updateTheme(mediaQuery);
-                mediaQuery.addEventListener('change', updateTheme);
-
-                cleanup = () => {
-                    mediaQuery.removeEventListener('change', updateTheme);
-                };
+                root.removeAttribute('data-theme');
             } else {
-                root.classList.add(settings.theme);
+                root.setAttribute('data-theme', settings.theme);
             }
         }
 
