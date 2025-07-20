@@ -7,6 +7,7 @@ interface SearchResultItemProps {
     bookmark: SearchableBookmark;
     isSelected: boolean;
     query: string;
+    index: number;
     onClick: () => void;
     onMouseEnter: () => void;
 }
@@ -15,6 +16,7 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
     bookmark,
     isSelected,
     query,
+    index,
     onClick,
     onMouseEnter,
 }) => {
@@ -65,10 +67,10 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
                 </div>
             </div>
 
-            {/* 快捷键提示 */}
+            {/* 数字快捷键提示 */}
             <div className="flex-shrink-0">
                 <kbd className="rounded px-1.5 py-0.5 text-xs bg-newtab-surface text-newtab-text-secondary border border-newtab-border">
-                    ⏎
+                    {index + 1}
                 </kbd>
             </div>
         </div>

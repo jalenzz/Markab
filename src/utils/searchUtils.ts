@@ -55,7 +55,7 @@ export function searchBookmarks(
             score += 60;
         }
 
-        // URL匹配
+        // URL 匹配
         if (urlLower.includes(normalizedQuery)) {
             score += 40;
         }
@@ -71,10 +71,10 @@ export function searchBookmarks(
         }
     });
 
-    // 按分数降序排序，只取前4个结果
+    // 按分数降序排序，只取前 5 个结果
     results.sort((a, b) => b.score - a.score);
 
-    return results.slice(0, 4).map((result) => result.bookmark);
+    return results.slice(0, 5).map((result) => result.bookmark);
 }
 
 /**

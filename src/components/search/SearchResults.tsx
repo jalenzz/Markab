@@ -62,6 +62,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                             bookmark={bookmark}
                             isSelected={index === selectedIndex}
                             query={query}
+                            index={index}
                             onClick={() => onItemClick(bookmark)}
                             onMouseEnter={() => onSelectedIndexChange(index)}
                         />

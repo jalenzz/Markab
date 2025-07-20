@@ -145,9 +145,21 @@ export function useQuickSearch() {
                     event.preventDefault();
                     openSelectedBookmark();
                     break;
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5': {
+                    event.preventDefault();
+                    const index = parseInt(event.key) - 1;
+                    if (index < searchState.results.length) {
+                        openBookmark(searchState.results[index]);
+                    }
+                    break;
+                }
             }
         },
-        [searchState.isActive, deactivateSearch, selectPrevious, selectNext, openSelectedBookmark],
+        [searchState.isActive, searchState.results, deactivateSearch, selectPrevious, selectNext, openSelectedBookmark, openBookmark],
     );
 
     // 检查是否为字母键
