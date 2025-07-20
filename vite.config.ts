@@ -30,6 +30,26 @@ export default defineConfig({
               ]
             : []),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('pinyin-pro')) {
+                            return 'pinyin';
+                        }
+                        if (id.includes('emoji')) {
+                            return 'emoji';
+                        }
+                        if (id.includes('motion') || id.includes('framer')) {
+                            return 'motion';
+                        }
+                        return 'vendor';
+                    }
+                },
+            },
+        },
+    },
     server: {
         cors: {
             origin: [/chrome-extension:\/\//],

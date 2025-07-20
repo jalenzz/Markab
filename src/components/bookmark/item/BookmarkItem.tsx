@@ -4,6 +4,7 @@ import React from 'react';
 import { ANIMATION_CONFIG } from '../../../config';
 import { useSettings } from '../../../hooks';
 import type { BookmarkItem as BookmarkItemType } from '../../../types';
+import { getFaviconUrl } from '../../../utils/bookmarkUtils';
 
 interface BookmarkItemProps {
     bookmark: BookmarkItemType;
@@ -12,14 +13,6 @@ interface BookmarkItemProps {
 
 export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) => {
     const { settings } = useSettings();
-
-    const getFaviconUrl = (url: string) => {
-        if (!url) url = 'none'; // 对于窗口恢复项没有 url，使用默认图标
-        const iconUrl = new URL(chrome.runtime.getURL('/_favicon/'));
-        iconUrl.searchParams.set('pageUrl', url);
-        iconUrl.searchParams.set('size', '32');
-        return iconUrl.toString();
-    };
 
     const linkTarget = settings.linkOpen === 'new-tab' ? '_blank' : undefined;
 
@@ -45,7 +38,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
                 target={linkTarget}
                 rel="noopener noreferrer"
                 onClick={handleClick}
-                className="group/bookmark [data-has-background='true']:[text-shadow:0_1px_3px_rgba(0,0,0,0.4)] [data-has-background='true']:hover:bg-white/10 [data-has-background='true']:dark:hover:bg-black/20 [data-has-background='true']:dark:[text-shadow:0_1px_3px_rgba(0,0,0,0.8)] inline-flex cursor-pointer items-center gap-3 rounded-default px-2 py-1 text-newtab-text-secondary-light no-underline transition-colors duration-default hover:bg-newtab-hover-light hover:no-underline dark:text-newtab-text-secondary-dark dark:hover:bg-newtab-hover-dark"
+                className="group/bookmark [data-has-background='true']:[text-shadow:0_1px_3px_rgba(0,0,0,0.4)] [data-has-background='true']:hover:bg-white/10 [data-has-background='true']:dark:hover:bg-black/20 [data-has-background='true']:dark:[text-shadow:0_1px_3px_rgba(0,0,0,0.8)] inline-flex cursor-pointer items-center gap-3 rounded-default px-2 py-1 text-newtab-text-secondary no-underline transition-colors duration-default hover:bg-newtab-surface-hover hover:text-newtab-text-primary hover:no-underline"
                 title={bookmark.title}
             >
                 <div className="flex-shrink-0">

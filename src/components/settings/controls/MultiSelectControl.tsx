@@ -40,14 +40,14 @@ export function MultiSelectControl({ config, value, onChange }: MultiSelectContr
         <div className="py-3">
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="flex w-full items-center justify-between text-body text-newtab-text-primary-light transition-colors duration-default hover:text-newtab-text-primary-light dark:text-newtab-text-primary-dark dark:hover:text-newtab-text-primary-dark"
+                className="flex w-full items-center justify-between text-body text-newtab-text-primary transition-colors duration-default hover:text-newtab-text-primary"
             >
                 <span>{config.label}</span>
                 <div
                     className={`arrow-icon transition-transform duration-150 ease-out ${isExpanded ? 'rotate-90' : ''}`}
                 >
                     <svg
-                        className="h-4 w-4 text-newtab-text-secondary-light opacity-60 dark:text-newtab-text-secondary-dark"
+                        className="h-4 w-4 text-newtab-text-secondary opacity-60"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -74,7 +74,7 @@ export function MultiSelectControl({ config, value, onChange }: MultiSelectContr
                             <button
                                 key={folder.id}
                                 onClick={() => handleFolderToggle(folder.id)}
-                                className="px-2 py-1 text-newtab-text-secondary-light transition-all duration-default hover:opacity-60 dark:text-newtab-text-secondary-dark"
+                                className="px-2 py-1 text-newtab-text-secondary transition-all duration-default hover:text-newtab-text-primary hover:opacity-60"
                             >
                                 <span
                                     className={
