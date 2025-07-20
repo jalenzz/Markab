@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import type { SearchableBookmark, SearchState } from '../types';
 import { flattenBookmarks, searchBookmarks } from '../utils/searchUtils';
@@ -8,7 +8,7 @@ import { useSettings } from './useSettings';
 export function useQuickSearch() {
     const { folderColumns } = useBookmarks();
     const { settings } = useSettings();
-    
+
     const [searchState, setSearchState] = useState<SearchState>({
         isActive: false,
         query: '',
@@ -69,7 +69,8 @@ export function useQuickSearch() {
     const selectPrevious = useCallback(() => {
         setSearchState((prev) => ({
             ...prev,
-            selectedIndex: prev.selectedIndex > 0 ? prev.selectedIndex - 1 : prev.results.length - 1,
+            selectedIndex:
+                prev.selectedIndex > 0 ? prev.selectedIndex - 1 : prev.results.length - 1,
         }));
     }, []);
 
@@ -77,7 +78,8 @@ export function useQuickSearch() {
     const selectNext = useCallback(() => {
         setSearchState((prev) => ({
             ...prev,
-            selectedIndex: prev.selectedIndex < prev.results.length - 1 ? prev.selectedIndex + 1 : 0,
+            selectedIndex:
+                prev.selectedIndex < prev.results.length - 1 ? prev.selectedIndex + 1 : 0,
         }));
     }, []);
 
@@ -89,36 +91,36 @@ export function useQuickSearch() {
         }));
     }, []);
 
-    // 打开选中的书签
-    const openSelectedBookmark = useCallback(() => {
-        const selectedBookmark = searchState.results[searchState.selectedIndex];
-        if (selectedBookmark) {
-            if (selectedBookmark.action) {
-                // 如果有自定义动作（如恢复会话），执行动作
-                selectedBookmark.action();
-            } else {
-                // 否则打开URL
-                const target = settings.linkOpen === 'new-tab' ? '_blank' : '_self';
-                window.open(selectedBookmark.url, target);
-            }
-            deactivateSearch();
-        }
-    }, [searchState.results, searchState.selectedIndex, settings.linkOpen, deactivateSearch]);
-
-    // 打开指定书签
-    const openBookmark = useCallback(
+    // 通用的书签打开逻辑
+    const executeBookmarkAction = useCallback(
         (bookmark: SearchableBookmark) => {
             if (bookmark.action) {
                 // 如果有自定义动作（如恢复会话），执行动作
                 bookmark.action();
             } else {
-                // 否则打开URL
+                // 否则打开 URL
                 const target = settings.linkOpen === 'new-tab' ? '_blank' : '_self';
                 window.open(bookmark.url, target);
             }
             deactivateSearch();
         },
         [settings.linkOpen, deactivateSearch],
+    );
+
+    // 打开选中的书签
+    const openSelectedBookmark = useCallback(() => {
+        const selectedBookmark = searchState.results[searchState.selectedIndex];
+        if (selectedBookmark) {
+            executeBookmarkAction(selectedBookmark);
+        }
+    }, [searchState.results, searchState.selectedIndex, executeBookmarkAction]);
+
+    // 打开指定书签
+    const openBookmark = useCallback(
+        (bookmark: SearchableBookmark) => {
+            executeBookmarkAction(bookmark);
+        },
+        [executeBookmarkAction],
     );
 
     // 处理键盘事件
@@ -159,7 +161,15 @@ export function useQuickSearch() {
                 }
             }
         },
-        [searchState.isActive, searchState.results, deactivateSearch, selectPrevious, selectNext, openSelectedBookmark, openBookmark],
+        [
+            searchState.isActive,
+            searchState.results,
+            deactivateSearch,
+            selectPrevious,
+            selectNext,
+            openSelectedBookmark,
+            openBookmark,
+        ],
     );
 
     // 检查是否为字母键
@@ -187,7 +197,8 @@ export function useQuickSearch() {
                 activeElement &&
                 (activeElement.tagName === 'INPUT' ||
                     activeElement.tagName === 'TEXTAREA' ||
-                    activeElement.contentEditable === 'true')
+                    (activeElement instanceof HTMLElement &&
+                        activeElement.contentEditable === 'true'))
             ) {
                 return;
             }

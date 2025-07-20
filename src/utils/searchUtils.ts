@@ -1,5 +1,6 @@
-import type { FolderItem, SearchableBookmark } from '../types';
 import { pinyin } from 'pinyin-pro';
+
+import type { FolderItem, SearchableBookmark } from '../types';
 
 // 搜索评分常量
 const SCORES = {
@@ -28,11 +29,11 @@ const pinyinCache = new Map<string, string>();
  * 将文件夹结构扁平化为可搜索的书签列表
  */
 export function flattenBookmarks(folders: FolderItem[]): SearchableBookmark[] {
-    return folders.flatMap(folder =>
-        folder.children.map(bookmark => ({
+    return folders.flatMap((folder) =>
+        folder.children.map((bookmark) => ({
             ...bookmark,
             folderTitle: folder.title,
-        }))
+        })),
     );
 }
 
@@ -124,7 +125,9 @@ function calculateBookmarkScore(bookmark: SearchableBookmark, normalizedQuery: s
         // 拼音模糊匹配
         const pinyinFuzzyScore = fuzzyMatch(titlePinyin, normalizedQuery);
         if (pinyinFuzzyScore > 0) {
-            return SCORES.PINYIN_FUZZY_BASE + Math.min(pinyinFuzzyScore / 5, SCORES.PINYIN_FUZZY_MAX);
+            return (
+                SCORES.PINYIN_FUZZY_BASE + Math.min(pinyinFuzzyScore / 5, SCORES.PINYIN_FUZZY_MAX)
+            );
         }
     }
 
@@ -148,14 +151,14 @@ export function searchBookmarks(
     const normalizedQuery = query.toLowerCase().trim();
 
     const results = bookmarks
-        .map(bookmark => ({
+        .map((bookmark) => ({
             bookmark,
-            score: calculateBookmarkScore(bookmark, normalizedQuery)
+            score: calculateBookmarkScore(bookmark, normalizedQuery),
         }))
-        .filter(result => result.score > 0)
+        .filter((result) => result.score > 0)
         .sort((a, b) => b.score - a.score)
         .slice(0, CONFIG.MAX_RESULTS)
-        .map(result => result.bookmark);
+        .map((result) => result.bookmark);
 
     return results;
 }
@@ -267,9 +270,11 @@ function highlightPinyinMatch(text: string, query: string): string {
         const matchedPart = text.slice(startChar, startChar + matchLength);
         const afterMatch = text.slice(startChar + matchLength);
 
-        return beforeMatch +
-               `<span class="text-newtab-primary font-semibold">${matchedPart}</span>` +
-               afterMatch;
+        return (
+            beforeMatch +
+            `<span class="text-newtab-primary font-semibold">${matchedPart}</span>` +
+            afterMatch
+        );
     }
 
     // 如果没有找到精确匹配，尝试模糊拼音匹配
@@ -337,7 +342,10 @@ function escapeRegExp(string: string): string {
  * @param maxLength 最大长度
  * @returns 截断后的文本
  */
-export function truncateText(text: string, maxLength: number = CONFIG.DEFAULT_MAX_TEXT_LENGTH): string {
+export function truncateText(
+    text: string,
+    maxLength: number = CONFIG.DEFAULT_MAX_TEXT_LENGTH,
+): string {
     if (text.length <= maxLength) {
         return text;
     }

@@ -40,9 +40,11 @@ export const QuickSearch: React.FC = () => {
         // 阻止事件冒泡，避免与全局键盘事件冲突
         event.stopPropagation();
 
-        if (event.key === 'ArrowUp' || event.key === 'ArrowDown' ||
-            event.key === 'Enter' || event.key === 'Escape' ||
-            /^[1-5]$/.test(event.key)) {
+        // 检查是否为导航或操作键
+        const isNavigationKey = ['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(event.key);
+        const isNumberKey = /^[1-5]$/.test(event.key);
+
+        if (isNavigationKey || isNumberKey) {
             // 阻止默认行为
             event.preventDefault();
 
@@ -77,13 +79,13 @@ export const QuickSearch: React.FC = () => {
                 <motion.div
                     {...ANIMATION_CONFIG.presets.fadeIn}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm pt-32"
+                    className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-32 backdrop-blur-sm"
                     onClick={handleBackdropClick}
                 >
                     <motion.div
                         {...ANIMATION_CONFIG.presets.slideInUp}
                         exit={{ opacity: 0, y: -20 }}
-                        className="w-full max-w-lg rounded-lg bg-newtab-surface-elevated shadow-2xl overflow-hidden"
+                        className="w-full max-w-lg overflow-hidden rounded-lg bg-newtab-surface-elevated shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* 搜索输入框 */}
