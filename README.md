@@ -12,6 +12,7 @@ A new tab extension focused on providing clean, elegant bookmark display experie
 
 - **Flat Display** - Shows all bookmark folders in a clean multi-column layout
 - **Minimalist Interface** - Focused on bookmark display essentials, removing redundant elements
+- **Quick Search** - Instant bookmark search with intelligent matching and keyboard shortcuts
 - **Dark Mode Support** - Automatically adapts to system theme preferences
 - **Flexible Layout** - Freely reorganize folders by dragging to customize your bookmark layout
 - **State Memory** - Intelligently saves layout preferences and folder expand states
