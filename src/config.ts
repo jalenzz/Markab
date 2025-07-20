@@ -27,6 +27,12 @@ export const ANIMATION_CONFIG = {
             animate: { opacity: 1, y: 0 },
             exit: { opacity: 0, y: -20 },
         },
+        // 淡入动画
+        fadeIn: {
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            exit: { opacity: 0 },
+        },
     },
 } as const;
 

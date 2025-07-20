@@ -90,3 +90,15 @@ export type SettingConfig =
     | SliderSettingConfig
     | InputSettingConfig
     | MultiSelectSettingConfig;
+
+// 搜索相关类型
+export interface SearchableBookmark extends BookmarkItem {
+    folderTitle: string; // 所属文件夹名称，用于显示上下文
+}
+
+export interface SearchState {
+    isActive: boolean;
+    query: string;
+    selectedIndex: number;
+    results: SearchableBookmark[];
+}

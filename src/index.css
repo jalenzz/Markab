@@ -26,7 +26,7 @@
         --color-border: rgba(74, 85, 104, 0.2);
     }
 
-    html[data-theme="light"] {
+    html[data-theme='light'] {
         --color-primary: rgb(0, 122, 255);
 
         --color-text-primary: rgb(29, 35, 41);
@@ -39,7 +39,7 @@
         --color-border: rgba(74, 85, 104, 0.2);
     }
 
-    html[data-theme="dark"] {
+    html[data-theme='dark'] {
         --color-primary: rgb(10, 132, 255);
 
         --color-text-primary: rgb(247, 249, 252);
