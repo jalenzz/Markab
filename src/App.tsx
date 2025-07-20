@@ -3,7 +3,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import { BookmarkGrid, QuickSearch, SettingsButton, SettingsPanel } from './components';
-import { SettingsProvider, useSettings, useSettingsEffects } from './hooks';
+import { SettingsProvider, useFocusManagement, useSettings, useSettingsEffects } from './hooks';
 
 function AppContent() {
     const { settings } = useSettings();
@@ -13,6 +13,9 @@ function AppContent() {
 
     // 应用设置到 DOM 和 CSS 变量
     useSettingsEffects(settings);
+
+    // 页面焦点管理
+    const { focusTargetRef } = useFocusManagement();
 
     const handleSettingsToggle = (isOpen: boolean) => {
         setIsSettingsOpen(isOpen);
@@ -24,7 +27,7 @@ function AppContent() {
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <div className="relative min-h-screen w-full overflow-hidden">
+            <div ref={focusTargetRef} className="relative min-h-screen w-full overflow-hidden">
                 <SettingsButton onToggle={handleSettingsToggle} isOpen={isSettingsOpen} />
                 <SettingsPanel isOpen={isSettingsOpen} onClose={handleSettingsClose} />
                 <QuickSearch />
