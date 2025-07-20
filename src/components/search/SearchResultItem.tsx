@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import type { SearchableBookmark } from '../../types';
+import { getFaviconUrl } from '../../utils/bookmarkUtils';
 import { highlightText } from '../../utils/searchUtils';
 
 interface SearchResultItemProps {
@@ -12,7 +13,7 @@ interface SearchResultItemProps {
     onMouseEnter: () => void;
 }
 
-export const SearchResultItem: React.FC<SearchResultItemProps> = ({
+export const SearchResultItem: React.FC<SearchResultItemProps> = React.memo(({
     bookmark,
     isSelected,
     query,
@@ -20,15 +21,10 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
     onClick,
     onMouseEnter,
 }) => {
-    const getFaviconUrl = (url: string) => {
-        if (!url) url = 'none';
-        const iconUrl = new URL(chrome.runtime.getURL('/_favicon/'));
-        iconUrl.searchParams.set('pageUrl', url);
-        iconUrl.searchParams.set('size', '32');
-        return iconUrl.toString();
-    };
-
-    const highlightedTitle = highlightText(bookmark.title, query);
+    const highlightedTitle = useMemo(() =>
+        highlightText(bookmark.title, query),
+        [bookmark.title, query]
+    );
 
     return (
         <div
@@ -75,4 +71,4 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
             </div>
         </div>
     );
-};
+});

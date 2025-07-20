@@ -13,7 +13,7 @@ interface SearchResultsProps {
     onSelectedIndexChange: (index: number) => void;
 }
 
-export const SearchResults: React.FC<SearchResultsProps> = ({
+export const SearchResults: React.FC<SearchResultsProps> = React.memo(({
     results,
     selectedIndex,
     query,
@@ -71,4 +71,4 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
             </div>
         </motion.div>
     );
-};
+});

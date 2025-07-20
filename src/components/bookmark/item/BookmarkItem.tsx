@@ -4,6 +4,7 @@ import React from 'react';
 import { ANIMATION_CONFIG } from '../../../config';
 import { useSettings } from '../../../hooks';
 import type { BookmarkItem as BookmarkItemType } from '../../../types';
+import { getFaviconUrl } from '../../../utils/bookmarkUtils';
 
 interface BookmarkItemProps {
     bookmark: BookmarkItemType;
@@ -12,14 +13,6 @@ interface BookmarkItemProps {
 
 export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) => {
     const { settings } = useSettings();
-
-    const getFaviconUrl = (url: string) => {
-        if (!url) url = 'none'; // 对于窗口恢复项没有 url，使用默认图标
-        const iconUrl = new URL(chrome.runtime.getURL('/_favicon/'));
-        iconUrl.searchParams.set('pageUrl', url);
-        iconUrl.searchParams.set('size', '32');
-        return iconUrl.toString();
-    };
 
     const linkTarget = settings.linkOpen === 'new-tab' ? '_blank' : undefined;
 

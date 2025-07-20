@@ -7,7 +7,7 @@ interface SearchInputProps {
     placeholder?: string;
 }
 
-export const SearchInput: React.FC<SearchInputProps> = ({
+export const SearchInput: React.FC<SearchInputProps> = React.memo(({
     value,
     onChange,
     onKeyDown,
@@ -63,4 +63,4 @@ export const SearchInput: React.FC<SearchInputProps> = ({
             />
         </div>
     );
-};
+});

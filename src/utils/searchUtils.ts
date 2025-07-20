@@ -1,22 +1,39 @@
 import type { FolderItem, SearchableBookmark } from '../types';
 import { pinyin } from 'pinyin-pro';
 
+// 搜索评分常量
+const SCORES = {
+    EXACT_MATCH: 100,
+    STARTS_WITH: 80,
+    CONTAINS: 60,
+    FUZZY_BASE: 20,
+    FUZZY_MAX: 20,
+    PINYIN_EXACT: 30,
+    PINYIN_STARTS_WITH: 25,
+    PINYIN_CONTAINS: 20,
+    PINYIN_FUZZY_BASE: 10,
+    PINYIN_FUZZY_MAX: 10,
+} as const;
+
+// 搜索配置常量
+const CONFIG = {
+    MAX_RESULTS: 5,
+    DEFAULT_MAX_TEXT_LENGTH: 50,
+} as const;
+
+// 拼音转换缓存
+const pinyinCache = new Map<string, string>();
+
 /**
  * 将文件夹结构扁平化为可搜索的书签列表
  */
 export function flattenBookmarks(folders: FolderItem[]): SearchableBookmark[] {
-    const searchableBookmarks: SearchableBookmark[] = [];
-
-    folders.forEach((folder) => {
-        folder.children.forEach((bookmark) => {
-            searchableBookmarks.push({
-                ...bookmark,
-                folderTitle: folder.title,
-            });
-        });
-    });
-
-    return searchableBookmarks;
+    return folders.flatMap(folder =>
+        folder.children.map(bookmark => ({
+            ...bookmark,
+            folderTitle: folder.title,
+        }))
+    );
 }
 
 /**
@@ -51,12 +68,67 @@ function fuzzyMatch(target: string, query: string): number {
 }
 
 /**
- * 将中文转换为拼音
+ * 将中文转换为拼音（带缓存）
  * @param text 中文文本
  * @returns 拼音字符串
  */
 function toPinyin(text: string): string {
-    return pinyin(text, { toneType: 'none', type: 'array' }).join('');
+    if (pinyinCache.has(text)) {
+        return pinyinCache.get(text)!;
+    }
+
+    const result = pinyin(text, { toneType: 'none', type: 'array' }).join('');
+    pinyinCache.set(text, result);
+    return result;
+}
+
+/**
+ * 计算书签的搜索评分
+ * @param bookmark 书签对象
+ * @param normalizedQuery 标准化的查询字符串
+ * @returns 评分，0表示不匹配
+ */
+function calculateBookmarkScore(bookmark: SearchableBookmark, normalizedQuery: string): number {
+    const titleLower = bookmark.title.toLowerCase();
+    const titlePinyin = toPinyin(bookmark.title).toLowerCase();
+
+    // 1. 直接文本匹配
+    if (titleLower === normalizedQuery) {
+        return SCORES.EXACT_MATCH;
+    }
+    if (titleLower.startsWith(normalizedQuery)) {
+        return SCORES.STARTS_WITH;
+    }
+    if (titleLower.includes(normalizedQuery)) {
+        return SCORES.CONTAINS;
+    }
+
+    // 2. 模糊匹配
+    const fuzzyScore = fuzzyMatch(titleLower, normalizedQuery);
+    if (fuzzyScore > 0) {
+        return SCORES.FUZZY_BASE + Math.min(fuzzyScore, SCORES.FUZZY_MAX);
+    }
+
+    // 3. 拼音匹配（仅当有中文字符时）
+    if (titlePinyin !== titleLower) {
+        if (titlePinyin === normalizedQuery) {
+            return SCORES.PINYIN_EXACT;
+        }
+        if (titlePinyin.startsWith(normalizedQuery)) {
+            return SCORES.PINYIN_STARTS_WITH;
+        }
+        if (titlePinyin.includes(normalizedQuery)) {
+            return SCORES.PINYIN_CONTAINS;
+        }
+
+        // 拼音模糊匹配
+        const pinyinFuzzyScore = fuzzyMatch(titlePinyin, normalizedQuery);
+        if (pinyinFuzzyScore > 0) {
+            return SCORES.PINYIN_FUZZY_BASE + Math.min(pinyinFuzzyScore / 5, SCORES.PINYIN_FUZZY_MAX);
+        }
+    }
+
+    return 0;
 }
 
 /**
@@ -74,67 +146,18 @@ export function searchBookmarks(
     }
 
     const normalizedQuery = query.toLowerCase().trim();
-    const results: Array<{ bookmark: SearchableBookmark; score: number }> = [];
 
-    bookmarks.forEach((bookmark) => {
-        const titleLower = bookmark.title.toLowerCase();
-        const titlePinyin = toPinyin(bookmark.title).toLowerCase();
+    const results = bookmarks
+        .map(bookmark => ({
+            bookmark,
+            score: calculateBookmarkScore(bookmark, normalizedQuery)
+        }))
+        .filter(result => result.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, CONFIG.MAX_RESULTS)
+        .map(result => result.bookmark);
 
-        let score = 0;
-
-        // 1. 完全匹配得分最高 (100 分)
-        if (titleLower === normalizedQuery) {
-            score = 100;
-        }
-        // 2. 开头匹配 (80 分)
-        else if (titleLower.startsWith(normalizedQuery)) {
-            score = 80;
-        }
-        // 3. 包含匹配 (60 分)
-        else if (titleLower.includes(normalizedQuery)) {
-            score = 60;
-        }
-        // 4. 模糊匹配 (20-40 分)
-        else {
-            const fuzzyScore = fuzzyMatch(titleLower, normalizedQuery);
-            if (fuzzyScore > 0) {
-                score = 20 + Math.min(fuzzyScore, 20); // 20-40 分
-            }
-        }
-
-        // 5. 拼音匹配 (10-30 分)
-        if (score === 0 && titlePinyin !== titleLower) {
-            // 拼音完全匹配
-            if (titlePinyin === normalizedQuery) {
-                score = 30;
-            }
-            // 拼音开头匹配
-            else if (titlePinyin.startsWith(normalizedQuery)) {
-                score = 25;
-            }
-            // 拼音包含匹配
-            else if (titlePinyin.includes(normalizedQuery)) {
-                score = 20;
-            }
-            // 拼音模糊匹配
-            else {
-                const pinyinFuzzyScore = fuzzyMatch(titlePinyin, normalizedQuery);
-                if (pinyinFuzzyScore > 0) {
-                    score = 10 + Math.min(pinyinFuzzyScore / 5, 10); // 10-20分
-                }
-            }
-        }
-
-        // 如果有任何匹配，添加到结果中
-        if (score > 0) {
-            results.push({ bookmark, score });
-        }
-    });
-
-    // 按分数降序排序，只取前 5 个结果
-    results.sort((a, b) => b.score - a.score);
-
-    return results.slice(0, 5).map((result) => result.bookmark);
+    return results;
 }
 
 /**
@@ -314,7 +337,7 @@ function escapeRegExp(string: string): string {
  * @param maxLength 最大长度
  * @returns 截断后的文本
  */
-export function truncateText(text: string, maxLength: number = 50): string {
+export function truncateText(text: string, maxLength: number = CONFIG.DEFAULT_MAX_TEXT_LENGTH): string {
     if (text.length <= maxLength) {
         return text;
     }
