@@ -1,0 +1,209 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import type { SearchableBookmark, SearchState } from '../types';
+import { flattenBookmarks, searchBookmarks } from '../utils/searchUtils';
+import { useBookmarks } from './useBookmarks';
+import { useSettings } from './useSettings';
+
+export function useQuickSearch() {
+    const { folderColumns } = useBookmarks();
+    const { settings } = useSettings();
+    
+    const [searchState, setSearchState] = useState<SearchState>({
+        isActive: false,
+        query: '',
+        selectedIndex: 0,
+        results: [],
+    });
+
+    // 将所有书签扁平化为可搜索的列表
+    const allBookmarks = useMemo(() => {
+        const allFolders = folderColumns.flat();
+        return flattenBookmarks(allFolders);
+    }, [folderColumns]);
+
+    // 执行搜索
+    const performSearch = useCallback(
+        (query: string) => {
+            const results = searchBookmarks(allBookmarks, query);
+            setSearchState((prev) => ({
+                ...prev,
+                query,
+                results,
+                selectedIndex: 0, // 重置选中索引
+            }));
+        },
+        [allBookmarks],
+    );
+
+    // 激活搜索模式
+    const activateSearch = useCallback(() => {
+        setSearchState((prev) => ({
+            ...prev,
+            isActive: true,
+            query: '',
+            results: [],
+            selectedIndex: 0,
+        }));
+    }, []);
+
+    // 退出搜索模式
+    const deactivateSearch = useCallback(() => {
+        setSearchState({
+            isActive: false,
+            query: '',
+            selectedIndex: 0,
+            results: [],
+        });
+    }, []);
+
+    // 更新搜索关键词
+    const updateQuery = useCallback(
+        (query: string) => {
+            performSearch(query);
+        },
+        [performSearch],
+    );
+
+    // 选择上一个结果
+    const selectPrevious = useCallback(() => {
+        setSearchState((prev) => ({
+            ...prev,
+            selectedIndex: prev.selectedIndex > 0 ? prev.selectedIndex - 1 : prev.results.length - 1,
+        }));
+    }, []);
+
+    // 选择下一个结果
+    const selectNext = useCallback(() => {
+        setSearchState((prev) => ({
+            ...prev,
+            selectedIndex: prev.selectedIndex < prev.results.length - 1 ? prev.selectedIndex + 1 : 0,
+        }));
+    }, []);
+
+    // 设置选中索引
+    const setSelectedIndex = useCallback((index: number) => {
+        setSearchState((prev) => ({
+            ...prev,
+            selectedIndex: index,
+        }));
+    }, []);
+
+    // 打开选中的书签
+    const openSelectedBookmark = useCallback(() => {
+        const selectedBookmark = searchState.results[searchState.selectedIndex];
+        if (selectedBookmark) {
+            if (selectedBookmark.action) {
+                // 如果有自定义动作（如恢复会话），执行动作
+                selectedBookmark.action();
+            } else {
+                // 否则打开URL
+                const target = settings.linkOpen === 'new-tab' ? '_blank' : '_self';
+                window.open(selectedBookmark.url, target);
+            }
+            deactivateSearch();
+        }
+    }, [searchState.results, searchState.selectedIndex, settings.linkOpen, deactivateSearch]);
+
+    // 打开指定书签
+    const openBookmark = useCallback(
+        (bookmark: SearchableBookmark) => {
+            if (bookmark.action) {
+                // 如果有自定义动作（如恢复会话），执行动作
+                bookmark.action();
+            } else {
+                // 否则打开URL
+                const target = settings.linkOpen === 'new-tab' ? '_blank' : '_self';
+                window.open(bookmark.url, target);
+            }
+            deactivateSearch();
+        },
+        [settings.linkOpen, deactivateSearch],
+    );
+
+    // 处理键盘事件
+    const handleKeyDown = useCallback(
+        (event: KeyboardEvent) => {
+            if (!searchState.isActive) {
+                return;
+            }
+
+            switch (event.key) {
+                case 'Escape':
+                    event.preventDefault();
+                    deactivateSearch();
+                    break;
+                case 'ArrowUp':
+                    event.preventDefault();
+                    selectPrevious();
+                    break;
+                case 'ArrowDown':
+                    event.preventDefault();
+                    selectNext();
+                    break;
+                case 'Enter':
+                    event.preventDefault();
+                    openSelectedBookmark();
+                    break;
+            }
+        },
+        [searchState.isActive, deactivateSearch, selectPrevious, selectNext, openSelectedBookmark],
+    );
+
+    // 检查是否为字母键
+    const isLetterKey = useCallback((event: KeyboardEvent) => {
+        return (
+            event.key.length === 1 &&
+            /[a-zA-Z]/.test(event.key) &&
+            !event.ctrlKey &&
+            !event.metaKey &&
+            !event.altKey
+        );
+    }, []);
+
+    // 处理全局键盘事件（激活搜索）
+    const handleGlobalKeyDown = useCallback(
+        (event: KeyboardEvent) => {
+            // 如果搜索已激活，不处理
+            if (searchState.isActive) {
+                return;
+            }
+
+            // 如果焦点在输入框上，不处理
+            const activeElement = document.activeElement;
+            if (
+                activeElement &&
+                (activeElement.tagName === 'INPUT' ||
+                    activeElement.tagName === 'TEXTAREA' ||
+                    activeElement.contentEditable === 'true')
+            ) {
+                return;
+            }
+
+            // 如果是字母键，激活搜索
+            if (isLetterKey(event)) {
+                event.preventDefault();
+                activateSearch();
+                // 延迟设置初始查询，确保搜索框已渲染
+                setTimeout(() => {
+                    updateQuery(event.key);
+                }, 0);
+            }
+        },
+        [searchState.isActive, isLetterKey, activateSearch, updateQuery],
+    );
+
+    return {
+        searchState,
+        activateSearch,
+        deactivateSearch,
+        updateQuery,
+        selectPrevious,
+        selectNext,
+        setSelectedIndex,
+        openSelectedBookmark,
+        openBookmark,
+        handleKeyDown,
+        handleGlobalKeyDown,
+    };
+}
