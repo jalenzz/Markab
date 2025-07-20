@@ -22,10 +22,9 @@ export const SearchInput: React.FC<SearchInputProps> = React.memo(({
         }
     }, []);
 
-    // 当值变化时，将光标移到末尾
     useEffect(() => {
-        if (inputRef.current && value) {
-             const input = inputRef.current;
+        if (inputRef.current && value && document.activeElement !== inputRef.current) {
+            const input = inputRef.current;
             input.setSelectionRange(value.length, value.length);
         }
     }, [value]);

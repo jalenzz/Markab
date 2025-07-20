@@ -39,18 +39,24 @@ export const QuickSearch: React.FC = () => {
     const handleInputKeyDown = (event: React.KeyboardEvent) => {
         // 阻止事件冒泡，避免与全局键盘事件冲突
         event.stopPropagation();
-        
-        // 将 React 事件转换为原生事件
-        const nativeEvent = new KeyboardEvent('keydown', {
-            key: event.key,
-            code: event.code,
-            ctrlKey: event.ctrlKey,
-            metaKey: event.metaKey,
-            altKey: event.altKey,
-            shiftKey: event.shiftKey,
-        });
-        
-        handleKeyDown(nativeEvent);
+
+        if (event.key === 'ArrowUp' || event.key === 'ArrowDown' ||
+            event.key === 'Enter' || event.key === 'Escape' ||
+            /^[1-5]$/.test(event.key)) {
+            // 阻止默认行为
+            event.preventDefault();
+
+            const nativeEvent = new KeyboardEvent('keydown', {
+                key: event.key,
+                code: event.code,
+                ctrlKey: event.ctrlKey,
+                metaKey: event.metaKey,
+                altKey: event.altKey,
+                shiftKey: event.shiftKey,
+            });
+
+            handleKeyDown(nativeEvent);
+        }
     };
 
     // 处理选中索引变化
