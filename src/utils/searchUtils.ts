@@ -140,10 +140,7 @@ function calculateBookmarkScore(bookmark: SearchableBookmark, normalizedQuery: s
  * @param query 搜索关键词
  * @returns 匹配的书签列表，按相关性排序
  */
-export function searchBookmarks(
-    bookmarks: SearchableBookmark[],
-    query: string,
-): SearchResult[] {
+export function searchBookmarks(bookmarks: SearchableBookmark[], query: string): SearchResult[] {
     if (!query.trim()) {
         return [];
     }
@@ -175,12 +172,21 @@ export function searchBookmarks(
  * @returns 网络搜索结果项
  */
 function createWebSearchItem(query: string): SearchResult {
-    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
     return {
         type: 'web-search',
         id: 'web-search',
         title: `Search for "${query}"`,
-        url: searchUrl,
+        url: '',
+        action: async (openInNewTab = true) => {
+            try {
+                await chrome.search.query({
+                    text: query,
+                    disposition: openInNewTab ? 'NEW_TAB' : 'CURRENT_TAB',
+                });
+            } catch (error) {
+                console.error('Failed to search with default search engine:', error);
+            }
+        },
     };
 }
 

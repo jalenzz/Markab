@@ -4,7 +4,7 @@ export interface BookmarkItem {
     title: string;
     url: string;
     parentId?: string;
-    action?: () => Promise<void> | void; // 可选的点击回调函数，处理多标签页窗口恢复
+    action?: (openInNewTab?: boolean) => Promise<void> | void;
 }
 
 // 文件夹类型
@@ -103,6 +103,7 @@ export interface SearchResult {
     title: string;
     url: string; // 统一都有 URL，书签有书签 URL，搜索有搜索 URL
     folderTitle?: string; // 只有书签才有文件夹名称
+    action?: (openInNewTab?: boolean) => Promise<void> | void; // 可选的点击回调函数，用于处理特殊操作如默认搜索引擎
 }
 
 export interface SearchState {

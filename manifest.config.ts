@@ -18,7 +18,16 @@ export default defineManifest({
         512: 'public/logo.png',
     },
 
-    permissions: ['storage', 'bookmarks', 'topSites', 'history', 'sessions', 'favicon', 'tabs'],
+    permissions: [
+        'storage',
+        'bookmarks',
+        'topSites',
+        'history',
+        'sessions',
+        'favicon',
+        'tabs',
+        'search',
+    ],
 
     web_accessible_resources: [
         {

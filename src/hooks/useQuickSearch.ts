@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import type { SearchState, SearchResult } from '../types';
-import { flattenBookmarks, createSearchResults } from '../utils/searchUtils';
+import type { SearchResult, SearchState } from '../types';
+import { createSearchResults, flattenBookmarks } from '../utils/searchUtils';
 import { useBookmarks } from './useBookmarks';
 import { useSettings } from './useSettings';
 
@@ -93,9 +93,15 @@ export function useQuickSearch() {
 
     // 通用的搜索结果项执行逻辑
     const executeSearchAction = useCallback(
-        (item: SearchResult) => {
-            const target = settings.linkOpen === 'new-tab' ? '_blank' : '_self';
-            window.open(item.url, target);
+        async (item: SearchResult) => {
+            const openInNewTab = settings.linkOpen === 'new-tab';
+
+            if (item.action) {
+                await item.action(openInNewTab);
+            } else {
+                const target = openInNewTab ? '_blank' : '_self';
+                window.open(item.url, target);
+            }
             deactivateSearch();
         },
         [settings.linkOpen, deactivateSearch],
