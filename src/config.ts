@@ -48,6 +48,7 @@ export const DEFAULT_SETTINGS = {
     lockLayout: false,
     linkOpen: 'current-tab' as const,
     hiddenFolders: [] as string[],
+    autoFocus: true,
 } as const;
 
 // 设置配置
@@ -98,6 +99,11 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
     {
         key: 'lockLayout',
         label: 'Lock Layout',
+        type: 'toggle',
+    },
+    {
+        key: 'autoFocus',
+        label: 'Auto Focus',
         type: 'toggle',
     },
     {

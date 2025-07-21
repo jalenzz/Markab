@@ -25,10 +25,10 @@ type SettingsAction =
 interface SettingsState {
     settings: AppSettings;
     isLoading: boolean;
+    isInitialized: boolean;
     error: string | null;
 }
 
-// 使用 Immer 的简化 reducer
 function settingsReducer(state: SettingsState, action: SettingsAction): SettingsState {
     switch (action.type) {
         case 'LOAD_SETTINGS':
@@ -36,6 +36,7 @@ function settingsReducer(state: SettingsState, action: SettingsAction): Settings
                 ...state,
                 settings: action.payload,
                 isLoading: false,
+                isInitialized: true,
                 error: null,
             };
 
@@ -62,6 +63,7 @@ function settingsReducer(state: SettingsState, action: SettingsAction): Settings
 interface SettingsContextType {
     settings: AppSettings;
     isLoading: boolean;
+    isInitialized: boolean;
     error: string | null;
     updateSetting: (key: keyof AppSettings, value: AppSettings[keyof AppSettings]) => void;
     getSettingValue: (key: keyof AppSettings) => AppSettings[keyof AppSettings];
@@ -80,6 +82,7 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
     const [state, dispatch] = useReducer(settingsReducer, {
         settings: DEFAULT_SETTINGS,
         isLoading: true,
+        isInitialized: false,
         error: null,
     });
 
@@ -156,6 +159,7 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
     const contextValue: SettingsContextType = {
         settings: state.settings,
         isLoading: state.isLoading,
+        isInitialized: state.isInitialized,
         error: state.error,
         updateSetting,
         getSettingValue,
