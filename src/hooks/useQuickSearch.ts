@@ -172,8 +172,7 @@ export function useQuickSearch() {
         ],
     );
 
-    // 检查是否为字母键
-    const isLetterKey = useCallback((event: KeyboardEvent) => {
+    const isTypingKey = useCallback((event: KeyboardEvent) => {
         return (
             event.key.length === 1 &&
             /[a-zA-Z]/.test(event.key) &&
@@ -183,37 +182,18 @@ export function useQuickSearch() {
         );
     }, []);
 
-    // 处理全局键盘事件（激活搜索）
+    // 处理全局键盘事件
     const handleGlobalKeyDown = useCallback(
         (event: KeyboardEvent) => {
-            // 如果搜索已激活，不处理
-            if (searchState.isActive) {
-                return;
-            }
-
-            // 如果焦点在输入框上，不处理
-            const activeElement = document.activeElement;
-            if (
-                activeElement &&
-                (activeElement.tagName === 'INPUT' ||
-                    activeElement.tagName === 'TEXTAREA' ||
-                    (activeElement instanceof HTMLElement &&
-                        activeElement.contentEditable === 'true'))
-            ) {
-                return;
-            }
-
-            // 如果是字母键，激活搜索
-            if (isLetterKey(event)) {
+            if (!searchState.isActive && isTypingKey(event)) {
                 event.preventDefault();
                 activateSearch();
-                // 延迟设置初始查询，确保搜索框已渲染
-                setTimeout(() => {
+                requestAnimationFrame(() => {
                     updateQuery(event.key);
-                }, 0);
+                });
             }
         },
-        [searchState.isActive, isLetterKey, activateSearch, updateQuery],
+        [searchState.isActive, isTypingKey, activateSearch, updateQuery],
     );
 
     return {

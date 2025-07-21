@@ -9,9 +9,7 @@ export function useFocusManagement() {
 
     useEffect(() => {
         if (location.search !== '?focus') {
-            // 添加？focus 参数并重新加载页面
-            location.search = '?focus';
-            throw new Error('Reloading page to bypass focus restriction');
+            window.location.replace(location.pathname + '?focus');
         }
 
         const setFocus = () => {
