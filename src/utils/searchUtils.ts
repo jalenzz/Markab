@@ -29,7 +29,12 @@ const pinyinCache = new Map<string, string>();
  * 将文件夹结构扁平化为可搜索的书签列表
  */
 export function flattenBookmarks(folders: FolderItem[]): SearchableBookmark[] {
-    return folders.flatMap((folder) =>
+    // 过滤特殊文件夹
+    const bookmarkFolders = folders.filter((folder) =>
+        folder.id !== 'recent-folder' && folder.id !== 'topsite-folder'
+    );
+
+    return bookmarkFolders.flatMap((folder) =>
         folder.children.map((bookmark) => ({
             ...bookmark,
             folderTitle: folder.title,
@@ -38,7 +43,7 @@ export function flattenBookmarks(folders: FolderItem[]): SearchableBookmark[] {
 }
 
 /**
- * 模糊匹配：检查查询字符是否按顺序出现在目标字符串中
+ * 模糊匹配：限制字符间距
  * @param target 目标字符串
  * @param query 查询字符串
  * @returns 匹配分数，0 表示不匹配
@@ -46,30 +51,33 @@ export function flattenBookmarks(folders: FolderItem[]): SearchableBookmark[] {
 function fuzzyMatch(target: string, query: string): number {
     const targetLower = target.toLowerCase();
     const queryLower = query.toLowerCase();
+    const MAX_GAP = 10; // 匹配字符之间的最大间距
 
     let targetIndex = 0;
     let queryIndex = 0;
-    let matchedChars = 0;
+    let lastMatchIndex = -1;
 
     while (targetIndex < targetLower.length && queryIndex < queryLower.length) {
         if (targetLower[targetIndex] === queryLower[queryIndex]) {
-            matchedChars++;
+            // 检查与上一个匹配字符的间距
+            if (lastMatchIndex !== -1 && targetIndex - lastMatchIndex - 1 > MAX_GAP) {
+                return 0; // 间距过大
+            }
+            lastMatchIndex = targetIndex;
             queryIndex++;
         }
         targetIndex++;
     }
 
-    // 如果所有查询字符都匹配了，返回匹配度分数
     if (queryIndex === queryLower.length) {
-        // 分数基于匹配字符数和目标字符串长度的比例
-        return Math.round((matchedChars / targetLower.length) * 100);
+        return Math.round((queryLower.length / targetLower.length) * 100);
     }
 
     return 0;
 }
 
 /**
- * 将中文转换为拼音（带缓存）
+ * 将中文转换为拼音
  * @param text 中文文本
  * @returns 拼音字符串
  */
@@ -87,7 +95,7 @@ function toPinyin(text: string): string {
  * 计算书签的搜索评分
  * @param bookmark 书签对象
  * @param normalizedQuery 标准化的查询字符串
- * @returns 评分，0表示不匹配
+ * @returns 评分，0 表示不匹配
  */
 function calculateBookmarkScore(bookmark: SearchableBookmark, normalizedQuery: string): number {
     const titleLower = bookmark.title.toLowerCase();
