@@ -48,7 +48,7 @@ export const DEFAULT_SETTINGS = {
     lockLayout: false,
     linkOpen: 'current-tab' as const,
     hiddenFolders: [] as string[],
-    autoFocus: true,
+    quickSearch: true,
 } as const;
 
 // 设置配置
@@ -102,10 +102,10 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         type: 'toggle',
     },
     {
-        key: 'autoFocus',
-        label: 'Auto Focus',
+        key: 'quickSearch',
+        label: 'Quick Search',
         description:
-            'Automatically focus the page instead of the address bar. When enabled, you can directly type to start quick search without clicking on the page first.',
+            'When enabled, you can directly type to start search without clicking on the page first.',
         type: 'toggle',
     },
     {

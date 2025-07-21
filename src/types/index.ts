@@ -42,7 +42,7 @@ export interface AppSettings {
     maxTopSites: number;
     maxRecentTabs: number;
     lockLayout: boolean;
-    autoFocus: boolean;
+    quickSearch: boolean;
     linkOpen: 'current-tab' | 'new-tab';
     hiddenFolders: string[];
 }

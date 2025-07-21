@@ -11,7 +11,7 @@ export function useFocusManagement() {
     const focusTargetRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (!isInitialized || !settings.autoFocus) {
+        if (!isInitialized || !settings.quickSearch) {
             return;
         }
 
@@ -31,7 +31,7 @@ export function useFocusManagement() {
         return () => {
             clearTimeout(timeoutId);
         };
-    }, [isInitialized, settings.autoFocus]);
+    }, [isInitialized, settings.quickSearch]);
 
     return { focusTargetRef };
 }
