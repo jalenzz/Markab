@@ -1,6 +1,6 @@
 import { pinyin } from 'pinyin-pro';
 
-import type { FolderItem, SearchableBookmark } from '../types';
+import type { FolderItem, SearchableBookmark, SearchResult } from '../types';
 
 // 搜索评分常量
 const SCORES = {
@@ -18,7 +18,7 @@ const SCORES = {
 
 // 搜索配置常量
 const CONFIG = {
-    MAX_RESULTS: 5,
+    MAX_BOOKMARK_RESULTS: 4,
     DEFAULT_MAX_TEXT_LENGTH: 50,
 } as const;
 
@@ -135,7 +135,7 @@ function calculateBookmarkScore(bookmark: SearchableBookmark, normalizedQuery: s
 }
 
 /**
- * 搜索书签
+ * 搜索书签并返回搜索结果项格式
  * @param bookmarks 可搜索的书签列表
  * @param query 搜索关键词
  * @returns 匹配的书签列表，按相关性排序
@@ -143,7 +143,7 @@ function calculateBookmarkScore(bookmark: SearchableBookmark, normalizedQuery: s
 export function searchBookmarks(
     bookmarks: SearchableBookmark[],
     query: string,
-): SearchableBookmark[] {
+): SearchResult[] {
     if (!query.trim()) {
         return [];
     }
@@ -157,8 +157,55 @@ export function searchBookmarks(
         }))
         .filter((result) => result.score > 0)
         .sort((a, b) => b.score - a.score)
-        .slice(0, CONFIG.MAX_RESULTS)
-        .map((result) => result.bookmark);
+        .slice(0, CONFIG.MAX_BOOKMARK_RESULTS)
+        .map((result) => ({
+            type: 'bookmark' as const,
+            id: result.bookmark.id,
+            title: result.bookmark.title,
+            url: result.bookmark.url,
+            folderTitle: result.bookmark.folderTitle,
+        }));
+
+    return results;
+}
+
+/**
+ * 创建网络搜索结果项
+ * @param query 搜索查询
+ * @returns 网络搜索结果项
+ */
+function createWebSearchItem(query: string): SearchResult {
+    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+    return {
+        type: 'web-search',
+        id: 'web-search',
+        title: `Search for "${query}"`,
+        url: searchUrl,
+    };
+}
+
+/**
+ * 创建完整的搜索结果列表
+ * @param bookmarks 可搜索的书签列表
+ * @param query 搜索关键词
+ * @returns 包含书签和网络搜索的完整结果列表
+ */
+export function createSearchResults(
+    bookmarks: SearchableBookmark[],
+    query: string,
+): SearchResult[] {
+    const results: SearchResult[] = [];
+
+    if (!query.trim()) {
+        return results;
+    }
+
+    // 获取匹配的书签（最多 4 个）
+    const matchedBookmarks = searchBookmarks(bookmarks, query);
+    results.push(...matchedBookmarks);
+
+    // 总是添加网络搜索选项作为最后一项
+    results.push(createWebSearchItem(query));
 
     return results;
 }

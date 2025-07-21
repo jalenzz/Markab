@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import type { SearchableBookmark, SearchState } from '../types';
-import { flattenBookmarks, searchBookmarks } from '../utils/searchUtils';
+import type { SearchState, SearchResult } from '../types';
+import { flattenBookmarks, createSearchResults } from '../utils/searchUtils';
 import { useBookmarks } from './useBookmarks';
 import { useSettings } from './useSettings';
 
@@ -25,7 +25,7 @@ export function useQuickSearch() {
     // 执行搜索
     const performSearch = useCallback(
         (query: string) => {
-            const results = searchBookmarks(allBookmarks, query);
+            const results = createSearchResults(allBookmarks, query);
             setSearchState((prev) => ({
                 ...prev,
                 query,
@@ -91,36 +91,30 @@ export function useQuickSearch() {
         }));
     }, []);
 
-    // 通用的书签打开逻辑
-    const executeBookmarkAction = useCallback(
-        (bookmark: SearchableBookmark) => {
-            if (bookmark.action) {
-                // 如果有自定义动作（如恢复会话），执行动作
-                bookmark.action();
-            } else {
-                // 否则打开 URL
-                const target = settings.linkOpen === 'new-tab' ? '_blank' : '_self';
-                window.open(bookmark.url, target);
-            }
+    // 通用的搜索结果项执行逻辑
+    const executeSearchAction = useCallback(
+        (item: SearchResult) => {
+            const target = settings.linkOpen === 'new-tab' ? '_blank' : '_self';
+            window.open(item.url, target);
             deactivateSearch();
         },
         [settings.linkOpen, deactivateSearch],
     );
 
-    // 打开选中的书签
-    const openSelectedBookmark = useCallback(() => {
-        const selectedBookmark = searchState.results[searchState.selectedIndex];
-        if (selectedBookmark) {
-            executeBookmarkAction(selectedBookmark);
+    // 打开选中的搜索结果项
+    const openSelectedItem = useCallback(() => {
+        const selectedItem = searchState.results[searchState.selectedIndex];
+        if (selectedItem) {
+            executeSearchAction(selectedItem);
         }
-    }, [searchState.results, searchState.selectedIndex, executeBookmarkAction]);
+    }, [searchState.results, searchState.selectedIndex, executeSearchAction]);
 
-    // 打开指定书签
-    const openBookmark = useCallback(
-        (bookmark: SearchableBookmark) => {
-            executeBookmarkAction(bookmark);
+    // 打开指定搜索结果项
+    const openItem = useCallback(
+        (item: SearchResult) => {
+            executeSearchAction(item);
         },
-        [executeBookmarkAction],
+        [executeSearchAction],
     );
 
     // 处理键盘事件
@@ -145,7 +139,7 @@ export function useQuickSearch() {
                     break;
                 case 'Enter':
                     event.preventDefault();
-                    openSelectedBookmark();
+                    openSelectedItem();
                     break;
                 case '1':
                 case '2':
@@ -155,7 +149,7 @@ export function useQuickSearch() {
                     event.preventDefault();
                     const index = parseInt(event.key) - 1;
                     if (index < searchState.results.length) {
-                        openBookmark(searchState.results[index]);
+                        openItem(searchState.results[index]);
                     }
                     break;
                 }
@@ -167,8 +161,8 @@ export function useQuickSearch() {
             deactivateSearch,
             selectPrevious,
             selectNext,
-            openSelectedBookmark,
-            openBookmark,
+            openSelectedItem,
+            openItem,
         ],
     );
 
@@ -224,8 +218,8 @@ export function useQuickSearch() {
         selectPrevious,
         selectNext,
         setSelectedIndex,
-        openSelectedBookmark,
-        openBookmark,
+        openSelectedItem,
+        openItem,
         handleKeyDown,
         handleGlobalKeyDown,
     };

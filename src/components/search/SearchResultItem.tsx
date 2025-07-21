@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 
-import type { SearchableBookmark } from '../../types';
+import type { SearchResult } from '../../types';
 import { getFaviconUrl } from '../../utils/bookmarkUtils';
 import { highlightText } from '../../utils/searchUtils';
 
 interface SearchResultItemProps {
-    bookmark: SearchableBookmark;
+    item: SearchResult;
     isSelected: boolean;
     query: string;
     index: number;
@@ -14,11 +14,13 @@ interface SearchResultItemProps {
 }
 
 export const SearchResultItem: React.FC<SearchResultItemProps> = React.memo(
-    ({ bookmark, isSelected, query, index, onClick, onMouseEnter }) => {
+    ({ item, isSelected, query, index, onClick, onMouseEnter }) => {
         const highlightedTitle = useMemo(
-            () => highlightText(bookmark.title, query),
-            [bookmark.title, query],
+            () => highlightText(item.title, query),
+            [item.title, query],
         );
+
+        const isWebSearch = item.type === 'web-search';
 
         return (
             <div
@@ -28,20 +30,28 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = React.memo(
                 onClick={onClick}
                 onMouseEnter={onMouseEnter}
             >
-                {/* Favicon */}
+                {/* 图标 */}
                 <div className="flex-shrink-0">
-                    <img
-                        src={getFaviconUrl(bookmark.url)}
-                        alt=""
-                        className="h-4 w-4 rounded-sm"
-                        onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                        }}
-                    />
+                    {isWebSearch ? (
+                        // 搜索图标
+                        <div className="flex h-4 w-4 items-center justify-center">
+                            <span className="text-xs">🔍</span>
+                        </div>
+                    ) : (
+                        // 书签 Favicon
+                        <img
+                            src={getFaviconUrl(item.url)}
+                            alt=""
+                            className="h-4 w-4 rounded-sm"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                            }}
+                        />
+                    )}
                 </div>
 
-                {/* 书签信息 */}
+                {/* 内容信息 */}
                 <div className="min-w-0 flex-1">
                     {/* 标题 */}
                     <div
@@ -49,8 +59,10 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = React.memo(
                         dangerouslySetInnerHTML={{ __html: highlightedTitle }}
                     />
 
-                    {/* 文件夹名称 */}
-                    <div className="text-xs text-newtab-text-secondary">{bookmark.folderTitle}</div>
+                    {/* 副标题 */}
+                    <div className="text-xs text-newtab-text-secondary">
+                        {isWebSearch ? 'Search the web' : item.folderTitle}
+                    </div>
                 </div>
 
                 {/* 数字快捷键提示 */}

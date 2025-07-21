@@ -12,7 +12,7 @@ export const QuickSearch: React.FC = () => {
         deactivateSearch,
         updateQuery,
         setSelectedIndex,
-        openBookmark,
+        openItem,
         handleKeyDown,
         handleGlobalKeyDown,
     } = useQuickSearch();
@@ -103,7 +103,7 @@ export const QuickSearch: React.FC = () => {
                                 results={searchState.results}
                                 selectedIndex={searchState.selectedIndex}
                                 query={searchState.query}
-                                onItemClick={openBookmark}
+                                onItemClick={openItem}
                                 onSelectedIndexChange={handleSelectedIndexChange}
                             />
                         </div>

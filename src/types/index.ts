@@ -96,9 +96,18 @@ export interface SearchableBookmark extends BookmarkItem {
     folderTitle: string; // 所属文件夹名称，用于显示上下文
 }
 
+// 搜索结果项类型
+export interface SearchResult {
+    type: 'bookmark' | 'web-search';
+    id: string;
+    title: string;
+    url: string; // 统一都有 URL，书签有书签 URL，搜索有搜索 URL
+    folderTitle?: string; // 只有书签才有文件夹名称
+}
+
 export interface SearchState {
     isActive: boolean;
     query: string;
     selectedIndex: number;
-    results: SearchableBookmark[];
+    results: SearchResult[];
 }
