@@ -30,8 +30,8 @@ const pinyinCache = new Map<string, string>();
  */
 export function flattenBookmarks(folders: FolderItem[]): SearchableBookmark[] {
     // 过滤特殊文件夹
-    const bookmarkFolders = folders.filter((folder) =>
-        folder.id !== 'recent-folder' && folder.id !== 'topsite-folder'
+    const bookmarkFolders = folders.filter(
+        (folder) => folder.id !== 'recent-folder' && folder.id !== 'topsite-folder',
     );
 
     return bookmarkFolders.flatMap((folder) =>

@@ -12,7 +12,7 @@ export function useFocusManagement() {
 
     useEffect(() => {
         if (!isInitialized || !settings.autoFocus) {
-           return;
+            return;
         }
 
         if (location.search !== '?focus') {

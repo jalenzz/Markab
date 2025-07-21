@@ -104,6 +104,8 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
     {
         key: 'autoFocus',
         label: 'Auto Focus',
+        description:
+            'Automatically focus the page instead of the address bar. When enabled, you can directly type to start quick search without clicking on the page first.',
         type: 'toggle',
     },
     {

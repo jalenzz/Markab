@@ -1,4 +1,5 @@
 import type { ToggleSettingConfig } from '../../../types';
+import { SettingLabel } from '../SettingLabel';
 
 interface ToggleControlProps {
     config: ToggleSettingConfig;
@@ -9,7 +10,7 @@ interface ToggleControlProps {
 export function ToggleControl({ config, value, onChange }: ToggleControlProps) {
     return (
         <div className="flex items-center justify-between py-3">
-            <label className="mr-3 flex-1 text-body text-newtab-text-primary">{config.label}</label>
+            <SettingLabel label={config.label} description={config.description} />
             <div className="flex-shrink-0">
                 <label className="flex cursor-pointer items-center">
                     <input

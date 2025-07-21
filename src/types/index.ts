@@ -56,6 +56,7 @@ export interface SettingOption {
 export interface BaseSettingConfig {
     key: string;
     label: string;
+    description?: string;
     type: 'select' | 'toggle' | 'slider' | 'input' | 'multi-select';
 }
 
