@@ -1,4 +1,5 @@
 import type { SliderSettingConfig } from '../../../types';
+import { SettingLabel } from '../SettingLabel';
 
 interface SliderControlProps {
     config: SliderSettingConfig;
@@ -9,7 +10,7 @@ interface SliderControlProps {
 export function SliderControl({ config, value, onChange }: SliderControlProps) {
     return (
         <div className="flex items-center justify-between py-3">
-            <label className="mr-3 flex-1 text-body text-newtab-text-primary">{config.label}</label>
+            <SettingLabel label={config.label} description={config.description} />
             <div className="flex-shrink-0">
                 <div className="flex items-center space-x-3">
                     <input

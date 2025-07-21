@@ -5,7 +5,7 @@ import { createSearchResults, flattenBookmarks } from '../utils/searchUtils';
 import { useBookmarks } from './useBookmarks';
 import { useSettings } from './useSettings';
 
-export function useQuickSearch() {
+export function useSearch() {
     const { folderColumns } = useBookmarks();
     const { settings } = useSettings();
 

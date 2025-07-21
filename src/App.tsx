@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { BookmarkGrid, QuickSearch, SettingsButton, SettingsPanel } from './components';
+import { BookmarkGrid, Search, SettingsButton, SettingsPanel } from './components';
 import { SettingsProvider, useFocusManagement, useSettings, useSettingsEffects } from './hooks';
 
 function AppContent() {
@@ -30,7 +30,7 @@ function AppContent() {
             <div ref={focusTargetRef} className="relative min-h-screen w-full overflow-hidden">
                 <SettingsButton onToggle={handleSettingsToggle} isOpen={isSettingsOpen} />
                 <SettingsPanel isOpen={isSettingsOpen} onClose={handleSettingsClose} />
-                <QuickSearch />
+                <Search />
 
                 <div className="relative z-10 min-h-screen px-10 sm:px-12 lg:px-16 2xl:px-60">
                     <BookmarkGrid />

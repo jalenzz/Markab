@@ -42,7 +42,7 @@ export interface AppSettings {
     maxTopSites: number;
     maxRecentTabs: number;
     lockLayout: boolean;
-    autoFocus: boolean;
+    quickSearch: boolean;
     linkOpen: 'current-tab' | 'new-tab';
     hiddenFolders: string[];
 }
@@ -56,6 +56,7 @@ export interface SettingOption {
 export interface BaseSettingConfig {
     key: string;
     label: string;
+    description?: string;
     type: 'select' | 'toggle' | 'slider' | 'input' | 'multi-select';
 }
 

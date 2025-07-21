@@ -1,4 +1,5 @@
 import type { InputSettingConfig } from '../../../types';
+import { SettingLabel } from '../SettingLabel';
 
 interface InputControlProps {
     config: InputSettingConfig;
@@ -9,7 +10,7 @@ interface InputControlProps {
 export function InputControl({ config, value, onChange }: InputControlProps) {
     return (
         <div className="flex items-center justify-between py-3">
-            <label className="mr-3 flex-1 text-body text-newtab-text-primary">{config.label}</label>
+            <SettingLabel label={config.label} description={config.description} />
             <div className="flex-shrink-0">
                 <input
                     type="text"

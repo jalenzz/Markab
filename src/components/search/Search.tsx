@@ -2,11 +2,11 @@ import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect } from 'react';
 
 import { ANIMATION_CONFIG } from '../../config';
-import { useQuickSearch } from '../../hooks/useQuickSearch';
+import { useSearch } from '../../hooks/useSearch';
 import { SearchInput } from './SearchInput';
 import { SearchResults } from './SearchResults';
 
-export const QuickSearch: React.FC = () => {
+export const Search: React.FC = () => {
     const {
         searchState,
         deactivateSearch,
@@ -15,7 +15,7 @@ export const QuickSearch: React.FC = () => {
         openItem,
         handleKeyDown,
         handleGlobalKeyDown,
-    } = useQuickSearch();
+    } = useSearch();
 
     // 监听全局键盘事件
     useEffect(() => {
