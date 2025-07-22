@@ -64,7 +64,7 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
     return (
         <div
             ref={drag as never}
-            className={`group min-w-0 flex-1 ${isDragging ? 'opacity-50' : ''}`}
+            className={`[data-has-background='true']:bg-white/10 [data-has-background='true']:backdrop-blur-md [data-has-background='true']:border [data-has-background='true']:border-white/20 [data-has-background='true']:dark:bg-black/20 [data-has-background='true']:dark:border-white/10 group min-w-0 flex-1 rounded-default bg-white/5 backdrop-blur-sm ${isDragging ? 'opacity-50' : ''}`}
         >
             <div>
                 <FolderHeader

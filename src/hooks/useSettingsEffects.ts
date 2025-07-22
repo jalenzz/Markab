@@ -34,6 +34,27 @@ export function useSettingsEffects(settings: AppSettings) {
             root.setAttribute('data-font-family', settings.fontFamily);
         }
 
+        // 应用背景设置
+        if (settings.backgroundImage !== undefined) {
+            if (settings.backgroundImage) {
+                root.style.setProperty('--background-image', `url(${settings.backgroundImage})`);
+                root.setAttribute('data-has-background', 'true');
+            } else {
+                root.style.removeProperty('--background-image');
+                root.removeAttribute('data-has-background');
+            }
+        }
+
+        if (settings.backgroundOpacity !== undefined) {
+            root.style.setProperty('--background-opacity', settings.backgroundOpacity.toString());
+        }
+
         return cleanup;
-    }, [settings.theme, settings.fontSize, settings.fontFamily]);
+    }, [
+        settings.theme,
+        settings.fontSize,
+        settings.fontFamily,
+        settings.backgroundImage,
+        settings.backgroundOpacity,
+    ]);
 }

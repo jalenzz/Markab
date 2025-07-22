@@ -4,6 +4,7 @@ import { ANIMATION_CONFIG, SETTINGS_CONFIG } from '../../config';
 import { useModal, useSettings } from '../../hooks';
 import type { AppSettings, SettingConfig } from '../../types';
 import {
+    ImageUploadControl,
     InputControl,
     MultiSelectControl,
     SelectControl,
@@ -30,6 +31,7 @@ const controlComponents: Record<SettingConfig['type'], ControlComponent> = {
     'slider': SliderControl as ControlComponent,
     'input': InputControl as ControlComponent,
     'multi-select': MultiSelectControl as ControlComponent,
+    'image-upload': ImageUploadControl as ControlComponent,
 };
 
 /**

@@ -1,3 +1,4 @@
+export { ImageUploadControl } from './ImageUploadControl';
 export { InputControl } from './InputControl';
 export { MultiSelectControl } from './MultiSelectControl';
 export { SelectControl } from './SelectControl';

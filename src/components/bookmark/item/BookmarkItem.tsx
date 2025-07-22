@@ -39,7 +39,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
                 target={linkTarget}
                 rel="noopener noreferrer"
                 onClick={handleClick}
-                className="group/bookmark inline-flex cursor-pointer items-center gap-3 rounded-default px-2 py-1 text-newtab-text-secondary no-underline transition-colors duration-default hover:bg-newtab-surface-hover hover:text-newtab-text-primary hover:no-underline"
+                className="group/bookmark [data-has-background='true']:[text-shadow:0_1px_3px_rgba(0,0,0,0.4)] [data-has-background='true']:hover:bg-white/10 [data-has-background='true']:dark:hover:bg-black/20 [data-has-background='true']:dark:[text-shadow:0_1px_3px_rgba(0,0,0,0.8)] inline-flex cursor-pointer items-center gap-3 rounded-default px-2 py-1 text-newtab-text-secondary no-underline transition-colors duration-default hover:bg-newtab-surface-hover hover:text-newtab-text-primary hover:no-underline"
                 title={bookmark.title}
             >
                 <div className="flex-shrink-0">

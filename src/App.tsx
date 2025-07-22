@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { BookmarkGrid, Search, SettingsButton, SettingsPanel } from './components';
+import { Background, BookmarkGrid, Search, SettingsButton, SettingsPanel } from './components';
 import { SettingsProvider, useFocusManagement, useSettings, useSettingsEffects } from './hooks';
 
 function AppContent() {
@@ -28,6 +28,7 @@ function AppContent() {
     return (
         <DndProvider backend={HTML5Backend}>
             <div ref={focusTargetRef} className="relative min-h-screen w-full overflow-hidden">
+                <Background />
                 <SettingsButton onToggle={handleSettingsToggle} isOpen={isSettingsOpen} />
                 <SettingsPanel isOpen={isSettingsOpen} onClose={handleSettingsClose} />
                 <Search />
