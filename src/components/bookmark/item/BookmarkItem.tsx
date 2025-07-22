@@ -19,7 +19,8 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
     const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (bookmark.action) {
             e.preventDefault();
-            await bookmark.action();
+            const openInNewTab = settings.linkOpen === 'new-tab';
+            await bookmark.action(openInNewTab);
         }
     };
 

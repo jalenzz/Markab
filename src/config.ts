@@ -50,6 +50,7 @@ export const DEFAULT_SETTINGS = {
     hiddenFolders: [] as string[],
     backgroundImage: null as string | null,
     backgroundOpacity: 0.3,
+    quickSearch: true,
 } as const;
 
 // 设置配置
@@ -100,6 +101,13 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
     {
         key: 'lockLayout',
         label: 'Lock Layout',
+        type: 'toggle',
+    },
+    {
+        key: 'quickSearch',
+        label: 'Quick Search',
+        description:
+            'When enabled, you can directly type to start search without clicking on the page first.',
         type: 'toggle',
     },
     {

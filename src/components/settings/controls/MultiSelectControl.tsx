@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ANIMATION_CONFIG } from '../../../config';
 import { browserApiService } from '../../../services';
 import type { FolderItem, MultiSelectSettingConfig } from '../../../types';
+import { SettingLabel } from '../SettingLabel';
 
 interface MultiSelectControlProps {
     config: MultiSelectSettingConfig;
@@ -42,7 +43,7 @@ export function MultiSelectControl({ config, value, onChange }: MultiSelectContr
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="flex w-full items-center justify-between text-body text-newtab-text-primary transition-colors duration-default hover:text-newtab-text-primary"
             >
-                <span>{config.label}</span>
+                <SettingLabel label={config.label} description={config.description} />
                 <div
                     className={`arrow-icon transition-transform duration-150 ease-out ${isExpanded ? 'rotate-90' : ''}`}
                 >

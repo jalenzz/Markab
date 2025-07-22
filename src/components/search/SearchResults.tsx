@@ -2,14 +2,14 @@ import { motion } from 'motion/react';
 import React, { useEffect, useRef } from 'react';
 
 import { ANIMATION_CONFIG } from '../../config';
-import type { SearchableBookmark } from '../../types';
+import type { SearchResult } from '../../types';
 import { SearchResultItem } from './SearchResultItem';
 
 interface SearchResultsProps {
-    results: SearchableBookmark[];
+    results: SearchResult[];
     selectedIndex: number;
     query: string;
-    onItemClick: (bookmark: SearchableBookmark) => void;
+    onItemClick: (item: SearchResult) => void;
     onSelectedIndexChange: (index: number) => void;
 }
 
@@ -48,17 +48,17 @@ export const SearchResults: React.FC<SearchResultsProps> = React.memo(
                 className="max-h-80 overflow-y-auto"
             >
                 <div>
-                    {results.map((bookmark, index) => (
+                    {results.map((item, index) => (
                         <div
-                            key={`${bookmark.id}-${bookmark.folderTitle}`}
+                            key={`${item.id}-${item.folderTitle || ''}`}
                             ref={index === selectedIndex ? selectedItemRef : null}
                         >
                             <SearchResultItem
-                                bookmark={bookmark}
+                                item={item}
                                 isSelected={index === selectedIndex}
                                 query={query}
                                 index={index}
-                                onClick={() => onItemClick(bookmark)}
+                                onClick={() => onItemClick(item)}
                                 onMouseEnter={() => onSelectedIndexChange(index)}
                             />
                         </div>

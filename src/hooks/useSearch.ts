@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import type { SearchableBookmark, SearchState } from '../types';
-import { flattenBookmarks, searchBookmarks } from '../utils/searchUtils';
+import type { SearchResult, SearchState } from '../types';
+import { createSearchResults, flattenBookmarks } from '../utils/searchUtils';
 import { useBookmarks } from './useBookmarks';
 import { useSettings } from './useSettings';
 
-export function useQuickSearch() {
+export function useSearch() {
     const { folderColumns } = useBookmarks();
     const { settings } = useSettings();
 
@@ -25,7 +25,7 @@ export function useQuickSearch() {
     // 执行搜索
     const performSearch = useCallback(
         (query: string) => {
-            const results = searchBookmarks(allBookmarks, query);
+            const results = createSearchResults(allBookmarks, query);
             setSearchState((prev) => ({
                 ...prev,
                 query,
@@ -91,36 +91,36 @@ export function useQuickSearch() {
         }));
     }, []);
 
-    // 通用的书签打开逻辑
-    const executeBookmarkAction = useCallback(
-        (bookmark: SearchableBookmark) => {
-            if (bookmark.action) {
-                // 如果有自定义动作（如恢复会话），执行动作
-                bookmark.action();
+    // 通用的搜索结果项执行逻辑
+    const executeSearchAction = useCallback(
+        async (item: SearchResult) => {
+            const openInNewTab = settings.linkOpen === 'new-tab';
+
+            if (item.action) {
+                await item.action(openInNewTab);
             } else {
-                // 否则打开 URL
-                const target = settings.linkOpen === 'new-tab' ? '_blank' : '_self';
-                window.open(bookmark.url, target);
+                const target = openInNewTab ? '_blank' : '_self';
+                window.open(item.url, target);
             }
             deactivateSearch();
         },
         [settings.linkOpen, deactivateSearch],
     );
 
-    // 打开选中的书签
-    const openSelectedBookmark = useCallback(() => {
-        const selectedBookmark = searchState.results[searchState.selectedIndex];
-        if (selectedBookmark) {
-            executeBookmarkAction(selectedBookmark);
+    // 打开选中的搜索结果项
+    const openSelectedItem = useCallback(() => {
+        const selectedItem = searchState.results[searchState.selectedIndex];
+        if (selectedItem) {
+            executeSearchAction(selectedItem);
         }
-    }, [searchState.results, searchState.selectedIndex, executeBookmarkAction]);
+    }, [searchState.results, searchState.selectedIndex, executeSearchAction]);
 
-    // 打开指定书签
-    const openBookmark = useCallback(
-        (bookmark: SearchableBookmark) => {
-            executeBookmarkAction(bookmark);
+    // 打开指定搜索结果项
+    const openItem = useCallback(
+        (item: SearchResult) => {
+            executeSearchAction(item);
         },
-        [executeBookmarkAction],
+        [executeSearchAction],
     );
 
     // 处理键盘事件
@@ -145,7 +145,7 @@ export function useQuickSearch() {
                     break;
                 case 'Enter':
                     event.preventDefault();
-                    openSelectedBookmark();
+                    openSelectedItem();
                     break;
                 case '1':
                 case '2':
@@ -155,7 +155,7 @@ export function useQuickSearch() {
                     event.preventDefault();
                     const index = parseInt(event.key) - 1;
                     if (index < searchState.results.length) {
-                        openBookmark(searchState.results[index]);
+                        openItem(searchState.results[index]);
                     }
                     break;
                 }
@@ -167,13 +167,12 @@ export function useQuickSearch() {
             deactivateSearch,
             selectPrevious,
             selectNext,
-            openSelectedBookmark,
-            openBookmark,
+            openSelectedItem,
+            openItem,
         ],
     );
 
-    // 检查是否为字母键
-    const isLetterKey = useCallback((event: KeyboardEvent) => {
+    const isTypingKey = useCallback((event: KeyboardEvent) => {
         return (
             event.key.length === 1 &&
             /[a-zA-Z]/.test(event.key) &&
@@ -183,37 +182,18 @@ export function useQuickSearch() {
         );
     }, []);
 
-    // 处理全局键盘事件（激活搜索）
+    // 处理全局键盘事件
     const handleGlobalKeyDown = useCallback(
         (event: KeyboardEvent) => {
-            // 如果搜索已激活，不处理
-            if (searchState.isActive) {
-                return;
-            }
-
-            // 如果焦点在输入框上，不处理
-            const activeElement = document.activeElement;
-            if (
-                activeElement &&
-                (activeElement.tagName === 'INPUT' ||
-                    activeElement.tagName === 'TEXTAREA' ||
-                    (activeElement instanceof HTMLElement &&
-                        activeElement.contentEditable === 'true'))
-            ) {
-                return;
-            }
-
-            // 如果是字母键，激活搜索
-            if (isLetterKey(event)) {
+            if (!searchState.isActive && isTypingKey(event)) {
                 event.preventDefault();
                 activateSearch();
-                // 延迟设置初始查询，确保搜索框已渲染
-                setTimeout(() => {
+                requestAnimationFrame(() => {
                     updateQuery(event.key);
-                }, 0);
+                });
             }
         },
-        [searchState.isActive, isLetterKey, activateSearch, updateQuery],
+        [searchState.isActive, isTypingKey, activateSearch, updateQuery],
     );
 
     return {
@@ -224,8 +204,8 @@ export function useQuickSearch() {
         selectPrevious,
         selectNext,
         setSelectedIndex,
-        openSelectedBookmark,
-        openBookmark,
+        openSelectedItem,
+        openItem,
         handleKeyDown,
         handleGlobalKeyDown,
     };

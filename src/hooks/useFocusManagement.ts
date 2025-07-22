@@ -1,17 +1,22 @@
 import { useEffect, useRef } from 'react';
 
+import { useSettings } from './useSettings';
+
 /**
  * 通过 URL 重定向绕过 Chrome 的焦点限制
  * ref: https://stackoverflow.com/questions/16684663/chrome-new-tab-page-extension-steal-focus-from-the-address-bar
  */
 export function useFocusManagement() {
+    const { settings, isInitialized } = useSettings();
     const focusTargetRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        if (!isInitialized || !settings.quickSearch) {
+            return;
+        }
+
         if (location.search !== '?focus') {
-            // 添加？focus 参数并重新加载页面
-            location.search = '?focus';
-            throw new Error('Reloading page to bypass focus restriction');
+            window.location.replace(location.pathname + '?focus');
         }
 
         const setFocus = () => {
@@ -26,7 +31,7 @@ export function useFocusManagement() {
         return () => {
             clearTimeout(timeoutId);
         };
-    }, []);
+    }, [isInitialized, settings.quickSearch]);
 
     return { focusTargetRef };
 }
