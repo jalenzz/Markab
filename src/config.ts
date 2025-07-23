@@ -1,4 +1,4 @@
-import type { SettingConfig } from './types';
+import type { SettingConfig, SettingGroup } from './types';
 
 // 动画配置
 export const ANIMATION_CONFIG = {
@@ -33,10 +33,28 @@ export const ANIMATION_CONFIG = {
             animate: { opacity: 1 },
             exit: { opacity: 0 },
         },
+        // 侧边面板滑入动画
+        slideInRight: {
+            initial: { opacity: 0, x: 320 },
+            animate: { opacity: 1, x: 0 },
+            exit: { opacity: 0, x: 320 },
+        },
     },
 } as const;
 
 export type AnimationConfig = typeof ANIMATION_CONFIG;
+
+// 设置分组配置
+export const SETTINGS_GROUPS: SettingGroup[] = [
+    {
+        id: 'appearance',
+        title: 'Appearance',
+    },
+    {
+        id: 'general',
+        title: 'General',
+    },
+];
 
 // 默认设置配置
 export const DEFAULT_SETTINGS = {
@@ -57,6 +75,7 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         key: 'theme',
         label: 'Theme',
         type: 'select',
+        group: 'appearance',
         options: [
             { value: 'auto', label: 'Auto' },
             { value: 'light', label: 'Light' },
@@ -67,12 +86,14 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         key: 'fontFamily',
         label: 'Font',
         type: 'input',
+        group: 'appearance',
         placeholder: 'Font name',
     },
     {
         key: 'fontSize',
         label: 'Font Size',
         type: 'slider',
+        group: 'appearance',
         min: 10,
         max: 24,
         step: 1,
@@ -82,6 +103,7 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         key: 'maxTopSites',
         label: 'Max Top Sites',
         type: 'slider',
+        group: 'general',
         min: 5,
         max: 20,
         step: 1,
@@ -91,6 +113,7 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         key: 'maxRecentTabs',
         label: 'Max Recent Tabs',
         type: 'slider',
+        group: 'general',
         min: 5,
         max: 20,
         step: 1,
@@ -100,6 +123,7 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         key: 'lockLayout',
         label: 'Lock Layout',
         type: 'toggle',
+        group: 'general',
     },
     {
         key: 'quickSearch',
@@ -107,11 +131,13 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         description:
             'When enabled, you can directly type to start search without clicking on the page first.',
         type: 'toggle',
+        group: 'general',
     },
     {
         key: 'linkOpen',
         label: 'Link Open',
         type: 'select',
+        group: 'general',
         options: [
             { value: 'current-tab', label: 'Current Tab' },
             { value: 'new-tab', label: 'New Tab' },
@@ -121,5 +147,6 @@ export const SETTINGS_CONFIG: SettingConfig[] = [
         key: 'hiddenFolders',
         label: 'Show Folders',
         type: 'multi-select',
+        group: 'general',
     },
 ];
