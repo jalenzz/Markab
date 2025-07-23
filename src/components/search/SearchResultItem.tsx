@@ -61,7 +61,7 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = React.memo(
 
                     {/* 副标题 */}
                     <div className="text-xs text-newtab-text-secondary">
-                        {isWebSearch ? 'Search the web' : item.folderTitle}
+                        {item.folderTitle}
                     </div>
                 </div>
 

@@ -103,8 +103,8 @@ export interface SearchResult {
     type: 'bookmark' | 'web-search';
     id: string;
     title: string;
-    url: string; // 统一都有 URL，书签有书签 URL，搜索有搜索 URL
-    folderTitle?: string; // 只有书签才有文件夹名称
+    url: string;
+    folderTitle?: string;
     action?: (openInNewTab?: boolean) => Promise<void> | void; // 可选的点击回调函数，用于处理特殊操作如默认搜索引擎
 }
 

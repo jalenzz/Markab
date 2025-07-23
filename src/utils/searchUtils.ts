@@ -177,25 +177,67 @@ export function searchBookmarks(bookmarks: SearchableBookmark[], query: string):
 /**
  * 创建网络搜索结果项
  * @param query 搜索查询
+ * @param engineName 搜索引擎名称
+ * @param searchUrl 搜索 URL 模板，使用{query}作为占位符
+ * @param isDefault 是否为默认搜索引擎
  * @returns 网络搜索结果项
  */
-function createWebSearchItem(query: string): SearchResult {
+function createWebSearchItem(
+    query: string,
+    engineName: string,
+    searchUrl?: string,
+    isDefault = false,
+): SearchResult {
+
     return {
         type: 'web-search',
-        id: 'web-search',
+        id: `web-search-${engineName.toLowerCase()}`,
         title: `Search for "${query}"`,
         url: '',
+        folderTitle: engineName,
         action: async (openInNewTab = true) => {
             try {
-                await chrome.search.query({
-                    text: query,
-                    disposition: openInNewTab ? 'NEW_TAB' : 'CURRENT_TAB',
-                });
+                if (isDefault) {
+                    await chrome.search.query({
+                        text: query,
+                        disposition: openInNewTab ? 'NEW_TAB' : 'CURRENT_TAB',
+                    });
+                } else if (searchUrl) {
+                    const url = searchUrl.replace('{query}', encodeURIComponent(query));
+                    const target = openInNewTab ? '_blank' : '_self';
+                    window.open(url, target);
+                }
             } catch (error) {
-                console.error('Failed to search with default search engine:', error);
+                console.error(`Failed to search with ${engineName}:`, error);
             }
         },
     };
+}
+
+/**
+ * 创建多个搜索引擎的搜索结果项
+ * @param query 搜索查询
+ * @returns 搜索引擎结果项列表
+ */
+function createWebSearchItems(query: string): SearchResult[] {
+    const searchEngines = [
+        {
+            name: 'Default',
+            isDefault: true,
+        },
+        {
+            name: 'Google',
+            url: 'https://www.google.com/search?q={query}',
+        },
+        {
+            name: 'Bing',
+            url: 'https://www.bing.com/search?q={query}',
+        },
+    ];
+
+    return searchEngines.map((engine) =>
+        createWebSearchItem(query, engine.name, engine.url, engine.isDefault),
+    );
 }
 
 /**
@@ -218,8 +260,13 @@ export function createSearchResults(
     const matchedBookmarks = searchBookmarks(bookmarks, query);
     results.push(...matchedBookmarks);
 
-    // 总是添加网络搜索选项作为最后一项
-    results.push(createWebSearchItem(query));
+    // 如果有书签搜索结果，只添加默认搜索引擎
+    if (matchedBookmarks.length > 0) {
+        results.push(createWebSearchItem(query, 'Default', undefined, true));
+    } else {
+        // 如果没有书签搜索结果，添加多个搜索引擎选项
+        results.push(...createWebSearchItems(query));
+    }
 
     return results;
 }
