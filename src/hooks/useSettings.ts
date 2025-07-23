@@ -18,8 +18,7 @@ type SettingsAction =
     | {
           type: 'UPDATE_SETTING';
           payload: { key: keyof AppSettings; value: AppSettings[keyof AppSettings] };
-      }
-    | { type: 'RESET_SETTINGS' };
+      };
 
 // 设置状态
 interface SettingsState {
@@ -48,12 +47,6 @@ function settingsReducer(state: SettingsState, action: SettingsAction): Settings
                 ] = action.payload.value;
             });
 
-        case 'RESET_SETTINGS':
-            return {
-                ...state,
-                settings: DEFAULT_SETTINGS,
-            };
-
         default:
             return state;
     }
@@ -67,7 +60,6 @@ interface SettingsContextType {
     error: string | null;
     updateSetting: (key: keyof AppSettings, value: AppSettings[keyof AppSettings]) => void;
     getSettingValue: (key: keyof AppSettings) => AppSettings[keyof AppSettings];
-    resetSettings: () => void;
 }
 
 // 创建 Context
@@ -152,10 +144,6 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
         [state.settings],
     );
 
-    const resetSettings = useCallback(() => {
-        dispatch({ type: 'RESET_SETTINGS' });
-    }, []);
-
     const contextValue: SettingsContextType = {
         settings: state.settings,
         isLoading: state.isLoading,
@@ -163,7 +151,6 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
         error: state.error,
         updateSetting,
         getSettingValue,
-        resetSettings,
     };
 
     return React.createElement(SettingsContext.Provider, { value: contextValue }, children);

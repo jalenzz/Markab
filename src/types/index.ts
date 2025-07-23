@@ -39,8 +39,8 @@ export interface AppSettings {
     theme: 'auto' | 'light' | 'dark';
     fontFamily: string;
     fontSize: number;
-    maxTopSites: number;
-    maxRecentTabs: number;
+    topSitesNum: number;
+    recentlyClosedNum: number;
     lockLayout: boolean;
     quickSearch: boolean;
     linkOpen: 'current-tab' | 'new-tab';
@@ -92,6 +92,13 @@ export type SettingConfig =
     | SliderSettingConfig
     | InputSettingConfig
     | MultiSelectSettingConfig;
+
+export interface SettingsCategory {
+    title: string;
+    settings: SettingConfig[];
+}
+
+export type SettingsConfig = Record<string, SettingsCategory>;
 
 // 搜索相关类型
 export interface SearchableBookmark extends BookmarkItem {
