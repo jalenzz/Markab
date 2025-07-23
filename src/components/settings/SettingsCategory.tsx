@@ -12,7 +12,6 @@ interface SettingsCategoryProps {
     settings: SettingConfig[];
     getSettingValue: (key: keyof AppSettings) => AppSettings[keyof AppSettings];
     updateSetting: (key: keyof AppSettings, value: AppSettings[keyof AppSettings]) => void;
-    isFirst?: boolean;
 }
 
 interface ControlComponentProps {
@@ -39,18 +38,15 @@ export function SettingsCategory({
     settings,
     getSettingValue,
     updateSetting,
-    isFirst = false,
 }: SettingsCategoryProps) {
     return (
-        <div>
-            {/* 分割线 在非第一个类别前显示 */}
-            {!isFirst && <div className="mb-8 border-t border-newtab-border opacity-30" />}
-
+        <div className="mt-8 first:mt-0">
             <div className="mb-6">
-                <h3 className="text-title font-medium text-newtab-text-primary">{title}</h3>
+                <h3 className="mb-3 text-title font-medium text-newtab-text-primary">{title}</h3>
+                <div className="border-t border-newtab-border opacity-30" />
             </div>
 
-            <div className="mb-8 space-y-4">
+            <div className="mb-8 space-y-2">
                 {settings.map((setting) => {
                     const ControlComponent = controlComponents[setting.type];
                     if (!ControlComponent) return null;
