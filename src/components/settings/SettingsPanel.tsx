@@ -33,7 +33,7 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                     ref={modalRef}
                     {...ANIMATION_CONFIG.presets.slideInRight}
                     transition={ANIMATION_CONFIG.transitions.ease}
-                    className="fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col border-l border-newtab-border bg-newtab-surface-elevated shadow-2xl sm:w-96"
+                    className="fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col bg-newtab-surface-elevated shadow-2xl rounded-l-lg sm:w-96"
                 >
                     <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">
                         {categorizedSettings.map(({ categoryId, title, settings }) => (
