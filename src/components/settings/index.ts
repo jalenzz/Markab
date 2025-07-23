@@ -1,3 +1,3 @@
 export { SettingsButton } from './SettingsButton';
-export { SettingsGroup } from './SettingsGroup';
+export { SettingsCategory } from './SettingsCategory';
 export { SettingsPanel } from './SettingsPanel';

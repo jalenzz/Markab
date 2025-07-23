@@ -1,5 +1,3 @@
-import type { SettingConfig, SettingGroup } from './types';
-
 // 动画配置
 export const ANIMATION_CONFIG = {
     // 基础过渡配置
@@ -44,18 +42,6 @@ export const ANIMATION_CONFIG = {
 
 export type AnimationConfig = typeof ANIMATION_CONFIG;
 
-// 设置分组配置
-export const SETTINGS_GROUPS: SettingGroup[] = [
-    {
-        id: 'appearance',
-        title: 'Appearance',
-    },
-    {
-        id: 'general',
-        title: 'General',
-    },
-];
-
 // 默认设置配置
 export const DEFAULT_SETTINGS = {
     theme: 'auto' as const,
@@ -70,83 +56,84 @@ export const DEFAULT_SETTINGS = {
 } as const;
 
 // 设置配置
-export const SETTINGS_CONFIG: SettingConfig[] = [
-    {
-        key: 'theme',
-        label: 'Theme',
-        type: 'select',
-        group: 'appearance',
-        options: [
-            { value: 'auto', label: 'Auto' },
-            { value: 'light', label: 'Light' },
-            { value: 'dark', label: 'Dark' },
+export const SETTINGS_CONFIG = {
+    appearance: {
+        title: 'Appearance',
+        settings: [
+            {
+                key: 'theme',
+                label: 'Theme',
+                type: 'select',
+                options: [
+                    { value: 'auto', label: 'Auto' },
+                    { value: 'light', label: 'Light' },
+                    { value: 'dark', label: 'Dark' },
+                ],
+            },
+            {
+                key: 'fontFamily',
+                label: 'Font',
+                type: 'input',
+                placeholder: 'Font name',
+            },
+            {
+                key: 'fontSize',
+                label: 'Font Size',
+                type: 'slider',
+                min: 10,
+                max: 24,
+                step: 1,
+                showValue: true,
+            },
         ],
     },
-    {
-        key: 'fontFamily',
-        label: 'Font',
-        type: 'input',
-        group: 'appearance',
-        placeholder: 'Font name',
-    },
-    {
-        key: 'fontSize',
-        label: 'Font Size',
-        type: 'slider',
-        group: 'appearance',
-        min: 10,
-        max: 24,
-        step: 1,
-        showValue: true,
-    },
-    {
-        key: 'maxTopSites',
-        label: 'Max Top Sites',
-        type: 'slider',
-        group: 'general',
-        min: 5,
-        max: 20,
-        step: 1,
-        showValue: true,
-    },
-    {
-        key: 'maxRecentTabs',
-        label: 'Max Recent Tabs',
-        type: 'slider',
-        group: 'general',
-        min: 5,
-        max: 20,
-        step: 1,
-        showValue: true,
-    },
-    {
-        key: 'lockLayout',
-        label: 'Lock Layout',
-        type: 'toggle',
-        group: 'general',
-    },
-    {
-        key: 'quickSearch',
-        label: 'Quick Search',
-        description:
-            'When enabled, you can directly type to start search without clicking on the page first.',
-        type: 'toggle',
-        group: 'general',
-    },
-    {
-        key: 'linkOpen',
-        label: 'Link Open',
-        type: 'select',
-        group: 'general',
-        options: [
-            { value: 'current-tab', label: 'Current Tab' },
-            { value: 'new-tab', label: 'New Tab' },
+    general: {
+        title: 'General',
+        settings: [
+            {
+                key: 'maxTopSites',
+                label: 'Max Top Sites',
+                type: 'slider',
+                min: 5,
+                max: 20,
+                step: 1,
+                showValue: true,
+            },
+            {
+                key: 'maxRecentTabs',
+                label: 'Max Recent Tabs',
+                type: 'slider',
+                min: 5,
+                max: 20,
+                step: 1,
+                showValue: true,
+            },
+            {
+                key: 'lockLayout',
+                label: 'Lock Layout',
+                type: 'toggle',
+            },
+            {
+                key: 'quickSearch',
+                label: 'Quick Search',
+                description:
+                    'When enabled, you can directly type to start search without clicking on the page first.',
+                type: 'toggle',
+            },
+            {
+                key: 'linkOpen',
+                label: 'Link Open',
+                type: 'select',
+                options: [
+                    { value: 'current-tab', label: 'Current Tab' },
+                    { value: 'new-tab', label: 'New Tab' },
+                ],
+            },
+            {
+                key: 'hiddenFolders',
+                label: 'Show Folders',
+                type: 'multi-select',
+            },
         ],
     },
-    {
-        key: 'hiddenFolders',
-        label: 'Show Folders',
-        type: 'multi-select',
-        group: 'general',
-    },
-];
+};

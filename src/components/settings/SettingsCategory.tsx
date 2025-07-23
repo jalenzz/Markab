@@ -1,4 +1,4 @@
-import type { AppSettings, SettingConfig, SettingGroup } from '../../types';
+import type { AppSettings, SettingConfig } from '../../types';
 import {
     InputControl,
     MultiSelectControl,
@@ -7,8 +7,8 @@ import {
     ToggleControl,
 } from './controls';
 
-interface SettingsGroupProps {
-    group: SettingGroup;
+interface SettingsCategoryProps {
+    title: string;
     settings: SettingConfig[];
     getSettingValue: (key: keyof AppSettings) => AppSettings[keyof AppSettings];
     updateSetting: (key: keyof AppSettings, value: AppSettings[keyof AppSettings]) => void;
@@ -32,31 +32,28 @@ const controlComponents: Record<SettingConfig['type'], ControlComponent> = {
 };
 
 /**
- * 设置分组组件
- * 用于渲染设置分组标题和分割线，提升界面层次感
+ * 设置类别组件
  */
-export function SettingsGroup({
-    group,
+export function SettingsCategory({
+    title,
     settings,
     getSettingValue,
     updateSetting,
     isFirst = false
-}: SettingsGroupProps) {
+}: SettingsCategoryProps) {
     return (
         <div>
-            {/* 分割线 - 在非第一个分组前显示 */}
+            {/* 分割线 在非第一个类别前显示 */}
             {!isFirst && (
                 <div className="mb-8 border-t border-newtab-border opacity-30" />
             )}
 
-            {/* 分组标题 */}
             <div className="mb-6">
                 <h3 className="text-title font-medium text-newtab-text-primary">
-                    {group.title}
+                    {title}
                 </h3>
             </div>
 
-            {/* 分组内容 */}
             <div className="space-y-4 mb-8">
                 {settings.map((setting) => {
                     const ControlComponent = controlComponents[setting.type];

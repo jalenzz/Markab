@@ -58,7 +58,6 @@ export interface BaseSettingConfig {
     label: string;
     description?: string;
     type: 'select' | 'toggle' | 'slider' | 'input' | 'multi-select';
-    group: string;
 }
 
 export interface SelectSettingConfig extends BaseSettingConfig {
@@ -94,11 +93,12 @@ export type SettingConfig =
     | InputSettingConfig
     | MultiSelectSettingConfig;
 
-// 设置分组类型
-export interface SettingGroup {
-    id: string;
+export interface SettingsCategory {
     title: string;
+    settings: SettingConfig[];
 }
+
+export type SettingsConfig = Record<string, SettingsCategory>;
 
 // 搜索相关类型
 export interface SearchableBookmark extends BookmarkItem {
