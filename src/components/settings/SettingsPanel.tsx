@@ -15,7 +15,7 @@ interface SettingsPanelProps {
  * 设置面板组件
  */
 export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
-    const { updateSetting, getSettingValue, resetSettings } = useSettings();
+    const { updateSetting, getSettingValue } = useSettings();
     const { modalRef } = useModal({ isOpen, onClose });
 
     const categorizedSettings = useMemo(() => {
@@ -59,15 +59,6 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                                 isFirst={index === 0}
                             />
                         ))}
-                    </div>
-
-                    <div className="shrink-0 border-t border-newtab-border p-6">
-                        <button
-                            onClick={resetSettings}
-                            className="w-full rounded-default px-4 py-2 text-body text-newtab-text-secondary transition-colors duration-default hover:bg-newtab-surface-hover"
-                        >
-                            Reset All Settings
-                        </button>
                     </div>
                 </motion.div>
             )}
