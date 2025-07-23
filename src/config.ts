@@ -57,6 +57,36 @@ export const DEFAULT_SETTINGS = {
 
 // 设置配置
 export const SETTINGS_CONFIG = {
+    appearance: {
+        title: 'Appearance',
+        settings: [
+            {
+                key: 'theme',
+                label: 'Theme',
+                type: 'select',
+                options: [
+                    { value: 'auto', label: 'Auto' },
+                    { value: 'light', label: 'Light' },
+                    { value: 'dark', label: 'Dark' },
+                ],
+            },
+            {
+                key: 'fontFamily',
+                label: 'Font',
+                type: 'input',
+                placeholder: 'Font name',
+            },
+            {
+                key: 'fontSize',
+                label: 'Font Size',
+                type: 'slider',
+                min: 10,
+                max: 24,
+                step: 1,
+                showValue: true,
+            },
+        ],
+    },
     general: {
         title: 'General',
         settings: [
@@ -103,36 +133,6 @@ export const SETTINGS_CONFIG = {
                 key: 'hiddenFolders',
                 label: 'Show Folders',
                 type: 'multi-select',
-            },
-        ],
-    },
-    appearance: {
-        title: 'Appearance',
-        settings: [
-            {
-                key: 'theme',
-                label: 'Theme',
-                type: 'select',
-                options: [
-                    { value: 'auto', label: 'Auto' },
-                    { value: 'light', label: 'Light' },
-                    { value: 'dark', label: 'Dark' },
-                ],
-            },
-            {
-                key: 'fontFamily',
-                label: 'Font',
-                type: 'input',
-                placeholder: 'Font name',
-            },
-            {
-                key: 'fontSize',
-                label: 'Font Size',
-                type: 'slider',
-                min: 10,
-                max: 24,
-                step: 1,
-                showValue: true,
             },
         ],
     },
