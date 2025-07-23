@@ -1,12 +1,12 @@
 import type { BookmarkItem, FolderItem } from '../types';
 
 class BrowserApiService {
-    async getTopSitesAsBookmarkFolder(maxTopSites: number = 10): Promise<FolderItem | null> {
+    async getTopSitesAsBookmarkFolder(topSitesNum: number = 10): Promise<FolderItem | null> {
         try {
             const topSites = await chrome.topSites.get();
             if (topSites.length === 0) return null;
 
-            const limitedTopSites = topSites.slice(0, maxTopSites);
+            const limitedTopSites = topSites.slice(0, topSitesNum);
 
             const children: BookmarkItem[] = limitedTopSites.map((site, index) => ({
                 id: `topsite-${index}`,
@@ -27,10 +27,12 @@ class BrowserApiService {
     }
 
     async getRecentlyClosedAsBookmarkFolder(
-        maxRecentTabs: number = 10,
+        recentlyClosedNum: number = 10,
     ): Promise<FolderItem | null> {
         try {
-            const sessions = await chrome.sessions.getRecentlyClosed({ maxResults: maxRecentTabs });
+            const sessions = await chrome.sessions.getRecentlyClosed({
+                maxResults: recentlyClosedNum,
+            });
             const recentTabs: BookmarkItem[] = [];
 
             sessions.forEach((session, sessionIndex) => {
@@ -128,13 +130,13 @@ class BrowserApiService {
      * 获取所有有效的文件夹
      */
     async getAllFolders(
-        maxTopSites: number = 10,
-        maxRecentTabs: number = 10,
+        topSitesNum: number = 10,
+        recentlyClosedNum: number = 10,
     ): Promise<FolderItem[]> {
         const [bookmarkFolders, topSitesFolder, recentlyClosedFolder] = await Promise.all([
             this.getBookmarkFolders(),
-            this.getTopSitesAsBookmarkFolder(maxTopSites),
-            this.getRecentlyClosedAsBookmarkFolder(maxRecentTabs),
+            this.getTopSitesAsBookmarkFolder(topSitesNum),
+            this.getRecentlyClosedAsBookmarkFolder(recentlyClosedNum),
         ]);
 
         const folders: FolderItem[] = [...bookmarkFolders];

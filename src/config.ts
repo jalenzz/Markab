@@ -47,8 +47,8 @@ export const DEFAULT_SETTINGS = {
     theme: 'auto' as const,
     fontFamily: '',
     fontSize: 14,
-    maxTopSites: 10,
-    maxRecentTabs: 10,
+    topSitesNum: 10,
+    recentlyClosedNum: 10,
     lockLayout: false,
     linkOpen: 'current-tab' as const,
     hiddenFolders: [] as string[],
@@ -57,42 +57,12 @@ export const DEFAULT_SETTINGS = {
 
 // 设置配置
 export const SETTINGS_CONFIG = {
-    appearance: {
-        title: 'Appearance',
-        settings: [
-            {
-                key: 'theme',
-                label: 'Theme',
-                type: 'select',
-                options: [
-                    { value: 'auto', label: 'Auto' },
-                    { value: 'light', label: 'Light' },
-                    { value: 'dark', label: 'Dark' },
-                ],
-            },
-            {
-                key: 'fontFamily',
-                label: 'Font',
-                type: 'input',
-                placeholder: 'Font name',
-            },
-            {
-                key: 'fontSize',
-                label: 'Font Size',
-                type: 'slider',
-                min: 10,
-                max: 24,
-                step: 1,
-                showValue: true,
-            },
-        ],
-    },
     general: {
         title: 'General',
         settings: [
             {
-                key: 'maxTopSites',
-                label: 'Max Top Sites',
+                key: 'topSitesNum',
+                label: 'Top Sites',
                 type: 'slider',
                 min: 5,
                 max: 20,
@@ -100,8 +70,8 @@ export const SETTINGS_CONFIG = {
                 showValue: true,
             },
             {
-                key: 'maxRecentTabs',
-                label: 'Max Recent Tabs',
+                key: 'recentlyClosedNum',
+                label: 'Recently Closed',
                 type: 'slider',
                 min: 5,
                 max: 20,
@@ -133,6 +103,36 @@ export const SETTINGS_CONFIG = {
                 key: 'hiddenFolders',
                 label: 'Show Folders',
                 type: 'multi-select',
+            },
+        ],
+    },
+    appearance: {
+        title: 'Appearance',
+        settings: [
+            {
+                key: 'theme',
+                label: 'Theme',
+                type: 'select',
+                options: [
+                    { value: 'auto', label: 'Auto' },
+                    { value: 'light', label: 'Light' },
+                    { value: 'dark', label: 'Dark' },
+                ],
+            },
+            {
+                key: 'fontFamily',
+                label: 'Font',
+                type: 'input',
+                placeholder: 'Font name',
+            },
+            {
+                key: 'fontSize',
+                label: 'Font Size',
+                type: 'slider',
+                min: 10,
+                max: 24,
+                step: 1,
+                showValue: true,
             },
         ],
     },

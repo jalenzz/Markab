@@ -39,22 +39,18 @@ export function SettingsCategory({
     settings,
     getSettingValue,
     updateSetting,
-    isFirst = false
+    isFirst = false,
 }: SettingsCategoryProps) {
     return (
         <div>
             {/* 分割线 在非第一个类别前显示 */}
-            {!isFirst && (
-                <div className="mb-8 border-t border-newtab-border opacity-30" />
-            )}
+            {!isFirst && <div className="mb-8 border-t border-newtab-border opacity-30" />}
 
             <div className="mb-6">
-                <h3 className="text-title font-medium text-newtab-text-primary">
-                    {title}
-                </h3>
+                <h3 className="text-title font-medium text-newtab-text-primary">{title}</h3>
             </div>
 
-            <div className="space-y-4 mb-8">
+            <div className="mb-8 space-y-4">
                 {settings.map((setting) => {
                     const ControlComponent = controlComponents[setting.type];
                     if (!ControlComponent) return null;
