@@ -8,7 +8,7 @@ interface SearchInputProps {
 }
 
 export const SearchInput: React.FC<SearchInputProps> = React.memo(
-    ({ value, onChange, onKeyDown, placeholder = 'search bookmarks...' }) => {
+    ({ value, onChange, onKeyDown, placeholder = 'search ...' }) => {
         const inputRef = useRef<HTMLInputElement>(null);
 
         // 自动聚焦
