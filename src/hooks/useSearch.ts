@@ -182,6 +182,23 @@ export function useSearch() {
         );
     }, []);
 
+    // 处理粘贴事件
+    const handleGlobalPaste = useCallback(
+        (event: ClipboardEvent) => {
+            if (!searchState.isActive) {
+                const clipboardText = event.clipboardData?.getData('text/plain');
+                if (clipboardText && clipboardText.trim()) {
+                    event.preventDefault();
+                    activateSearch();
+                    requestAnimationFrame(() => {
+                        updateQuery(clipboardText.trim());
+                    });
+                }
+            }
+        },
+        [searchState.isActive, activateSearch, updateQuery],
+    );
+
     // 处理全局键盘事件
     const handleGlobalKeyDown = useCallback(
         (event: KeyboardEvent) => {
@@ -208,5 +225,6 @@ export function useSearch() {
         openItem,
         handleKeyDown,
         handleGlobalKeyDown,
+        handleGlobalPaste,
     };
 }
