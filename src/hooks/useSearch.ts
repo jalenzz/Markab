@@ -25,7 +25,7 @@ export function useSearch() {
     // 执行搜索
     const performSearch = useCallback(
         (query: string) => {
-            const results = createSearchResults(allBookmarks, query);
+            const results = createSearchResults(allBookmarks, query, settings.searchEngines);
             setSearchState((prev) => ({
                 ...prev,
                 query,
@@ -33,7 +33,7 @@ export function useSearch() {
                 selectedIndex: 0, // 重置选中索引
             }));
         },
-        [allBookmarks],
+        [allBookmarks, settings.searchEngines],
     );
 
     // 激活搜索模式

@@ -45,6 +45,7 @@ export interface AppSettings {
     quickSearch: boolean;
     linkOpen: 'current-tab' | 'new-tab';
     hiddenFolders: string[];
+    searchEngines: string;
 }
 
 // 设置项配置类型定义

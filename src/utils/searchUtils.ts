@@ -215,40 +215,16 @@ function createWebSearchItem(
 }
 
 /**
- * 创建多个搜索引擎的搜索结果项
- * @param query 搜索查询
- * @returns 搜索引擎结果项列表
- */
-function createWebSearchItems(query: string): SearchResult[] {
-    const searchEngines = [
-        {
-            name: 'Default',
-            isDefault: true,
-        },
-        {
-            name: 'Google',
-            url: 'https://www.google.com/search?q={query}',
-        },
-        {
-            name: 'Bing',
-            url: 'https://www.bing.com/search?q={query}',
-        },
-    ];
-
-    return searchEngines.map((engine) =>
-        createWebSearchItem(query, engine.name, engine.url, engine.isDefault),
-    );
-}
-
-/**
  * 创建完整的搜索结果列表
  * @param bookmarks 可搜索的书签列表
  * @param query 搜索关键词
+ * @param searchEnginesConfig 搜索引擎配置字符串
  * @returns 包含书签和网络搜索的完整结果列表
  */
 export function createSearchResults(
     bookmarks: SearchableBookmark[],
     query: string,
+    searchEnginesConfig?: string,
 ): SearchResult[] {
     const results: SearchResult[] = [];
 
@@ -260,12 +236,23 @@ export function createSearchResults(
     const matchedBookmarks = searchBookmarks(bookmarks, query);
     results.push(...matchedBookmarks);
 
-    // 如果有书签搜索结果，只添加默认搜索引擎
+    // 添加搜索引擎选项
     if (matchedBookmarks.length > 0) {
+        // 有书签结果时只显示默认搜索引擎
         results.push(createWebSearchItem(query, 'Default', undefined, true));
     } else {
-        // 如果没有书签搜索结果，添加多个搜索引擎选项
-        results.push(...createWebSearchItems(query));
+        // 没有书签结果时显示所有搜索引擎
+        results.push(createWebSearchItem(query, 'Default', undefined, true));
+
+        // 添加用户配置的搜索引擎
+        if (searchEnginesConfig?.trim()) {
+            searchEnginesConfig.split(';').forEach(item => {
+                const [name, url] = item.split(',').map(s => s.trim());
+                if (name && url) {
+                    results.push(createWebSearchItem(query, name, url, false));
+                }
+            });
+        }
     }
 
     return results;
