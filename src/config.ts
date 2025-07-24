@@ -53,7 +53,8 @@ export const DEFAULT_SETTINGS = {
     linkOpen: 'current-tab' as const,
     hiddenFolders: [] as string[],
     quickSearch: true,
-    searchEngines: 'Google,https://www.google.com/search?q={query};Bing,https://www.bing.com/search?q={query}',
+    searchEngines:
+        'Google,https://www.google.com/search?q={query};Bing,https://www.bing.com/search?q={query}',
 } as const;
 
 // 设置配置

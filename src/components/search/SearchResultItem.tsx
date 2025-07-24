@@ -60,9 +60,7 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = React.memo(
                     />
 
                     {/* 副标题 */}
-                    <div className="text-xs text-newtab-text-secondary">
-                        {item.folderTitle}
-                    </div>
+                    <div className="text-xs text-newtab-text-secondary">{item.folderTitle}</div>
                 </div>
 
                 {/* 数字快捷键提示 */}

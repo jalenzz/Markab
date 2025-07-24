@@ -188,7 +188,6 @@ function createWebSearchItem(
     searchUrl?: string,
     isDefault = false,
 ): SearchResult {
-
     return {
         type: 'web-search',
         id: `web-search-${engineName.toLowerCase()}`,
@@ -246,8 +245,8 @@ export function createSearchResults(
 
         // 添加用户配置的搜索引擎
         if (searchEnginesConfig?.trim()) {
-            searchEnginesConfig.split(';').forEach(item => {
-                const [name, url] = item.split(',').map(s => s.trim());
+            searchEnginesConfig.split(';').forEach((item) => {
+                const [name, url] = item.split(',').map((s) => s.trim());
                 if (name && url) {
                     results.push(createWebSearchItem(query, name, url, false));
                 }
