@@ -247,7 +247,7 @@ export function createSearchResults(
         if (searchEnginesConfig?.trim()) {
             searchEnginesConfig.split(';').forEach((item) => {
                 const [name, url] = item.split(',').map((s) => s.trim());
-                if (name && url) {
+                if (name && url && url.includes('{query}')) {
                     results.push(createWebSearchItem(query, name, url, false));
                 }
             });
