@@ -126,7 +126,7 @@ export const SETTINGS_CONFIG = {
                 label: 'Search Engines',
                 description: 'Format: Name,URL;Name,URL (use {query} for search term)',
                 type: 'input',
-                placeholder: 'Google,https://google.com/search?q={query}',
+                placeholder: '',
             },
             {
                 key: 'linkOpen',
