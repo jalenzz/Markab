@@ -185,7 +185,12 @@ export function useSearch() {
     // 处理粘贴事件
     const handleGlobalPaste = useCallback(
         (event: ClipboardEvent) => {
-            if (!searchState.isActive) {
+            const activeElement = document.activeElement;
+            const isInputFocused =
+                activeElement &&
+                (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+
+            if (!searchState.isActive && !isInputFocused) {
                 const clipboardText = event.clipboardData?.getData('text/plain');
                 if (clipboardText && clipboardText.trim()) {
                     event.preventDefault();
@@ -202,7 +207,12 @@ export function useSearch() {
     // 处理全局键盘事件
     const handleGlobalKeyDown = useCallback(
         (event: KeyboardEvent) => {
-            if (!searchState.isActive && isTypingKey(event)) {
+            const activeElement = document.activeElement;
+            const isInputFocused =
+                activeElement &&
+                (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+
+            if (!searchState.isActive && !isInputFocused && isTypingKey(event)) {
                 event.preventDefault();
                 activateSearch();
                 requestAnimationFrame(() => {
