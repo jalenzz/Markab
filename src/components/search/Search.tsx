@@ -15,6 +15,7 @@ export const Search: React.FC = () => {
         openItem,
         handleKeyDown,
         handleGlobalKeyDown,
+        handleGlobalPaste,
     } = useSearch();
 
     // 监听全局键盘事件
@@ -24,6 +25,14 @@ export const Search: React.FC = () => {
             document.removeEventListener('keydown', handleGlobalKeyDown);
         };
     }, [handleGlobalKeyDown]);
+
+    // 监听全局粘贴事件
+    useEffect(() => {
+        document.addEventListener('paste', handleGlobalPaste);
+        return () => {
+            document.removeEventListener('paste', handleGlobalPaste);
+        };
+    }, [handleGlobalPaste]);
 
     // 监听搜索模式下的键盘事件
     useEffect(() => {

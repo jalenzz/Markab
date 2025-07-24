@@ -177,22 +177,37 @@ export function searchBookmarks(bookmarks: SearchableBookmark[], query: string):
 /**
  * 创建网络搜索结果项
  * @param query 搜索查询
+ * @param engineName 搜索引擎名称
+ * @param searchUrl 搜索 URL 模板，使用{query}作为占位符
+ * @param isDefault 是否为默认搜索引擎
  * @returns 网络搜索结果项
  */
-function createWebSearchItem(query: string): SearchResult {
+function createWebSearchItem(
+    query: string,
+    engineName: string,
+    searchUrl?: string,
+    isDefault = false,
+): SearchResult {
     return {
         type: 'web-search',
-        id: 'web-search',
+        id: `web-search-${engineName.toLowerCase()}`,
         title: `Search for "${query}"`,
         url: '',
+        folderTitle: engineName,
         action: async (openInNewTab = true) => {
             try {
-                await chrome.search.query({
-                    text: query,
-                    disposition: openInNewTab ? 'NEW_TAB' : 'CURRENT_TAB',
-                });
+                if (isDefault) {
+                    await chrome.search.query({
+                        text: query,
+                        disposition: openInNewTab ? 'NEW_TAB' : 'CURRENT_TAB',
+                    });
+                } else if (searchUrl) {
+                    const url = searchUrl.replace('{query}', encodeURIComponent(query));
+                    const target = openInNewTab ? '_blank' : '_self';
+                    window.open(url, target);
+                }
             } catch (error) {
-                console.error('Failed to search with default search engine:', error);
+                console.error(`Failed to search with ${engineName}:`, error);
             }
         },
     };
@@ -202,11 +217,13 @@ function createWebSearchItem(query: string): SearchResult {
  * 创建完整的搜索结果列表
  * @param bookmarks 可搜索的书签列表
  * @param query 搜索关键词
+ * @param searchEnginesConfig 搜索引擎配置字符串
  * @returns 包含书签和网络搜索的完整结果列表
  */
 export function createSearchResults(
     bookmarks: SearchableBookmark[],
     query: string,
+    searchEnginesConfig?: string,
 ): SearchResult[] {
     const results: SearchResult[] = [];
 
@@ -218,8 +235,24 @@ export function createSearchResults(
     const matchedBookmarks = searchBookmarks(bookmarks, query);
     results.push(...matchedBookmarks);
 
-    // 总是添加网络搜索选项作为最后一项
-    results.push(createWebSearchItem(query));
+    // 添加搜索引擎选项
+    if (matchedBookmarks.length > 0) {
+        // 有书签结果时只显示默认搜索引擎
+        results.push(createWebSearchItem(query, 'Default', undefined, true));
+    } else {
+        // 没有书签结果时显示所有搜索引擎
+        results.push(createWebSearchItem(query, 'Default', undefined, true));
+
+        // 添加用户配置的搜索引擎
+        if (searchEnginesConfig?.trim()) {
+            searchEnginesConfig.split(';').forEach((item) => {
+                const [name, url] = item.split(',').map((s) => s.trim());
+                if (name && url && url.includes('{query}')) {
+                    results.push(createWebSearchItem(query, name, url, false));
+                }
+            });
+        }
+    }
 
     return results;
 }

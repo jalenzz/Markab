@@ -53,6 +53,8 @@ export const DEFAULT_SETTINGS = {
     linkOpen: 'current-tab' as const,
     hiddenFolders: [] as string[],
     quickSearch: true,
+    searchEngines:
+        'Google,https://www.google.com/search?q={query};Bing,https://www.bing.com/search?q={query}',
 } as const;
 
 // 设置配置
@@ -119,6 +121,13 @@ export const SETTINGS_CONFIG = {
                 description:
                     'When enabled, you can directly type to start search without clicking on the page first.',
                 type: 'toggle',
+            },
+            {
+                key: 'searchEngines',
+                label: 'Search Engines',
+                description: 'Format: Name,URL;Name,URL (use {query} for search term)',
+                type: 'input',
+                placeholder: '',
             },
             {
                 key: 'linkOpen',

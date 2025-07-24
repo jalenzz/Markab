@@ -25,7 +25,7 @@ export function useSearch() {
     // 执行搜索
     const performSearch = useCallback(
         (query: string) => {
-            const results = createSearchResults(allBookmarks, query);
+            const results = createSearchResults(allBookmarks, query, settings.searchEngines);
             setSearchState((prev) => ({
                 ...prev,
                 query,
@@ -33,7 +33,7 @@ export function useSearch() {
                 selectedIndex: 0, // 重置选中索引
             }));
         },
-        [allBookmarks],
+        [allBookmarks, settings.searchEngines],
     );
 
     // 激活搜索模式
@@ -182,10 +182,37 @@ export function useSearch() {
         );
     }, []);
 
+    // 处理粘贴事件
+    const handleGlobalPaste = useCallback(
+        (event: ClipboardEvent) => {
+            const activeElement = document.activeElement;
+            const isInputFocused =
+                activeElement &&
+                (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+
+            if (!searchState.isActive && !isInputFocused) {
+                const clipboardText = event.clipboardData?.getData('text/plain');
+                if (clipboardText && clipboardText.trim()) {
+                    event.preventDefault();
+                    activateSearch();
+                    requestAnimationFrame(() => {
+                        updateQuery(clipboardText.trim());
+                    });
+                }
+            }
+        },
+        [searchState.isActive, activateSearch, updateQuery],
+    );
+
     // 处理全局键盘事件
     const handleGlobalKeyDown = useCallback(
         (event: KeyboardEvent) => {
-            if (!searchState.isActive && isTypingKey(event)) {
+            const activeElement = document.activeElement;
+            const isInputFocused =
+                activeElement &&
+                (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+
+            if (!searchState.isActive && !isInputFocused && isTypingKey(event)) {
                 event.preventDefault();
                 activateSearch();
                 requestAnimationFrame(() => {
@@ -208,5 +235,6 @@ export function useSearch() {
         openItem,
         handleKeyDown,
         handleGlobalKeyDown,
+        handleGlobalPaste,
     };
 }

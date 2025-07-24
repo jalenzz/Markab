@@ -17,6 +17,7 @@ export function InputControl({ config, value, onChange }: InputControlProps) {
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={config.placeholder}
+                    spellCheck={false}
                     className="placeholder:text-newtab-text-primary/50 w-36 rounded-default border border-newtab-border bg-newtab-surface px-3 py-1 text-body text-newtab-text-primary transition-colors duration-default focus:border-newtab-primary focus:outline-none"
                 />
             </div>
