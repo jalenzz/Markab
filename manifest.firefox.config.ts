@@ -20,11 +20,6 @@ export default defineManifest({
 
     permissions: ['storage', 'bookmarks', 'topSites', 'history', 'sessions', 'tabs', 'search'],
 
-    browser_specific_settings: {
-        gecko: {
-            id: 'your-gecko-id@example.com', // TODO: Replace with your actual Gecko ID
-        },
-    },
 
     web_accessible_resources: [
         {
