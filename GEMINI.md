@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This project is a Chrome extension that replaces the new tab page with a customizable bookmark manager. It's designed to provide a clean and elegant way to display and organize bookmarks. The extension is built with React, TypeScript, and Vite, and it uses Tailwind CSS for styling.
+This project is a browser extension that replaces the new tab page with a customizable bookmark manager. It supports both Chrome and Firefox. It's designed to provide a clean and elegant way to display and organize bookmarks. The extension is built with React, TypeScript, and Vite, and it uses Tailwind CSS for styling.
 
 The core functionality of the extension is to display a user's bookmarks in a grid layout. Users can customize the layout by dragging and dropping bookmark folders, and they can also expand and collapse folders to show or hide their contents. The extension also includes a search feature that allows users to quickly find bookmarks.
 
@@ -14,7 +14,7 @@ To build and run the project, you'll need to have `bun` installed.
 
 **Development:**
 
-To start the development server, run the following command:
+To start the development server, run the following command. This will start a development server for the Chrome version of the extension.
 
 ```bash
 bun run dev
@@ -22,11 +22,25 @@ bun run dev
 
 **Building:**
 
-To build the extension for production, run the following command:
+The project can be built for both Chrome and Firefox. The following commands will generate a zip file for each browser in the `release` directory.
 
-```bash
-bun run build
-```
+*   **Build for Chrome:**
+
+    ```bash
+    bun run build:chrome
+    ```
+
+*   **Build for Firefox:**
+
+    ```bash
+    bun run build:firefox
+    ```
+
+*   **Build for both:**
+
+    ```bash
+    bun run build
+    ```
 
 **Testing:**
 
@@ -39,9 +53,9 @@ bun run type-check
 
 ## Development Conventions
 
-- **Package Manager:** The project uses `bun` as the package manager.
-- **Code Style:** The project uses Prettier for code formatting and ESLint for linting.
-- **Component Structure:** The project's components are organized by feature in the `src/components` directory.
-- **State Management:** The project uses React Hooks and the Context API for state management.
-- **Browser APIs:** The project uses the `chrome.bookmarks` and `chrome.storage` APIs to interact with the browser.
-- **Drag and Drop:** The project uses `react-dnd` for drag and drop functionality.
+*   **Package Manager:** The project uses `bun` as the package manager.
+*   **Code Style:** The project uses Prettier for code formatting and ESLint for linting.
+*   **Component Structure:** The project's components are organized by feature in the `src/components` directory.
+*   **State Management:** The project uses React Hooks and the Context API for state management.
+*   **Browser APIs:** The project uses the `webextension-polyfill` library to interact with browser APIs. This allows the extension to work on both Chrome and Firefox using the `browser` namespace.
+*   **Drag and Drop:** The project uses `react-dnd` for drag and drop functionality.
