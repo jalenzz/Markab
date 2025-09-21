@@ -5,8 +5,10 @@
     "type": "module",
     "description": "Bookmark New Tab, Never forget your bookmarks",
     "scripts": {
-        "dev": "vite",
-        "build": "tsc -b && vite build",
+        "dev": "cross-env BROWSER_TARGET=chrome vite",
+        "build": "bun run build:chrome && bun run build:firefox",
+        "build:chrome": "cross-env BROWSER_TARGET=chrome tsc -b && cross-env BROWSER_TARGET=chrome vite build",
+        "build:firefox": "cross-env BROWSER_TARGET=firefox tsc -b && cross-env BROWSER_TARGET=firefox vite build",
         "build:analyze": "tsc -b && ANALYZE=true vite build",
         "preview": "vite preview",
         "lint": "eslint . && stylelint \"src/**/*.{css,scss,less}\"",
@@ -16,13 +18,15 @@
     },
     "dependencies": {
         "@emoji-mart/react": "^1.1.1",
+        "@types/webextension-polyfill": "^0.12.3",
         "immer": "^10.1.1",
         "motion": "^12.17.0",
         "pinyin-pro": "^3.26.0",
         "react": "^19.1.0",
         "react-dnd": "^16.0.1",
         "react-dnd-html5-backend": "^16.0.1",
-        "react-dom": "^19.1.0"
+        "react-dom": "^19.1.0",
+        "webextension-polyfill": "^0.12.0"
     },
     "devDependencies": {
         "@crxjs/vite-plugin": "^2.0.0",
@@ -33,6 +37,7 @@
         "@types/react-dom": "^19.1.2",
         "@vitejs/plugin-react": "^4.4.1",
         "autoprefixer": "^10.4.21",
+        "cross-env": "^10.0.0",
         "eslint": "^9.25.0",
         "eslint-plugin-react": "^7.37.5",
         "eslint-plugin-react-hooks": "^5.2.0",

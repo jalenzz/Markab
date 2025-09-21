@@ -12,7 +12,7 @@
         "paths": {
             "@/*": ["src/*"]
         },
-        "types": ["vite/client", "chrome"],
+        "types": ["vite/client", "webextension-polyfill"],
         "allowImportingTsExtensions": false,
         "strict": true,
         "noFallthroughCasesInSwitch": true,

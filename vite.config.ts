@@ -1,13 +1,16 @@
 import path from 'node:path';
 
-import { crx } from '@crxjs/vite-plugin';
+import { crx, type ManifestV3Export } from '@crxjs/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, type PluginOption } from 'vite';
 import zip from 'vite-plugin-zip-pack';
 
-import manifest from './manifest.config.js';
 import { name, version } from './package.json';
+
+const browser = process.env.BROWSER_TARGET || 'chrome';
+
+const manifest = (await import(`./manifest.${browser}.config.ts`)).default as ManifestV3Export;
 
 export default defineConfig({
     resolve: {
@@ -18,7 +21,7 @@ export default defineConfig({
     plugins: [
         react(),
         crx({ manifest }),
-        zip({ outDir: 'release', outFileName: `crx-${name}-${version}.zip` }),
+        zip({ outDir: 'release', outFileName: `${browser}-${name}-${version}.zip` }),
         ...(process.env.ANALYZE
             ? [
                   visualizer({

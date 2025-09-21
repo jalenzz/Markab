@@ -1,9 +1,11 @@
+import browser, { type Bookmarks } from 'webextension-polyfill';
+
 import type { BookmarkItem, FolderItem } from '../types';
 
 class BrowserApiService {
     async getTopSitesAsBookmarkFolder(topSitesNum: number = 10): Promise<FolderItem | null> {
         try {
-            const topSites = await chrome.topSites.get();
+            const topSites = await browser.topSites.get();
             if (topSites.length === 0) return null;
 
             const limitedTopSites = topSites.slice(0, topSitesNum);
@@ -30,7 +32,7 @@ class BrowserApiService {
         recentlyClosedNum: number = 10,
     ): Promise<FolderItem | null> {
         try {
-            const sessions = await chrome.sessions.getRecentlyClosed({
+            const sessions = await browser.sessions.getRecentlyClosed({
                 maxResults: recentlyClosedNum,
             });
             const recentTabs: BookmarkItem[] = [];
@@ -47,7 +49,7 @@ class BrowserApiService {
                     parentId: 'recent-folder',
                     ...(isWindow && {
                         action: async () => {
-                            await chrome.sessions.restore(session.window?.sessionId);
+                            await browser.sessions.restore(session.window?.sessionId);
                         },
                     }),
                 });
@@ -68,36 +70,22 @@ class BrowserApiService {
 
     async getBookmarkFolders(): Promise<FolderItem[]> {
         try {
-            const bookmarkTree = await new Promise<chrome.bookmarks.BookmarkTreeNode[]>(
-                (resolve, reject) => {
-                    chrome.bookmarks.getTree((result) => {
-                        if (chrome.runtime.lastError) {
-                            reject(new Error(chrome.runtime.lastError.message));
-                        } else {
-                            resolve(result);
-                        }
-                    });
-                },
-            );
+            const bookmarkTree = await browser.bookmarks.getTree();
 
             const folders: FolderItem[] = [];
 
-            // 递归遍历所有节点
-            const traverseNodes = (nodes: chrome.bookmarks.BookmarkTreeNode[]) => {
+            const traverseNodes = (nodes: Bookmarks.BookmarkTreeNode[]) => {
                 for (const node of nodes) {
-                    // 如果是文件夹且有子项
                     if (!node.url && node.children && node.children.length > 0) {
-                        // 提取直接的书签子项
                         const bookmarks: BookmarkItem[] = node.children
-                            .filter((child) => !!child.url) // 只要有 url 的就是书签
-                            .map((child) => ({
+                            .filter((child: Bookmarks.BookmarkTreeNode) => !!child.url)
+                            .map((child: Bookmarks.BookmarkTreeNode) => ({
                                 id: child.id,
                                 title: child.title || 'unnamed',
                                 url: child.url!,
                                 parentId: child.parentId,
                             }));
 
-                        // 如果包含书签，创建文件夹
                         if (bookmarks.length > 0) {
                             folders.push({
                                 id: node.id,
@@ -106,13 +94,11 @@ class BrowserApiService {
                             });
                         }
 
-                        // 递归处理子文件夹
                         traverseNodes(node.children);
                     }
                 }
             };
 
-            // 遍历根节点
             for (const rootNode of bookmarkTree) {
                 if (rootNode.children) {
                     traverseNodes(rootNode.children);
@@ -126,9 +112,6 @@ class BrowserApiService {
         }
     }
 
-    /**
-     * 获取所有有效的文件夹
-     */
     async getAllFolders(
         topSitesNum: number = 10,
         recentlyClosedNum: number = 10,
@@ -141,7 +124,6 @@ class BrowserApiService {
 
         const folders: FolderItem[] = [...bookmarkFolders];
 
-        // 添加特殊文件夹到开头
         if (recentlyClosedFolder) folders.unshift(recentlyClosedFolder);
         if (topSitesFolder) folders.unshift(topSitesFolder);
 
