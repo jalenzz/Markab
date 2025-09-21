@@ -1,4 +1,5 @@
 import { pinyin } from 'pinyin-pro';
+import browser from 'webextension-polyfill';
 
 import type { FolderItem, SearchableBookmark, SearchResult } from '../types';
 
@@ -197,7 +198,7 @@ function createWebSearchItem(
         action: async (openInNewTab = true) => {
             try {
                 if (isDefault) {
-                    await chrome.search.query({
+                    await browser.search.query({
                         text: query,
                         disposition: openInNewTab ? 'NEW_TAB' : 'CURRENT_TAB',
                     });
@@ -427,7 +428,7 @@ function highlightFuzzyMatch(text: string, query: string): string {
  * 转义正则表达式特殊字符
  */
 function escapeRegExp(string: string): string {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return string.replace(/[.*+?^${}()|[\\]/g, '\\$&');
 }
 
 /**
