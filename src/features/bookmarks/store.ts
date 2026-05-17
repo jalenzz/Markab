@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 
-import { browserApiService } from '../../services/browserApi';
-import { rebuildLayout, updateFolderPositions } from '../../services/columnLayoutService';
-import { storageService } from '../../services/storageService';
-import type { DragItem, FolderColumnsType, FolderStateType } from '../../types';
+import { browserApiService } from '@/lib/browser';
+import { storageService } from '@/lib/storage';
+
 import { reorderColumnsByDrop } from './dragDrop';
+import { rebuildLayout, updateFolderPositions } from './layout';
+import type { DragItem, FolderColumnsType, FolderStateType } from './types';
 
 const FOLDER_STATE_KEY = 'folderState';
 

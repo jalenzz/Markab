@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
-import { useSettingsStore } from '../../settings/store';
+import { useSettingsStore } from '@/features/settings/store';
+
 import { useBookmarksStore } from '../store';
 
 export function useBookmarkLoader() {

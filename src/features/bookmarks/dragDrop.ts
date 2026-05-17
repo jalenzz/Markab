@@ -1,4 +1,4 @@
-import type { DragItem, FolderColumnsType } from '../../types';
+import type { DragItem, FolderColumnsType } from './types';
 
 /**
  * 计算拖拽后新的列布局。

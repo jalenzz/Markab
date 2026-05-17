@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 
-import type { SearchResult } from '../../types';
-import { createSearchResults, flattenBookmarks } from '../../utils/searchUtils';
-import { useBookmarksStore } from '../bookmarks/store';
-import { useSettingsStore } from '../settings/store';
+import { useBookmarksStore } from '@/features/bookmarks/store';
+import { useSettingsStore } from '@/features/settings/store';
+
+import { createSearchResults, flattenBookmarks } from './searchUtils';
+import type { SearchResult } from './types';
 
 interface SearchState {
     isActive: boolean;

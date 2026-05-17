@@ -2,39 +2,31 @@ import { useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { ErrorBoundary } from './app/ErrorBoundary';
-import { BookmarkGrid, Search, SettingsButton, SettingsPanel } from './components';
-import { useBookmarkLoader } from './features/bookmarks/hooks/useBookmarkLoader';
-import { SettingsProvider, useFocusManagement, useSettings, useSettingsEffects } from './hooks';
+import { ErrorBoundary } from '@/app/ErrorBoundary';
+import { BookmarkGrid } from '@/features/bookmarks/components/BookmarkGrid';
+import { useBookmarkLoader } from '@/features/bookmarks/hooks/useBookmarkLoader';
+import { Search } from '@/features/search/components/Search';
+import { SettingsButton } from '@/features/settings/components/SettingsButton';
+import { SettingsPanel } from '@/features/settings/components/SettingsPanel';
+import { useSettings } from '@/features/settings/hooks/useSettings';
+import { useSettingsEffects } from '@/features/settings/hooks/useSettingsEffects';
+import { useFocusManagement } from '@/shared/hooks/useFocusManagement';
 
 function AppContent() {
     const { settings } = useSettings();
 
-    // 设置面板状态管理
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-    // 应用设置到 DOM 和 CSS 变量
     useSettingsEffects(settings);
-
-    // 当设置加载完成 / 相关字段变化时拉取书签
     useBookmarkLoader();
 
-    // 页面焦点管理
     const { focusTargetRef } = useFocusManagement();
-
-    const handleSettingsToggle = (isOpen: boolean) => {
-        setIsSettingsOpen(isOpen);
-    };
-
-    const handleSettingsClose = () => {
-        setIsSettingsOpen(false);
-    };
 
     return (
         <DndProvider backend={HTML5Backend}>
             <div ref={focusTargetRef} className="relative min-h-screen w-full overflow-hidden">
-                <SettingsButton onToggle={handleSettingsToggle} isOpen={isSettingsOpen} />
-                <SettingsPanel isOpen={isSettingsOpen} onClose={handleSettingsClose} />
+                <SettingsButton onToggle={setIsSettingsOpen} isOpen={isSettingsOpen} />
+                <SettingsPanel isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
                 <Search />
 
                 <div className="relative z-10 min-h-screen px-10 sm:px-12 lg:px-16 2xl:px-60">
@@ -48,9 +40,7 @@ function AppContent() {
 function App() {
     return (
         <ErrorBoundary>
-            <SettingsProvider>
-                <AppContent />
-            </SettingsProvider>
+            <AppContent />
         </ErrorBoundary>
     );
 }

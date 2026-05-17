@@ -1,9 +1,10 @@
 import { produce } from 'immer';
 import { create } from 'zustand';
 
-import { DEFAULT_SETTINGS } from '../../config';
-import { storageService } from '../../services/storageService';
-import type { AppSettings } from '../../types';
+import { storageService } from '@/lib/storage';
+
+import { DEFAULT_SETTINGS } from './schema';
+import type { AppSettings } from './types';
 
 const STORAGE_KEY = 'appSettings';
 
