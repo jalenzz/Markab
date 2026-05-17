@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
+import { ErrorBoundary } from './app/ErrorBoundary';
 import { BookmarkGrid, Search, SettingsButton, SettingsPanel } from './components';
 import { SettingsProvider, useFocusManagement, useSettings, useSettingsEffects } from './hooks';
 
@@ -42,9 +43,11 @@ function AppContent() {
 
 function App() {
     return (
-        <SettingsProvider>
-            <AppContent />
-        </SettingsProvider>
+        <ErrorBoundary>
+            <SettingsProvider>
+                <AppContent />
+            </SettingsProvider>
+        </ErrorBoundary>
     );
 }
 

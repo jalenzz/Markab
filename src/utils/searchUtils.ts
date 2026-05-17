@@ -1,5 +1,6 @@
 import { pinyin } from 'pinyin-pro';
 
+import { SPECIAL_FOLDER_IDS } from '../lib/constants';
 import type { FolderItem, SearchableBookmark, SearchResult } from '../types';
 
 // 搜索评分常量
@@ -29,9 +30,8 @@ const pinyinCache = new Map<string, string>();
  * 将文件夹结构扁平化为可搜索的书签列表
  */
 export function flattenBookmarks(folders: FolderItem[]): SearchableBookmark[] {
-    // 过滤特殊文件夹
     const bookmarkFolders = folders.filter(
-        (folder) => folder.id !== 'recent-folder' && folder.id !== 'topsite-folder',
+        (folder) => !(SPECIAL_FOLDER_IDS as readonly string[]).includes(folder.id),
     );
 
     return bookmarkFolders.flatMap((folder) =>

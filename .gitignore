@@ -30,6 +30,8 @@ es
 lib
 logs
 test-output
+!src/lib
+!src/lib/**
 
 # umi
 .umi

@@ -1,3 +1,9 @@
+import {
+    RECENT_FOLDER_ID,
+    RECENT_ITEM_PREFIX,
+    TOPSITE_FOLDER_ID,
+    TOPSITE_ITEM_PREFIX,
+} from '../lib/constants';
 import type { BookmarkItem, FolderItem } from '../types';
 
 class BrowserApiService {
@@ -9,14 +15,14 @@ class BrowserApiService {
             const limitedTopSites = topSites.slice(0, topSitesNum);
 
             const children: BookmarkItem[] = limitedTopSites.map((site, index) => ({
-                id: `topsite-${index}`,
+                id: `${TOPSITE_ITEM_PREFIX}${index}`,
                 title: site.title || 'unnamed',
                 url: site.url,
-                parentId: 'topsite-folder',
+                parentId: TOPSITE_FOLDER_ID,
             }));
 
             return {
-                id: 'topsite-folder',
+                id: TOPSITE_FOLDER_ID,
                 title: 'Most Visited',
                 children,
             };
@@ -39,12 +45,12 @@ class BrowserApiService {
                 const isWindow = session.window?.tabs && session.window.tabs.length > 1;
 
                 recentTabs.push({
-                    id: `recent-${sessionIndex}`,
+                    id: `${RECENT_ITEM_PREFIX}${sessionIndex}`,
                     title: isWindow
                         ? `${session.window?.tabs?.length || 0} tabs`
                         : session.tab?.title || 'unnamed',
                     url: session.tab?.url || '',
-                    parentId: 'recent-folder',
+                    parentId: RECENT_FOLDER_ID,
                     ...(isWindow && {
                         action: async () => {
                             await chrome.sessions.restore(session.window?.sessionId);
@@ -56,7 +62,7 @@ class BrowserApiService {
             if (recentTabs.length === 0) return null;
 
             return {
-                id: 'recent-folder',
+                id: RECENT_FOLDER_ID,
                 title: 'Recently Closed',
                 children: recentTabs,
             };
