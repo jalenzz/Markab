@@ -4,6 +4,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import { ErrorBoundary } from './app/ErrorBoundary';
 import { BookmarkGrid, Search, SettingsButton, SettingsPanel } from './components';
+import { useBookmarkLoader } from './features/bookmarks/hooks/useBookmarkLoader';
 import { SettingsProvider, useFocusManagement, useSettings, useSettingsEffects } from './hooks';
 
 function AppContent() {
@@ -14,6 +15,9 @@ function AppContent() {
 
     // 应用设置到 DOM 和 CSS 变量
     useSettingsEffects(settings);
+
+    // 当设置加载完成 / 相关字段变化时拉取书签
+    useBookmarkLoader();
 
     // 页面焦点管理
     const { focusTargetRef } = useFocusManagement();

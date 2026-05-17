@@ -22,7 +22,8 @@
         "react": "^19.1.0",
         "react-dnd": "^16.0.1",
         "react-dnd-html5-backend": "^16.0.1",
-        "react-dom": "^19.1.0"
+        "react-dom": "^19.1.0",
+        "zustand": "^5.0.13"
     },
     "devDependencies": {
         "@crxjs/vite-plugin": "^2.0.0",

@@ -1,139 +1,47 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback } from 'react';
 
-import type { SearchResult, SearchState } from '../types';
-import { createSearchResults, flattenBookmarks } from '../utils/searchUtils';
-import { useBookmarks } from './useBookmarks';
-import { useSettings } from './useSettings';
+import { useSearchStore } from '../features/search/store';
+
+function isTypingKey(event: KeyboardEvent): boolean {
+    return (
+        event.key.length === 1 &&
+        /[a-zA-Z]/.test(event.key) &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.altKey
+    );
+}
+
+function isInputFocused(): boolean {
+    const active = document.activeElement;
+    return !!active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA');
+}
 
 export function useSearch() {
-    const { folderColumns } = useBookmarks();
-    const { settings } = useSettings();
+    const isActive = useSearchStore((s) => s.isActive);
+    const query = useSearchStore((s) => s.query);
+    const selectedIndex = useSearchStore((s) => s.selectedIndex);
+    const results = useSearchStore((s) => s.results);
+    const activate = useSearchStore((s) => s.activate);
+    const deactivate = useSearchStore((s) => s.deactivate);
+    const updateQuery = useSearchStore((s) => s.updateQuery);
+    const selectPrevious = useSearchStore((s) => s.selectPrevious);
+    const selectNext = useSearchStore((s) => s.selectNext);
+    const setSelectedIndex = useSearchStore((s) => s.setSelectedIndex);
+    const openItem = useSearchStore((s) => s.openItem);
+    const openSelected = useSearchStore((s) => s.openSelected);
 
-    const [searchState, setSearchState] = useState<SearchState>({
-        isActive: false,
-        query: '',
-        selectedIndex: 0,
-        results: [],
-    });
+    const searchState = { isActive, query, selectedIndex, results };
 
-    // 将所有书签扁平化为可搜索的列表
-    const allBookmarks = useMemo(() => {
-        const allFolders = folderColumns.flat();
-        return flattenBookmarks(allFolders);
-    }, [folderColumns]);
-
-    // 执行搜索
-    const performSearch = useCallback(
-        (query: string) => {
-            const results = createSearchResults(allBookmarks, query, settings.searchEngines);
-            setSearchState((prev) => ({
-                ...prev,
-                query,
-                results,
-                selectedIndex: 0, // 重置选中索引
-            }));
-        },
-        [allBookmarks, settings.searchEngines],
-    );
-
-    // 激活搜索模式
-    const activateSearch = useCallback(() => {
-        setSearchState((prev) => ({
-            ...prev,
-            isActive: true,
-            query: '',
-            results: [],
-            selectedIndex: 0,
-        }));
-    }, []);
-
-    // 退出搜索模式
-    const deactivateSearch = useCallback(() => {
-        setSearchState({
-            isActive: false,
-            query: '',
-            selectedIndex: 0,
-            results: [],
-        });
-    }, []);
-
-    // 更新搜索关键词
-    const updateQuery = useCallback(
-        (query: string) => {
-            performSearch(query);
-        },
-        [performSearch],
-    );
-
-    // 选择上一个结果
-    const selectPrevious = useCallback(() => {
-        setSearchState((prev) => ({
-            ...prev,
-            selectedIndex:
-                prev.selectedIndex > 0 ? prev.selectedIndex - 1 : prev.results.length - 1,
-        }));
-    }, []);
-
-    // 选择下一个结果
-    const selectNext = useCallback(() => {
-        setSearchState((prev) => ({
-            ...prev,
-            selectedIndex:
-                prev.selectedIndex < prev.results.length - 1 ? prev.selectedIndex + 1 : 0,
-        }));
-    }, []);
-
-    // 设置选中索引
-    const setSelectedIndex = useCallback((index: number) => {
-        setSearchState((prev) => ({
-            ...prev,
-            selectedIndex: index,
-        }));
-    }, []);
-
-    // 通用的搜索结果项执行逻辑
-    const executeSearchAction = useCallback(
-        async (item: SearchResult) => {
-            const openInNewTab = settings.linkOpen === 'new-tab';
-
-            if (item.action) {
-                await item.action(openInNewTab);
-            } else {
-                const target = openInNewTab ? '_blank' : '_self';
-                window.open(item.url, target);
-            }
-            deactivateSearch();
-        },
-        [settings.linkOpen, deactivateSearch],
-    );
-
-    // 打开选中的搜索结果项
-    const openSelectedItem = useCallback(() => {
-        const selectedItem = searchState.results[searchState.selectedIndex];
-        if (selectedItem) {
-            executeSearchAction(selectedItem);
-        }
-    }, [searchState.results, searchState.selectedIndex, executeSearchAction]);
-
-    // 打开指定搜索结果项
-    const openItem = useCallback(
-        (item: SearchResult) => {
-            executeSearchAction(item);
-        },
-        [executeSearchAction],
-    );
-
-    // 处理键盘事件
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
-            if (!searchState.isActive) {
-                return;
-            }
+            const { isActive, results } = useSearchStore.getState();
+            if (!isActive) return;
 
             switch (event.key) {
                 case 'Escape':
                     event.preventDefault();
-                    deactivateSearch();
+                    deactivate();
                     break;
                 case 'ArrowUp':
                     event.preventDefault();
@@ -145,7 +53,7 @@ export function useSearch() {
                     break;
                 case 'Enter':
                     event.preventDefault();
-                    openSelectedItem();
+                    openSelected();
                     break;
                 case '1':
                 case '2':
@@ -154,84 +62,56 @@ export function useSearch() {
                 case '5': {
                     event.preventDefault();
                     const index = parseInt(event.key) - 1;
-                    if (index < searchState.results.length) {
-                        openItem(searchState.results[index]);
+                    if (index < results.length) {
+                        openItem(results[index]);
                     }
                     break;
                 }
             }
         },
-        [
-            searchState.isActive,
-            searchState.results,
-            deactivateSearch,
-            selectPrevious,
-            selectNext,
-            openSelectedItem,
-            openItem,
-        ],
+        [deactivate, selectPrevious, selectNext, openSelected, openItem],
     );
 
-    const isTypingKey = useCallback((event: KeyboardEvent) => {
-        return (
-            event.key.length === 1 &&
-            /[a-zA-Z]/.test(event.key) &&
-            !event.ctrlKey &&
-            !event.metaKey &&
-            !event.altKey
-        );
-    }, []);
+    const handleGlobalKeyDown = useCallback(
+        (event: KeyboardEvent) => {
+            const { isActive } = useSearchStore.getState();
+            if (!isActive && !isInputFocused() && isTypingKey(event)) {
+                event.preventDefault();
+                activate();
+                requestAnimationFrame(() => {
+                    updateQuery(event.key);
+                });
+            }
+        },
+        [activate, updateQuery],
+    );
 
-    // 处理粘贴事件
     const handleGlobalPaste = useCallback(
         (event: ClipboardEvent) => {
-            const activeElement = document.activeElement;
-            const isInputFocused =
-                activeElement &&
-                (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
-
-            if (!searchState.isActive && !isInputFocused) {
+            const { isActive } = useSearchStore.getState();
+            if (!isActive && !isInputFocused()) {
                 const clipboardText = event.clipboardData?.getData('text/plain');
                 if (clipboardText && clipboardText.trim()) {
                     event.preventDefault();
-                    activateSearch();
+                    activate();
                     requestAnimationFrame(() => {
                         updateQuery(clipboardText.trim());
                     });
                 }
             }
         },
-        [searchState.isActive, activateSearch, updateQuery],
-    );
-
-    // 处理全局键盘事件
-    const handleGlobalKeyDown = useCallback(
-        (event: KeyboardEvent) => {
-            const activeElement = document.activeElement;
-            const isInputFocused =
-                activeElement &&
-                (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
-
-            if (!searchState.isActive && !isInputFocused && isTypingKey(event)) {
-                event.preventDefault();
-                activateSearch();
-                requestAnimationFrame(() => {
-                    updateQuery(event.key);
-                });
-            }
-        },
-        [searchState.isActive, isTypingKey, activateSearch, updateQuery],
+        [activate, updateQuery],
     );
 
     return {
         searchState,
-        activateSearch,
-        deactivateSearch,
+        activateSearch: activate,
+        deactivateSearch: deactivate,
         updateQuery,
         selectPrevious,
         selectNext,
         setSelectedIndex,
-        openSelectedItem,
+        openSelectedItem: openSelected,
         openItem,
         handleKeyDown,
         handleGlobalKeyDown,
