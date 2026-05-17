@@ -3,7 +3,8 @@ import { create } from 'zustand';
 import { browserApiService } from '../../services/browserApi';
 import { rebuildLayout, updateFolderPositions } from '../../services/columnLayoutService';
 import { storageService } from '../../services/storageService';
-import type { DragItem, FolderColumnsType, FolderItem, FolderStateType } from '../../types';
+import type { DragItem, FolderColumnsType, FolderStateType } from '../../types';
+import { reorderColumnsByDrop } from './dragDrop';
 
 const FOLDER_STATE_KEY = 'folderState';
 
@@ -97,52 +98,13 @@ export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set,
     },
 
     dropFolder: (dragItem, targetCol, targetIndex) => {
-        const { folderColumns: prevColumns } = get();
-        const draggedFolder: FolderItem | undefined =
-            prevColumns[dragItem.sourceCol]?.[dragItem.sourceIndex];
-
-        if (!draggedFolder) {
-            console.error('could not find dragged folder', dragItem);
-            return;
-        }
-
-        if (targetCol === dragItem.sourceCol) {
-            const actualTargetIndex =
-                targetIndex > dragItem.sourceIndex ? targetIndex - 1 : targetIndex;
-            if (actualTargetIndex === dragItem.sourceIndex) {
-                return;
-            }
-        }
-
-        const newColumns: FolderColumnsType = prevColumns.map((column, index) => {
-            if (targetCol !== -1 && index !== dragItem.sourceCol && index !== targetCol) {
-                return column;
-            }
-            return [...column];
-        });
-
-        newColumns[dragItem.sourceCol].splice(dragItem.sourceIndex, 1);
-
-        let adjustedTargetIndex = targetIndex;
-        if (targetCol === -1) {
-            if (newColumns[dragItem.sourceCol].length === 0) {
-                newColumns.splice(dragItem.sourceCol, 1);
-                if (adjustedTargetIndex > dragItem.sourceCol) {
-                    adjustedTargetIndex = adjustedTargetIndex - 1;
-                }
-            }
-            newColumns.splice(adjustedTargetIndex, 0, [draggedFolder]);
-        } else {
-            const finalTargetIndex =
-                dragItem.sourceCol === targetCol && adjustedTargetIndex > dragItem.sourceIndex
-                    ? adjustedTargetIndex - 1
-                    : adjustedTargetIndex;
-            newColumns[targetCol].splice(finalTargetIndex, 0, draggedFolder);
-
-            if (newColumns[dragItem.sourceCol].length === 0) {
-                newColumns.splice(dragItem.sourceCol, 1);
-            }
-        }
+        const newColumns = reorderColumnsByDrop(
+            get().folderColumns,
+            dragItem,
+            targetCol,
+            targetIndex,
+        );
+        if (!newColumns) return;
 
         set({ folderColumns: newColumns });
 
