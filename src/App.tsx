@@ -10,21 +10,20 @@ import { SettingsButton } from '@/features/settings/components/SettingsButton';
 import { SettingsPanel } from '@/features/settings/components/SettingsPanel';
 import { useSettings } from '@/features/settings/hooks/useSettings';
 import { useSettingsEffects } from '@/features/settings/hooks/useSettingsEffects';
-import { useFocusManagement } from '@/shared/hooks/useFocusManagement';
 
 function AppContent() {
-    const { settings } = useSettings();
+    const { settings, isInitialized } = useSettings();
 
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     useSettingsEffects(settings);
     useBookmarkLoader();
 
-    const { focusTargetRef } = useFocusManagement();
+    if (!isInitialized) return null;
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <div ref={focusTargetRef} className="relative min-h-screen w-full overflow-hidden">
+            <div className="relative min-h-screen w-full overflow-hidden">
                 <SettingsButton onToggle={setIsSettingsOpen} isOpen={isSettingsOpen} />
                 <SettingsPanel isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
                 <Search />

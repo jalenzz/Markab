@@ -5,7 +5,6 @@ export interface AppSettings {
     topSitesNum: number;
     recentlyClosedNum: number;
     lockLayout: boolean;
-    quickSearch: boolean;
     linkOpen: 'current-tab' | 'new-tab';
     hiddenFolders: string[];
     searchEngines: string;

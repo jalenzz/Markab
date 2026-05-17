@@ -7,7 +7,6 @@ export const DEFAULT_SETTINGS = {
     lockLayout: false,
     linkOpen: 'current-tab' as const,
     hiddenFolders: [] as string[],
-    quickSearch: true,
     searchEngines:
         'Google,https://www.google.com/search?q={query};Bing,https://www.bing.com/search?q={query}',
 } as const;
@@ -67,13 +66,6 @@ export const SETTINGS_CONFIG = {
             {
                 key: 'lockLayout',
                 label: 'Lock Layout',
-                type: 'toggle',
-            },
-            {
-                key: 'quickSearch',
-                label: 'Quick Search',
-                description:
-                    'When enabled, you can directly type to start search without clicking on the page first.',
                 type: 'toggle',
             },
             {
