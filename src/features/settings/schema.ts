@@ -1,7 +1,7 @@
 export const DEFAULT_SETTINGS = {
     theme: 'auto' as const,
     fontFamily: '',
-    fontSize: 14,
+    fontSize: 16,
     topSitesNum: 10,
     recentlyClosedNum: 10,
     lockLayout: false,
