@@ -32,9 +32,7 @@ const pinyinCache = new Map<string, string>();
  * 将文件夹结构扁平化为可搜索的书签列表
  */
 export function flattenBookmarks(folders: FolderItem[]): SearchableBookmark[] {
-    const bookmarkFolders = folders.filter(
-        (folder) => !(SPECIAL_FOLDER_IDS as readonly string[]).includes(folder.id),
-    );
+    const bookmarkFolders = folders.filter((folder) => !SPECIAL_FOLDER_IDS.includes(folder.id));
 
     return bookmarkFolders.flatMap((folder) =>
         folder.children.map((bookmark) => ({
