@@ -8,8 +8,8 @@ import { ToggleControl } from './controls/ToggleControl';
 interface SettingsCategoryProps {
     title: string;
     settings: SettingConfig[];
-    getSettingValue: (key: keyof AppSettings) => AppSettings[keyof AppSettings];
-    updateSetting: (key: keyof AppSettings, value: AppSettings[keyof AppSettings]) => void;
+    getSettingValue: <K extends keyof AppSettings>(key: K) => AppSettings[K];
+    updateSetting: <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => void;
 }
 
 interface ControlComponentProps {
