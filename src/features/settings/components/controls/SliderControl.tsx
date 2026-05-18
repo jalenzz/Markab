@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 import type { SliderSettingConfig } from '../../types';
 import { SettingLabel } from '../SettingLabel';
 
@@ -8,6 +10,9 @@ interface SliderControlProps {
 }
 
 export function SliderControl({ config, value, onChange }: SliderControlProps) {
+    const progress = ((value - config.min) / (config.max - config.min)) * 100;
+    const trackStyle = { '--slider-progress': `${progress}%` } as CSSProperties;
+
     return (
         <div className="flex items-center justify-between py-3">
             <SettingLabel label={config.label} description={config.description} />
@@ -21,6 +26,7 @@ export function SliderControl({ config, value, onChange }: SliderControlProps) {
                         value={value}
                         onChange={(e) => onChange(Number(e.target.value))}
                         className="w-20 accent-newtab-primary"
+                        style={trackStyle}
                     />
                     {config.showValue && (
                         <span className="w-8 text-right text-body font-medium text-newtab-text-primary">

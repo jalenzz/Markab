@@ -1,3 +1,7 @@
+@import '@fontsource/lora/latin-400.css';
+@import '@fontsource/lora/latin-500.css';
+@import '@fontsource/lora/latin-600.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,59 +15,59 @@
         --font-size-title: 1.25rem;
         --font-size-body: 0.875rem;
         --font-family-primary:
-            system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-            'Microsoft YaHei', sans-serif;
+            'Lora', 'TsangerJinKai02', 'Source Han Serif SC', 'Noto Serif CJK SC', 'Songti SC',
+            'STSong', Georgia, serif;
 
-        --color-primary: rgb(0, 122, 255);
+        --color-primary: #d97757;
 
-        --color-text-primary: rgb(29, 35, 41);
-        --color-text-secondary: rgb(74, 85, 104);
+        --color-text-primary: #141413;
+        --color-text-secondary: rgb(74, 73, 72);
 
-        --color-surface: rgb(248, 250, 252);
-        --color-surface-elevated: rgb(255, 255, 255);
-        --color-surface-hover: rgba(59, 130, 246, 0.08);
+        --color-surface: #faf9f5;
+        --color-surface-elevated: #ffffff;
+        --color-surface-hover: rgba(217, 119, 87, 0.08);
 
-        --color-border: rgba(74, 85, 104, 0.2);
+        --color-border: #e8e6dc;
     }
 
     html[data-theme='light'] {
-        --color-primary: rgb(0, 122, 255);
+        --color-primary: #d97757;
 
-        --color-text-primary: rgb(29, 35, 41);
-        --color-text-secondary: rgb(74, 85, 104);
+        --color-text-primary: #141413;
+        --color-text-secondary: rgb(74, 73, 72);
 
-        --color-surface: rgb(248, 250, 252);
-        --color-surface-elevated: rgb(255, 255, 255);
-        --color-surface-hover: rgba(59, 130, 246, 0.08);
+        --color-surface: #faf9f5;
+        --color-surface-elevated: #ffffff;
+        --color-surface-hover: rgba(217, 119, 87, 0.08);
 
-        --color-border: rgba(74, 85, 104, 0.2);
+        --color-border: #e8e6dc;
     }
 
     html[data-theme='dark'] {
-        --color-primary: rgb(10, 132, 255);
+        --color-primary: #d97757;
 
-        --color-text-primary: rgb(247, 249, 252);
-        --color-text-secondary: rgb(203, 213, 224);
+        --color-text-primary: #faf9f5;
+        --color-text-secondary: #b0aea5;
 
-        --color-surface: rgb(32, 33, 36);
-        --color-surface-elevated: rgb(41, 42, 45);
-        --color-surface-hover: rgba(59, 130, 246, 0.12);
+        --color-surface: #141413;
+        --color-surface-elevated: #1f1e1c;
+        --color-surface-hover: rgba(217, 119, 87, 0.12);
 
-        --color-border: rgba(203, 213, 224, 0.2);
+        --color-border: rgba(176, 174, 165, 0.25);
     }
 
     @media (prefers-color-scheme: dark) {
         html:not([data-theme]) {
-            --color-primary: rgb(10, 132, 255);
+            --color-primary: #d97757;
 
-            --color-text-primary: rgb(247, 249, 252);
-            --color-text-secondary: rgb(203, 213, 224);
+            --color-text-primary: #faf9f5;
+            --color-text-secondary: #b0aea5;
 
-            --color-surface: rgb(32, 33, 36);
-            --color-surface-elevated: rgb(41, 42, 45);
-            --color-surface-hover: rgba(59, 130, 246, 0.12);
+            --color-surface: #141413;
+            --color-surface-elevated: #1f1e1c;
+            --color-surface-hover: rgba(217, 119, 87, 0.12);
 
-            --color-border: rgba(203, 213, 224, 0.2);
+            --color-border: rgba(176, 174, 165, 0.25);
         }
     }
 
@@ -74,6 +78,55 @@
         color: var(--color-text-primary);
         -webkit-overflow-scrolling: touch;
         scroll-behavior: smooth;
+    }
+
+    input[type='range'] {
+        -webkit-appearance: none;
+        appearance: none;
+        background: transparent;
+    }
+
+    input[type='range']::-webkit-slider-runnable-track {
+        background: linear-gradient(
+            to right,
+            var(--color-primary) 0%,
+            var(--color-primary) var(--slider-progress, 0%),
+            var(--color-border) var(--slider-progress, 0%),
+            var(--color-border) 100%
+        );
+        border-radius: 2px;
+        height: 4px;
+    }
+
+    input[type='range']::-moz-range-track {
+        background: linear-gradient(
+            to right,
+            var(--color-primary) 0%,
+            var(--color-primary) var(--slider-progress, 0%),
+            var(--color-border) var(--slider-progress, 0%),
+            var(--color-border) 100%
+        );
+        border-radius: 2px;
+        height: 4px;
+    }
+
+    input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        background: var(--color-primary);
+        border: none;
+        border-radius: 50%;
+        height: 12px;
+        margin-top: -4px;
+        width: 12px;
+    }
+
+    input[type='range']::-moz-range-thumb {
+        background: var(--color-primary);
+        border: none;
+        border-radius: 50%;
+        height: 12px;
+        width: 12px;
     }
 
     ::-webkit-scrollbar {
