@@ -107,13 +107,10 @@ export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set,
         );
         if (!newColumns) return;
 
-        set({ folderColumns: newColumns });
-
-        setTimeout(() => {
-            set((state) => ({
-                folderState: updateFolderPositions(newColumns, state.folderState),
-            }));
-        }, 0);
+        set((state) => ({
+            folderColumns: newColumns,
+            folderState: updateFolderPositions(newColumns, state.folderState),
+        }));
     },
 }));
 
