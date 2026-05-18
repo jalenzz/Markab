@@ -129,6 +129,58 @@
         width: 12px;
     }
 
+    .folder-title {
+        padding-bottom: 4px;
+        position: relative;
+    }
+
+    .folder-title::after {
+        background: var(--color-primary);
+        bottom: 0;
+        content: '';
+        height: 2px;
+        left: 0;
+        position: absolute;
+        right: 0;
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .folder-header:hover .folder-title::after {
+        transform: scaleX(1);
+    }
+
+    .folder-header .arrow-icon svg {
+        transition: color 200ms, opacity 200ms;
+    }
+
+    .folder-header:hover .arrow-icon svg {
+        color: var(--color-text-primary);
+        opacity: 1;
+    }
+
+    .bookmark-title {
+        position: relative;
+    }
+
+    .bookmark-title::after {
+        background: var(--color-primary);
+        bottom: 2px;
+        content: '';
+        height: 1px;
+        left: 0;
+        position: absolute;
+        right: 0;
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bookmark-link:hover .bookmark-title::after {
+        transform: scaleX(1);
+    }
+
     ::-webkit-scrollbar {
         display: none;
     }

@@ -85,7 +85,7 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
 
     return (
         <div
-            className="flex cursor-pointer items-center space-x-4 rounded-default px-1 py-2 transition-colors duration-default hover:bg-newtab-surface-hover"
+            className="folder-header flex cursor-pointer items-center space-x-4 px-1 py-2"
             onClick={onTitleClick}
         >
             <div
@@ -127,7 +127,7 @@ export const FolderHeader: React.FC<FolderHeaderProps> = ({
             </div>
 
             <div className="flex flex-1 items-center justify-between">
-                <h3 className="truncate text-title font-semibold text-newtab-text-primary">
+                <h3 className="folder-title truncate text-title font-semibold text-newtab-text-primary">
                     {title}
                 </h3>
 

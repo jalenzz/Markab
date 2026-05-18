@@ -40,7 +40,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
                 target={linkTarget}
                 rel="noopener noreferrer"
                 onClick={handleClick}
-                className="group/bookmark inline-flex cursor-pointer items-center gap-3 rounded-default px-2 py-1 text-newtab-text-secondary no-underline transition-colors duration-default hover:bg-newtab-surface-hover hover:text-newtab-text-primary hover:no-underline"
+                className="bookmark-link inline-flex cursor-pointer items-center gap-3 rounded-default px-2 py-1 text-newtab-text-primary no-underline"
                 title={bookmark.title}
             >
                 <div className="flex-shrink-0">
@@ -52,7 +52,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark, index }) =
                         className="rounded-sm"
                     />
                 </div>
-                <span className="max-w-[200px] truncate text-body font-medium leading-relaxed">
+                <span className="bookmark-title max-w-[200px] truncate text-body font-medium leading-relaxed">
                     {bookmark.title}
                 </span>
             </a>
