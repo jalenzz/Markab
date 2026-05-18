@@ -30,6 +30,8 @@ interface BookmarksActions {
     hydrateFolderState: () => Promise<void>;
 }
 
+let inflightLoad: Promise<void> | null = null;
+
 export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set, get) => ({
     folderColumns: [],
     folderState: {},
@@ -49,28 +51,44 @@ export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set,
     },
 
     loadBookmarks: async ({ topSitesNum, recentlyClosedNum, hiddenFolders, forceReload }) => {
+        if (inflightLoad) {
+            await inflightLoad;
+            return;
+        }
+
         const { hasLoaded, isFolderStateHydrated } = get();
         if (hasLoaded && !forceReload) return;
         if (!isFolderStateHydrated) {
             await get().hydrateFolderState();
         }
 
+        const load = (async () => {
+            try {
+                set({ error: null });
+                const allFolders = await browserApiService.getAllFolders(
+                    topSitesNum,
+                    recentlyClosedNum,
+                );
+                const displayFolders = allFolders.filter(
+                    (folder) => !hiddenFolders.includes(folder.id),
+                );
+                const columns = rebuildLayout(displayFolders, get().folderState);
+                set({ folderColumns: columns, hasLoaded: true });
+            } catch (err) {
+                set({
+                    error: err instanceof Error ? err.message : 'load data failed',
+                    hasLoaded: true,
+                });
+            }
+        })();
+
+        inflightLoad = load;
         try {
-            set({ error: null });
-            const allFolders = await browserApiService.getAllFolders(
-                topSitesNum,
-                recentlyClosedNum,
-            );
-            const displayFolders = allFolders.filter(
-                (folder) => !hiddenFolders.includes(folder.id),
-            );
-            const columns = rebuildLayout(displayFolders, get().folderState);
-            set({ folderColumns: columns, hasLoaded: true });
-        } catch (err) {
-            set({
-                error: err instanceof Error ? err.message : 'load data failed',
-                hasLoaded: true,
-            });
+            await load;
+        } finally {
+            if (inflightLoad === load) {
+                inflightLoad = null;
+            }
         }
     },
 
