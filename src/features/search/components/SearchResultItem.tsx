@@ -25,21 +25,35 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = React.memo(
 
         return (
             <div
-                className={`flex cursor-pointer items-center gap-3 px-5 py-2 transition-all duration-default ${
-                    isSelected ? 'bg-newtab-surface-hover' : 'hover:bg-newtab-surface-hover'
-                }`}
+                role="option"
+                aria-selected={isSelected}
+                className="search-result group relative flex cursor-pointer items-center gap-3 py-2 pl-5 pr-4 transition-colors duration-150"
+                data-selected={isSelected || undefined}
                 onClick={onClick}
                 onMouseEnter={onMouseEnter}
             >
-                {/* 图标 */}
+                <span
+                    aria-hidden="true"
+                    className="search-result-indicator pointer-events-none absolute bottom-1.5 left-0 top-1.5 w-[2px] origin-center bg-newtab-primary transition-transform duration-200"
+                />
+
                 <div className="flex-shrink-0">
                     {isWebSearch ? (
-                        // 搜索图标
-                        <div className="flex h-4 w-4 items-center justify-center">
-                            <span className="text-xs">🔍</span>
-                        </div>
+                        <svg
+                            className="h-4 w-4 text-newtab-text-secondary"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={1.75}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                            />
+                        </svg>
                     ) : (
-                        // 书签 Favicon
                         <img
                             src={getFaviconUrl(item.url)}
                             alt=""
@@ -52,24 +66,21 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = React.memo(
                     )}
                 </div>
 
-                {/* 内容信息 */}
                 <div className="min-w-0 flex-1">
-                    {/* 标题 */}
                     <div
-                        className="text-body font-medium text-newtab-text-primary"
+                        className="truncate text-body text-newtab-text-primary"
                         dangerouslySetInnerHTML={{ __html: highlightedTitle }}
                     />
-
-                    {/* 副标题 */}
-                    <div className="text-xs text-newtab-text-secondary">{item.folderTitle}</div>
+                    {item.folderTitle && (
+                        <div className="truncate text-[0.7rem] uppercase tracking-[0.14em] text-newtab-text-secondary/80">
+                            {item.folderTitle}
+                        </div>
+                    )}
                 </div>
 
-                {/* 数字快捷键提示 */}
-                <div className="flex-shrink-0">
-                    <kbd className="rounded border border-newtab-border bg-newtab-surface px-1.5 py-0.5 text-xs text-newtab-text-secondary">
-                        {index + 1}
-                    </kbd>
-                </div>
+                <kbd className="flex-shrink-0 font-primary text-[0.7rem] italic text-newtab-text-secondary/60">
+                    {index + 1}
+                </kbd>
             </div>
         );
     },

@@ -26,6 +26,7 @@ function AppContent() {
             <div className="relative min-h-screen w-full overflow-hidden">
                 <SettingsButton onToggle={setIsSettingsOpen} isOpen={isSettingsOpen} />
                 <SettingsPanel isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+
                 <Search />
 
                 <div className="relative z-10 min-h-screen px-10 sm:px-12 lg:px-16 2xl:px-60">

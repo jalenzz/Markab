@@ -21,7 +21,18 @@ export function useGlobalSearchTriggers(): void {
     useEffect(() => {
         const onKeydown = (event: KeyboardEvent) => {
             const { isActive, activate, updateQuery } = useSearchStore.getState();
-            if (!isActive && !isInputFocused() && isTypingKey(event)) {
+            if (isActive || isInputFocused()) return;
+
+            const isSlashTrigger = event.key === '/' && !event.ctrlKey && !event.metaKey;
+            const isMetaKTrigger = event.key.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey);
+
+            if (isSlashTrigger || isMetaKTrigger) {
+                event.preventDefault();
+                activate();
+                return;
+            }
+
+            if (isTypingKey(event)) {
                 event.preventDefault();
                 activate();
                 requestAnimationFrame(() => {

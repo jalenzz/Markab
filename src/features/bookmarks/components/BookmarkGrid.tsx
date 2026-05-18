@@ -9,7 +9,7 @@ export const BookmarkGrid: React.FC = () => {
         useBookmarks();
 
     return (
-        <main className="w-full py-12">
+        <main className="w-full pb-12 pt-4">
             <div className="flex w-full flex-row items-start justify-evenly">
                 {/* 左边缘拖拽区域 */}
                 <DropZoneInColumn

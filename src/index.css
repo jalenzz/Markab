@@ -160,6 +160,34 @@
         opacity: 1;
     }
 
+    .search-row {
+        border-bottom: 1px solid var(--color-border);
+        transition: border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .search-row.is-active,
+    .search-row:has(.search-trigger:hover) {
+        border-bottom-color: var(--color-primary);
+    }
+
+    .search-trigger:focus-visible {
+        outline: none;
+    }
+
+    .search-result-indicator {
+        transform: scaleY(0);
+        transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .search-result:hover .search-result-indicator,
+    .search-result[data-selected] .search-result-indicator {
+        transform: scaleY(1);
+    }
+
+    .search-result[data-selected] {
+        background-color: var(--color-surface-hover);
+    }
+
     .bookmark-title {
         position: relative;
     }

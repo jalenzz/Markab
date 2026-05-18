@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { ANIMATION_CONFIG } from '@/shared/animations';
 
@@ -9,73 +9,78 @@ import { handleSearchKey } from '../keyboardActions';
 import { useSearchStore } from '../store';
 import { SearchInput } from './SearchInput';
 import { SearchResults } from './SearchResults';
+import { SearchTrigger } from './SearchTrigger';
 
 export const Search: React.FC = () => {
     const isActive = useSearchStore((s) => s.isActive);
     const query = useSearchStore((s) => s.query);
     const results = useSearchStore((s) => s.results);
     const selectedIndex = useSearchStore((s) => s.selectedIndex);
+    const activate = useSearchStore((s) => s.activate);
     const updateQuery = useSearchStore((s) => s.updateQuery);
     const deactivate = useSearchStore((s) => s.deactivate);
     const setSelectedIndex = useSearchStore((s) => s.setSelectedIndex);
     const openItem = useSearchStore((s) => s.openItem);
 
+    const containerRef = useRef<HTMLDivElement>(null);
+
     useGlobalSearchTriggers();
     useSearchKeyboard();
 
-    const handleInputKeyDown = (event: React.KeyboardEvent) => {
-        // 阻止冒泡，避免与全局 keydown 重复触发
-        event.stopPropagation();
+    useEffect(() => {
+        if (!isActive) return;
+        const onMouseDown = (event: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                deactivate();
+            }
+        };
+        document.addEventListener('mousedown', onMouseDown);
+        return () => document.removeEventListener('mousedown', onMouseDown);
+    }, [isActive, deactivate]);
 
+    const handleInputKeyDown = (event: React.KeyboardEvent) => {
+        event.stopPropagation();
         const isNavigationKey = ['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(event.key);
         const isNumberKey = /^[1-5]$/.test(event.key);
-
         if (isNavigationKey || isNumberKey) {
             handleSearchKey(event);
         }
     };
 
-    const handleBackdropClick = (event: React.MouseEvent) => {
-        if (event.target === event.currentTarget) {
-            deactivate();
-        }
-    };
-
     return (
-        <AnimatePresence>
-            {isActive && (
-                <motion.div
-                    {...ANIMATION_CONFIG.presets.fadeIn}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-32 backdrop-blur-sm"
-                    onClick={handleBackdropClick}
-                >
+        <div
+            ref={containerRef}
+            className="relative z-30 mx-auto w-full max-w-md px-4 pt-3"
+        >
+            <div className={`search-row flex h-10 items-center ${isActive ? 'is-active' : ''}`}>
+                {isActive ? (
+                    <SearchInput
+                        value={query}
+                        onChange={updateQuery}
+                        onKeyDown={handleInputKeyDown}
+                    />
+                ) : (
+                    <SearchTrigger onClick={activate} />
+                )}
+            </div>
+
+            <AnimatePresence>
+                {isActive && results.length > 0 && (
                     <motion.div
                         {...ANIMATION_CONFIG.presets.slideInUp}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="w-full max-w-lg overflow-hidden rounded-lg bg-newtab-surface-elevated shadow-2xl"
-                        onClick={(e) => e.stopPropagation()}
+                        exit={{ opacity: 0, y: -4 }}
+                        className="absolute inset-x-4 top-full z-30 mt-2 overflow-hidden rounded-md border border-newtab-border bg-newtab-surface-elevated shadow-[0_18px_48px_-24px_rgba(20,20,19,0.35)]"
                     >
-                        <div className="px-2 pt-3">
-                            <SearchInput
-                                value={query}
-                                onChange={updateQuery}
-                                onKeyDown={handleInputKeyDown}
-                            />
-                        </div>
-
-                        <div className="pt-1">
-                            <SearchResults
-                                results={results}
-                                selectedIndex={selectedIndex}
-                                query={query}
-                                onItemClick={openItem}
-                                onSelectedIndexChange={setSelectedIndex}
-                            />
-                        </div>
+                        <SearchResults
+                            results={results}
+                            selectedIndex={selectedIndex}
+                            query={query}
+                            onItemClick={openItem}
+                            onSelectedIndexChange={setSelectedIndex}
+                        />
                     </motion.div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+                )}
+            </AnimatePresence>
+        </div>
     );
 };
