@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { useBookmarksStore } from '@/features/bookmarks/store';
 import { useSettingsStore } from '@/features/settings/store';
 
-import { createSearchResults, flattenBookmarks } from './searchUtils';
+import { createSearchResults, ensurePinyinLoaded, flattenBookmarks } from './searchUtils';
 import type { SearchResult } from './types';
 
 interface SearchState {
@@ -16,6 +16,8 @@ interface SearchState {
 interface SearchActions {
     activate: () => void;
     deactivate: () => void;
+    setQuery: (query: string) => void;
+    recomputeResults: () => void;
     updateQuery: (query: string) => void;
     selectPrevious: () => void;
     selectNext: () => void;
@@ -35,6 +37,7 @@ export const useSearchStore = create<SearchState & SearchActions>((set, get) => 
     ...INITIAL_STATE,
 
     activate: () => {
+        void ensurePinyinLoaded();
         set({ ...INITIAL_STATE, isActive: true });
     },
 
@@ -42,12 +45,22 @@ export const useSearchStore = create<SearchState & SearchActions>((set, get) => 
         set({ ...INITIAL_STATE });
     },
 
-    updateQuery: (query) => {
+    setQuery: (query) => {
+        set({ query, selectedIndex: 0 });
+    },
+
+    recomputeResults: () => {
+        const { query } = get();
         const { folderColumns } = useBookmarksStore.getState();
         const { searchEngines } = useSettingsStore.getState().settings;
         const allBookmarks = flattenBookmarks(folderColumns.flat());
         const results = createSearchResults(allBookmarks, query, searchEngines);
-        set({ query, results, selectedIndex: 0 });
+        set({ results });
+    },
+
+    updateQuery: (query) => {
+        get().setQuery(query);
+        get().recomputeResults();
     },
 
     selectPrevious: () => {

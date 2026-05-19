@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 import { ANIMATION_CONFIG } from '@/shared/animations';
 
@@ -11,38 +11,101 @@ import { SearchInput } from './SearchInput';
 import { SearchResults } from './SearchResults';
 import { SearchTrigger } from './SearchTrigger';
 
+const SEARCH_DEBOUNCE_MS = 100;
+
+interface DebouncedFn {
+    (): void;
+    cancel: () => void;
+    flush: () => void;
+}
+
 export const Search: React.FC = () => {
     const isActive = useSearchStore((s) => s.isActive);
     const query = useSearchStore((s) => s.query);
     const results = useSearchStore((s) => s.results);
     const selectedIndex = useSearchStore((s) => s.selectedIndex);
     const activate = useSearchStore((s) => s.activate);
-    const updateQuery = useSearchStore((s) => s.updateQuery);
+    const setQuery = useSearchStore((s) => s.setQuery);
+    const recomputeResults = useSearchStore((s) => s.recomputeResults);
     const deactivate = useSearchStore((s) => s.deactivate);
     const setSelectedIndex = useSearchStore((s) => s.setSelectedIndex);
     const openItem = useSearchStore((s) => s.openItem);
 
     const containerRef = useRef<HTMLDivElement>(null);
+    const recomputeRef = useRef(recomputeResults);
+    recomputeRef.current = recomputeResults;
+
+    const debouncedRecompute = useMemo<DebouncedFn>(() => {
+        let timer: ReturnType<typeof setTimeout> | null = null;
+        const fire = () => {
+            timer = null;
+            recomputeRef.current();
+        };
+        const fn = (() => {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(fire, SEARCH_DEBOUNCE_MS);
+        }) as DebouncedFn;
+        fn.cancel = () => {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+        };
+        fn.flush = () => {
+            if (timer) {
+                clearTimeout(timer);
+                fire();
+            }
+        };
+        return fn;
+    }, []);
+
+    const handleQueryChange = useMemo(
+        () => (value: string) => {
+            setQuery(value);
+            if (value === '') {
+                debouncedRecompute.cancel();
+                recomputeRef.current();
+            } else {
+                debouncedRecompute();
+            }
+        },
+        [setQuery, debouncedRecompute],
+    );
 
     useGlobalSearchTriggers();
     useSearchKeyboard();
+
+    useEffect(() => () => debouncedRecompute.cancel(), [debouncedRecompute]);
+
+    useEffect(() => {
+        if (!isActive) {
+            debouncedRecompute.cancel();
+        }
+    }, [isActive, debouncedRecompute]);
 
     useEffect(() => {
         if (!isActive) return;
         const onMouseDown = (event: MouseEvent) => {
             if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                debouncedRecompute.cancel();
                 deactivate();
             }
         };
         document.addEventListener('mousedown', onMouseDown);
         return () => document.removeEventListener('mousedown', onMouseDown);
-    }, [isActive, deactivate]);
+    }, [isActive, deactivate, debouncedRecompute]);
 
     const handleInputKeyDown = (event: React.KeyboardEvent) => {
         event.stopPropagation();
         const isNavigationKey = ['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(event.key);
         const isNumberKey = /^[1-5]$/.test(event.key);
         if (isNavigationKey || isNumberKey) {
+            if (event.key === 'Enter') {
+                debouncedRecompute.flush();
+            } else if (event.key === 'Escape') {
+                debouncedRecompute.cancel();
+            }
             handleSearchKey(event);
         }
     };
@@ -53,7 +116,7 @@ export const Search: React.FC = () => {
                 {isActive ? (
                     <SearchInput
                         value={query}
-                        onChange={updateQuery}
+                        onChange={handleQueryChange}
                         onKeyDown={handleInputKeyDown}
                     />
                 ) : (

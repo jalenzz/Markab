@@ -8,9 +8,13 @@ import {
 } from './constants';
 
 class BrowserApiService {
-    async getTopSitesAsBookmarkFolder(topSitesNum: number = 10): Promise<FolderItem | null> {
+    async getTopSitesAsBookmarkFolder(
+        topSitesNum: number = 10,
+        signal?: AbortSignal,
+    ): Promise<FolderItem | null> {
         try {
             const topSites = await chrome.topSites.get();
+            if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
             if (topSites.length === 0) return null;
 
             const limitedTopSites = topSites.slice(0, topSitesNum);
@@ -28,6 +32,7 @@ class BrowserApiService {
                 children,
             };
         } catch (error) {
+            if ((error as Error)?.name === 'AbortError') throw error;
             console.error('getTopSitesAsBookmarkFolder failed:', error);
             return null;
         }
@@ -35,11 +40,13 @@ class BrowserApiService {
 
     async getRecentlyClosedAsBookmarkFolder(
         recentlyClosedNum: number = 10,
+        signal?: AbortSignal,
     ): Promise<FolderItem | null> {
         try {
             const sessions = await chrome.sessions.getRecentlyClosed({
                 maxResults: recentlyClosedNum,
             });
+            if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
             const recentTabs: BookmarkItem[] = [];
 
             sessions.forEach((session, sessionIndex) => {
@@ -68,12 +75,13 @@ class BrowserApiService {
                 children: recentTabs,
             };
         } catch (error) {
+            if ((error as Error)?.name === 'AbortError') throw error;
             console.error('getRecentlyClosedAsBookmarkFolder failed: ', error);
             return null;
         }
     }
 
-    async getBookmarkFolders(): Promise<FolderItem[]> {
+    async getBookmarkFolders(signal?: AbortSignal): Promise<FolderItem[]> {
         try {
             const bookmarkTree = await new Promise<chrome.bookmarks.BookmarkTreeNode[]>(
                 (resolve, reject) => {
@@ -86,6 +94,8 @@ class BrowserApiService {
                     });
                 },
             );
+
+            if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
 
             const folders: FolderItem[] = [];
 
@@ -128,7 +138,9 @@ class BrowserApiService {
 
             return folders;
         } catch (error) {
-            console.error('getBookmarkFolders failed: ', error);
+            if ((error as Error)?.name !== 'AbortError') {
+                console.error('getBookmarkFolders failed: ', error);
+            }
             throw error;
         }
     }
@@ -139,12 +151,15 @@ class BrowserApiService {
     async getAllFolders(
         topSitesNum: number = 10,
         recentlyClosedNum: number = 10,
+        signal?: AbortSignal,
     ): Promise<FolderItem[]> {
         const [bookmarkFolders, topSitesFolder, recentlyClosedFolder] = await Promise.all([
-            this.getBookmarkFolders(),
-            this.getTopSitesAsBookmarkFolder(topSitesNum),
-            this.getRecentlyClosedAsBookmarkFolder(recentlyClosedNum),
+            this.getBookmarkFolders(signal),
+            this.getTopSitesAsBookmarkFolder(topSitesNum, signal),
+            this.getRecentlyClosedAsBookmarkFolder(recentlyClosedNum, signal),
         ]);
+
+        if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
 
         const folders: FolderItem[] = [...bookmarkFolders];
 

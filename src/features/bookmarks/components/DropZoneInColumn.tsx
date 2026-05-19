@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useDrop } from 'react-dnd';
 
-import { useSettings } from '@/features/settings/hooks/useSettings';
+import { useSettingsStore } from '@/features/settings/store';
 
 import { type DragItem } from '../types';
 
@@ -18,11 +18,15 @@ export const DropZoneInColumn: React.FC<DropZoneInColumnProps> = ({
     isEdge = false,
     edgeType,
 }) => {
-    const { settings } = useSettings();
-    const isDragEnabled = !settings.lockLayout;
+    const isDragEnabled = useSettingsStore((s) => !s.settings.lockLayout);
 
-    const [{ isOver, canDrop }, drop] = useDrop(
-        {
+    const dropRef = useRef<HTMLDivElement>(null);
+    const [{ isOver, canDrop }, drop] = useDrop<
+        DragItem,
+        unknown,
+        { isOver: boolean; canDrop: boolean }
+    >(
+        () => ({
             accept: 'item',
             drop: (item: DragItem) => {
                 // 使用特殊的 targetCol 值 -1 表示创建新列
@@ -35,15 +39,16 @@ export const DropZoneInColumn: React.FC<DropZoneInColumnProps> = ({
                 isOver: monitor.isOver(),
                 canDrop: monitor.canDrop(),
             }),
-        },
+        }),
         [insertIndex, onFolderDrop, isEdge, edgeType, isDragEnabled],
     );
+    drop(dropRef);
 
     const showDropIndicator = isOver && canDrop;
 
     return (
         <div
-            ref={drop as never}
+            ref={dropRef}
             className={`flex h-full min-h-96 w-8 items-center justify-center transition-colors duration-default ${isEdge ? 'w-16' : ''}`}
         >
             {showDropIndicator && <div className="h-32 w-1 bg-newtab-primary" />}

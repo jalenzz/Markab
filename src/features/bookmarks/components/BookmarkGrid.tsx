@@ -1,15 +1,26 @@
 import React from 'react';
 
 import { useBookmarks } from '../hooks/useBookmarks';
+import { useBookmarksStore } from '../store';
 import { BookmarkColumn } from './BookmarkColumn';
 import { DropZoneInColumn } from './DropZoneInColumn';
 
 export const BookmarkGrid: React.FC = () => {
-    const { folderColumns, folderState, handleFolderClick, handleEmojiChange, handleFolderDrop } =
+    const { folderColumns, handleFolderClick, handleEmojiChange, handleFolderDrop } =
         useBookmarks();
+    const error = useBookmarksStore((s) => s.error);
+    const hasLoaded = useBookmarksStore((s) => s.hasLoaded);
 
     return (
         <main className="w-full pb-12 pt-4">
+            {error && hasLoaded && (
+                <div
+                    role="alert"
+                    className="mx-auto mb-4 max-w-2xl rounded border border-newtab-border px-4 py-2 text-sm text-newtab-text-secondary"
+                >
+                    Bookmarks failed to load: {error}
+                </div>
+            )}
             <div className="flex w-full flex-row items-start justify-evenly">
                 {/* 左边缘拖拽区域 */}
                 <DropZoneInColumn
@@ -31,7 +42,6 @@ export const BookmarkGrid: React.FC = () => {
                             <div className="w-64 min-w-0 flex-shrink-0">
                                 <BookmarkColumn
                                     folders={columnFolders}
-                                    folderState={folderState}
                                     onFolderClick={handleFolderClick}
                                     onEmojiChange={handleEmojiChange}
                                     columnIndex={columnIndex}

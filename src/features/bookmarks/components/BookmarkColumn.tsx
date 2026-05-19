@@ -3,22 +3,20 @@ import React from 'react';
 
 import { ANIMATION_CONFIG } from '@/shared/animations';
 
-import type { DragItem, FolderItem, FolderStateType } from '../types';
+import type { DragItem, FolderItem } from '../types';
 import { BookmarkFolder } from './BookmarkFolder';
 import { DropZoneInFolder } from './DropZoneInFolder';
 
 interface BookmarkColumnProps {
     folders: FolderItem[];
-    folderState: FolderStateType;
     onFolderClick: (folder: FolderItem) => void;
     onEmojiChange: (folderId: string, emoji: string) => void;
     columnIndex?: number;
     onFolderDrop?: (dragItem: DragItem, targetCol: number, targetIndex: number) => void;
 }
 
-export const BookmarkColumn: React.FC<BookmarkColumnProps> = ({
+const BookmarkColumnComponent: React.FC<BookmarkColumnProps> = ({
     folders,
-    folderState,
     onFolderClick,
     onEmojiChange,
     columnIndex = 0,
@@ -46,7 +44,6 @@ export const BookmarkColumn: React.FC<BookmarkColumnProps> = ({
                     >
                         <BookmarkFolder
                             folder={folder}
-                            folderState={folderState}
                             onFolderClick={onFolderClick}
                             onEmojiChange={onEmojiChange}
                             columnIndex={columnIndex}
@@ -66,5 +63,25 @@ export const BookmarkColumn: React.FC<BookmarkColumnProps> = ({
         </div>
     );
 };
+
+function arePropsEqual(prev: BookmarkColumnProps, next: BookmarkColumnProps): boolean {
+    if (
+        prev.onFolderClick !== next.onFolderClick ||
+        prev.onEmojiChange !== next.onEmojiChange ||
+        prev.onFolderDrop !== next.onFolderDrop ||
+        prev.columnIndex !== next.columnIndex
+    ) {
+        return false;
+    }
+    if (prev.folders !== next.folders) {
+        if (prev.folders.length !== next.folders.length) return false;
+        for (let i = 0; i < prev.folders.length; i++) {
+            if (prev.folders[i] !== next.folders[i]) return false;
+        }
+    }
+    return true;
+}
+
+export const BookmarkColumn = React.memo(BookmarkColumnComponent, arePropsEqual);
 
 export default BookmarkColumn;

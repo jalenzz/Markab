@@ -1,40 +1,38 @@
 import { motion } from 'motion/react';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useDrag } from 'react-dnd';
 
-import { useSettings } from '@/features/settings/hooks/useSettings';
+import { useSettingsStore } from '@/features/settings/store';
 import { ANIMATION_CONFIG } from '@/shared/animations';
 
-import type { FolderItem, FolderStateType } from '../types';
+import { useBookmarksStore } from '../store';
+import type { DragItem, FolderItem } from '../types';
 import { BookmarkList } from './BookmarkList';
 import { FolderHeader } from './FolderHeader';
 
 interface BookmarkFolderProps {
     folder: FolderItem;
-    folderState: FolderStateType;
     onFolderClick: (folder: FolderItem) => void;
     onEmojiChange: (folderId: string, emoji: string) => void;
     columnIndex: number;
     folderIndex: number;
 }
 
-export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
+const BookmarkFolderComponent: React.FC<BookmarkFolderProps> = ({
     folder,
-    folderState,
     onFolderClick,
     onEmojiChange,
     columnIndex,
     folderIndex,
 }) => {
-    const { settings } = useSettings();
-    const folderStateData = folderState[folder.id] || {};
-    const isExpanded = folderStateData.isExpanded || false;
-    const currentEmoji = folderStateData.emoji || '⭐';
+    const folderStateData = useBookmarksStore((s) => s.folderState[folder.id]) ?? {};
+    const isExpanded = folderStateData.isExpanded ?? false;
+    const currentEmoji = folderStateData.emoji ?? '⭐';
 
-    // 根据设置决定是否启用拖拽功能
-    const isDragEnabled = !settings.lockLayout;
+    const isDragEnabled = useSettingsStore((s) => !s.settings.lockLayout);
 
-    const [{ isDragging }, drag] = useDrag(
+    const dragRef = useRef<HTMLDivElement>(null);
+    const [{ isDragging }, drag] = useDrag<DragItem | null, unknown, { isDragging: boolean }>(
         () => ({
             type: 'item',
             item: isDragEnabled
@@ -51,6 +49,7 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
         }),
         [folder.id, columnIndex, folderIndex, isDragEnabled],
     );
+    drag(dragRef);
 
     const folderBookmarks = folder.children || [];
 
@@ -64,7 +63,7 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
 
     return (
         <div
-            ref={drag as never}
+            ref={dragRef}
             className={`group min-w-0 flex-1 ${isDragging ? 'opacity-50' : ''}`}
         >
             <div>
@@ -91,5 +90,7 @@ export const BookmarkFolder: React.FC<BookmarkFolderProps> = ({
         </div>
     );
 };
+
+export const BookmarkFolder = React.memo(BookmarkFolderComponent);
 
 export default BookmarkFolder;

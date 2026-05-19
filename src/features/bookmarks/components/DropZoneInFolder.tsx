@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useDrop } from 'react-dnd';
 
-import { useSettings } from '@/features/settings/hooks/useSettings';
+import { useSettingsStore } from '@/features/settings/store';
 
 import type { DragItem } from '../types';
 
@@ -16,10 +16,14 @@ export const DropZoneInFolder: React.FC<DropZoneInFolderProps> = ({
     folderIndex,
     onFolderDrop,
 }) => {
-    const { settings } = useSettings();
-    const isDragEnabled = !settings.lockLayout;
+    const isDragEnabled = useSettingsStore((s) => !s.settings.lockLayout);
 
-    const [{ isOver, canDrop }, drop] = useDrop(
+    const dropRef = useRef<HTMLDivElement>(null);
+    const [{ isOver, canDrop }, drop] = useDrop<
+        DragItem,
+        unknown,
+        { isOver: boolean; canDrop: boolean }
+    >(
         () => ({
             accept: 'item',
             drop: (item: DragItem) => {
@@ -44,12 +48,13 @@ export const DropZoneInFolder: React.FC<DropZoneInFolderProps> = ({
         }),
         [columnIndex, folderIndex, onFolderDrop, isDragEnabled],
     );
+    drop(dropRef);
 
     const showDropIndicator = isOver && canDrop;
 
     return (
         <div
-            ref={drop as never}
+            ref={dropRef}
             className="flex h-6 items-center transition-colors duration-default"
         >
             {showDropIndicator && <div className="h-1 w-full bg-newtab-primary" />}

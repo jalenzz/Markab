@@ -1,9 +1,25 @@
-import { pinyin } from 'pinyin-pro';
+import type { pinyin as PinyinFn } from 'pinyin-pro';
 
 import type { FolderItem } from '@/features/bookmarks/types';
 import { SPECIAL_FOLDER_IDS } from '@/lib/constants';
 
 import type { SearchableBookmark, SearchResult } from './types';
+
+// pinyin-pro is large and only needed for CJK matching; load it off the
+// critical startup path. Until the chunk resolves, pinyin-dependent branches
+// degrade to non-CJK matching (a few hundred ms at most after activate()).
+let pinyinFn: typeof PinyinFn | null = null;
+let pinyinLoadPromise: Promise<void> | null = null;
+
+export function ensurePinyinLoaded(): Promise<void> {
+    if (pinyinFn) return Promise.resolve();
+    if (!pinyinLoadPromise) {
+        pinyinLoadPromise = import('pinyin-pro').then((m) => {
+            pinyinFn = m.pinyin;
+        });
+    }
+    return pinyinLoadPromise;
+}
 
 // 搜索评分常量
 const SCORES = {
@@ -86,7 +102,11 @@ function toPinyin(text: string): string {
         return pinyinCache.get(text)!;
     }
 
-    const result = pinyin(text, { toneType: 'none', type: 'array' }).join('');
+    if (!pinyinFn) {
+        return text.toLowerCase();
+    }
+
+    const result = pinyinFn(text, { toneType: 'none', type: 'array' }).join('');
     pinyinCache.set(text, result);
     return result;
 }
@@ -304,6 +324,11 @@ function highlightPinyinMatch(text: string, query: string): string {
     const queryLower = query.toLowerCase();
     const textPinyin = toPinyin(text).toLowerCase();
 
+    const fn = pinyinFn;
+    if (!fn) {
+        return text;
+    }
+
     // 如果拼音完全匹配或包含查询，高亮对应的中文部分
     if (textPinyin === queryLower || textPinyin.startsWith(queryLower)) {
         // 计算查询对应的中文字符数量
@@ -312,7 +337,7 @@ function highlightPinyinMatch(text: string, query: string): string {
 
         for (let i = 0; i < text.length; i++) {
             const char = text[i];
-            const charPinyin = pinyin(char, { toneType: 'none', type: 'array' })[0] || char;
+            const charPinyin = fn(char, { toneType: 'none', type: 'array' })[0] || char;
             currentPinyin += charPinyin.toLowerCase();
             matchedChars++;
 
@@ -338,7 +363,7 @@ function highlightPinyinMatch(text: string, query: string): string {
         // 找到开始位置对应的中文字符
         while (charIndex < text.length && pinyinLength < startIndex) {
             const char = text[charIndex];
-            const charPinyin = pinyin(char, { toneType: 'none', type: 'array' })[0] || char;
+            const charPinyin = fn(char, { toneType: 'none', type: 'array' })[0] || char;
             pinyinLength += charPinyin.length;
             charIndex++;
         }
@@ -351,7 +376,7 @@ function highlightPinyinMatch(text: string, query: string): string {
 
         for (let i = startChar; i < text.length; i++) {
             const char = text[i];
-            const charPinyin = pinyin(char, { toneType: 'none', type: 'array' })[0] || char;
+            const charPinyin = fn(char, { toneType: 'none', type: 'array' })[0] || char;
             currentPinyin += charPinyin.toLowerCase();
             matchLength++;
 

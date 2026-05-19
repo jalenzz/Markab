@@ -1,12 +1,11 @@
 import { produce } from 'immer';
 import { create } from 'zustand';
 
+import { STORAGE_KEYS } from '@/lib/constants';
 import { storageService } from '@/lib/storage';
 
 import { DEFAULT_SETTINGS } from './schema';
 import type { AppSettings } from './types';
-
-const STORAGE_KEY = 'appSettings';
 
 interface SettingsState {
     settings: AppSettings;
@@ -46,7 +45,7 @@ export const useSettingsStore = create<SettingsState & SettingsActions>((set, ge
     hydrate: async () => {
         try {
             const saved = await storageService.loadConfig<AppSettings>(
-                STORAGE_KEY,
+                STORAGE_KEYS.APP_SETTINGS,
                 DEFAULT_SETTINGS,
             );
             set({
@@ -72,7 +71,7 @@ useSettingsStore.subscribe((state) => {
     if (state.isLoading) return;
     if (state.settings === lastPersistedSettings) return;
     lastPersistedSettings = state.settings;
-    storageService.saveConfig(STORAGE_KEY, state.settings).catch((error) => {
+    storageService.saveConfig(STORAGE_KEYS.APP_SETTINGS, state.settings).catch((error) => {
         console.error('Failed to save settings:', error);
     });
 });

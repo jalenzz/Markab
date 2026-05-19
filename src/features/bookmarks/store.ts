@@ -1,13 +1,12 @@
 import { create } from 'zustand';
 
 import { browserApiService } from '@/lib/browser';
+import { STORAGE_KEYS } from '@/lib/constants';
 import { storageService } from '@/lib/storage';
 
 import { reorderColumnsByDrop } from './dragDrop';
 import { rebuildLayout, updateFolderPositions } from './layout';
 import type { DragItem, FolderColumnsType, FolderStateType } from './types';
-
-const FOLDER_STATE_KEY = 'folderState';
 
 interface BookmarksState {
     folderColumns: FolderColumnsType;
@@ -31,6 +30,10 @@ interface BookmarksActions {
 }
 
 let inflightLoad: Promise<void> | null = null;
+// Monotonic load version: only the most recent load commits results; superseded loads are discarded.
+let loadVersion = 0;
+// Abort the previous in-flight load when a forceReload supersedes it.
+let currentAbortController: AbortController | null = null;
 
 export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set, get) => ({
     folderColumns: [],
@@ -42,7 +45,10 @@ export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set,
     hydrateFolderState: async () => {
         if (get().isFolderStateHydrated) return;
         try {
-            const saved = await storageService.loadConfig<FolderStateType>(FOLDER_STATE_KEY, {});
+            const saved = await storageService.loadConfig<FolderStateType>(
+                STORAGE_KEYS.FOLDER_STATE,
+                {},
+            );
             set({ folderState: saved, isFolderStateHydrated: true });
         } catch (error) {
             console.error('Failed to hydrate folder state:', error);
@@ -51,7 +57,13 @@ export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set,
     },
 
     loadBookmarks: async ({ topSitesNum, recentlyClosedNum, hiddenFolders, forceReload }) => {
-        if (inflightLoad) {
+        const myVersion = ++loadVersion;
+
+        if (forceReload && currentAbortController) {
+            currentAbortController.abort();
+        }
+
+        if (inflightLoad && !forceReload) {
             await inflightLoad;
             return;
         }
@@ -62,23 +74,32 @@ export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set,
             await get().hydrateFolderState();
         }
 
+        const controller = new AbortController();
+        currentAbortController = controller;
+
         const load = (async () => {
             try {
-                set({ error: null });
+                if (myVersion === loadVersion) set({ error: null });
                 const allFolders = await browserApiService.getAllFolders(
                     topSitesNum,
                     recentlyClosedNum,
+                    controller.signal,
                 );
                 const displayFolders = allFolders.filter(
                     (folder) => !hiddenFolders.includes(folder.id),
                 );
                 const columns = rebuildLayout(displayFolders, get().folderState);
-                set({ folderColumns: columns, hasLoaded: true });
+                if (myVersion === loadVersion) {
+                    set({ folderColumns: columns, hasLoaded: true });
+                }
             } catch (err) {
-                set({
-                    error: err instanceof Error ? err.message : 'load data failed',
-                    hasLoaded: true,
-                });
+                if ((err as Error)?.name === 'AbortError') return;
+                if (myVersion === loadVersion) {
+                    set({
+                        error: err instanceof Error ? err.message : 'load data failed',
+                        hasLoaded: true,
+                    });
+                }
             }
         })();
 
@@ -88,6 +109,9 @@ export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set,
         } finally {
             if (inflightLoad === load) {
                 inflightLoad = null;
+            }
+            if (currentAbortController === controller) {
+                currentAbortController = null;
             }
         }
     },
@@ -137,7 +161,7 @@ useBookmarksStore.subscribe((state) => {
     if (!state.isFolderStateHydrated) return;
     if (state.folderState === lastPersistedFolderState) return;
     lastPersistedFolderState = state.folderState;
-    storageService.saveConfig(FOLDER_STATE_KEY, state.folderState).catch((error) => {
+    storageService.saveConfig(STORAGE_KEYS.FOLDER_STATE, state.folderState).catch((error) => {
         console.error('Failed to save folder state:', error);
     });
 });
