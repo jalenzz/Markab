@@ -72,13 +72,13 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = React.memo(
                         dangerouslySetInnerHTML={{ __html: highlightedTitle }}
                     />
                     {item.folderTitle && (
-                        <div className="truncate text-[0.7rem] uppercase tracking-[0.14em] text-newtab-text-secondary/80">
+                        <div className="truncate text-[0.7rem] font-medium uppercase tracking-[0.06em] text-newtab-text-secondary">
                             {item.folderTitle}
                         </div>
                     )}
                 </div>
 
-                <kbd className="flex-shrink-0 font-primary text-[0.7rem] italic text-newtab-text-secondary/60">
+                <kbd className="text-newtab-text-secondary/60 flex-shrink-0 font-primary text-[0.7rem] italic">
                     {index + 1}
                 </kbd>
             </div>

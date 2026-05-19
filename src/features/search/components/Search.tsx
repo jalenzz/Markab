@@ -48,10 +48,7 @@ export const Search: React.FC = () => {
     };
 
     return (
-        <div
-            ref={containerRef}
-            className="relative z-30 mx-auto w-full max-w-md px-4 pt-3"
-        >
+        <div ref={containerRef} className="relative z-30 mx-auto w-full max-w-md px-4 pt-3">
             <div className={`search-row flex h-10 items-center ${isActive ? 'is-active' : ''}`}>
                 {isActive ? (
                     <SearchInput

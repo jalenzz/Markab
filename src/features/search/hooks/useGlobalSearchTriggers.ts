@@ -24,7 +24,8 @@ export function useGlobalSearchTriggers(): void {
             if (isActive || isInputFocused()) return;
 
             const isSlashTrigger = event.key === '/' && !event.ctrlKey && !event.metaKey;
-            const isMetaKTrigger = event.key.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey);
+            const isMetaKTrigger =
+                event.key.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey);
 
             if (isSlashTrigger || isMetaKTrigger) {
                 event.preventDefault();

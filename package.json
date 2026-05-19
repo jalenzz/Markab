@@ -15,8 +15,10 @@
         "type-check": "tsc --noEmit"
     },
     "dependencies": {
-        "@emoji-mart/react": "^1.1.1",
+        "@emoji-mart/data": "^1.2.1",
         "@fontsource/lora": "^5.2.8",
+        "baseline-browser-mapping": "^2.10.31",
+        "caniuse-lite": "^1.0.30001793",
         "immer": "^10.1.1",
         "motion": "^12.17.0",
         "pinyin-pro": "^3.26.0",

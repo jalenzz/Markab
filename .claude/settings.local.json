@@ -1,5 +1,9 @@
 {
-    "permissions": {
-        "allow": ["Bash(bun run *)"]
-    }
+  "permissions": {
+    "allow": [
+      "Bash(bun run *)",
+      "Bash(git *)",
+      "WebSearch"
+    ]
+  }
 }

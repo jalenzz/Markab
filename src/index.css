@@ -152,7 +152,9 @@
     }
 
     .folder-header .arrow-icon svg {
-        transition: color 200ms, opacity 200ms;
+        transition:
+            color 200ms,
+            opacity 200ms;
     }
 
     .folder-header:hover .arrow-icon svg {
