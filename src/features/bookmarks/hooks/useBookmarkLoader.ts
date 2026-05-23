@@ -13,11 +13,10 @@ export function useBookmarkLoader() {
 
     useEffect(() => {
         if (isSettingsLoading) return;
-        loadBookmarks({
+        void loadBookmarks({
             topSitesNum,
             recentlyClosedNum,
             hiddenFolders,
-            forceReload: true,
         });
     }, [isSettingsLoading, hiddenFolders, topSitesNum, recentlyClosedNum, loadBookmarks]);
 }

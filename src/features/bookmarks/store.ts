@@ -6,11 +6,38 @@ import { storageService } from '@/lib/storage';
 
 import { reorderColumnsByDrop } from './dragDrop';
 import { rebuildLayout, updateFolderPositions } from './layout';
-import type { DragItem, FolderColumnsType, FolderStateType } from './types';
+import type { DragItem, FolderColumnsType, FolderItem, FolderStateType } from './types';
+
+type SourceConfig = {
+    topSitesNum: number;
+    recentlyClosedNum: number;
+};
+
+function hasSourceConfigChanged(
+    prev: SourceConfig | null,
+    next: SourceConfig,
+): boolean {
+    if (!prev) return true;
+    return (
+        prev.topSitesNum !== next.topSitesNum ||
+        prev.recentlyClosedNum !== next.recentlyClosedNum
+    );
+}
+
+function buildVisibleColumns(
+    allFolders: FolderItem[],
+    hiddenFolders: string[],
+    folderState: FolderStateType,
+): FolderColumnsType {
+    const visibleFolders = allFolders.filter((folder) => !hiddenFolders.includes(folder.id));
+    return rebuildLayout(visibleFolders, folderState);
+}
 
 interface BookmarksState {
+    allFolders: FolderItem[];
     folderColumns: FolderColumnsType;
     folderState: FolderStateType;
+    lastSourceConfig: SourceConfig | null;
     error: string | null;
     hasLoaded: boolean;
     isFolderStateHydrated: boolean;
@@ -36,8 +63,10 @@ let loadVersion = 0;
 let currentAbortController: AbortController | null = null;
 
 export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set, get) => ({
+    allFolders: [],
     folderColumns: [],
     folderState: {},
+    lastSourceConfig: null,
     error: null,
     hasLoaded: false,
     isFolderStateHydrated: false,
@@ -58,20 +87,36 @@ export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set,
 
     loadBookmarks: async ({ topSitesNum, recentlyClosedNum, hiddenFolders, forceReload }) => {
         const myVersion = ++loadVersion;
+        const nextSourceConfig = { topSitesNum, recentlyClosedNum };
 
-        if (forceReload && currentAbortController) {
+        const { hasLoaded, isFolderStateHydrated, lastSourceConfig } = get();
+        if (!isFolderStateHydrated) {
+            await get().hydrateFolderState();
+        }
+
+        const shouldReloadSource =
+            !!forceReload || !hasLoaded || hasSourceConfigChanged(lastSourceConfig, nextSourceConfig);
+
+        if (!shouldReloadSource) {
+            const { allFolders, folderState } = get();
+            set({
+                error: null,
+                folderColumns: buildVisibleColumns(allFolders, hiddenFolders, folderState),
+                hasLoaded: true,
+            });
+            return;
+        }
+
+        if (currentAbortController) {
             currentAbortController.abort();
         }
 
         if (inflightLoad && !forceReload) {
-            await inflightLoad;
-            return;
-        }
-
-        const { hasLoaded, isFolderStateHydrated } = get();
-        if (hasLoaded && !forceReload) return;
-        if (!isFolderStateHydrated) {
-            await get().hydrateFolderState();
+            try {
+                await inflightLoad;
+            } catch {
+                // Ignore and continue with the most recent request below.
+            }
         }
 
         const controller = new AbortController();
@@ -85,12 +130,14 @@ export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set,
                     recentlyClosedNum,
                     controller.signal,
                 );
-                const displayFolders = allFolders.filter(
-                    (folder) => !hiddenFolders.includes(folder.id),
-                );
-                const columns = rebuildLayout(displayFolders, get().folderState);
+                const columns = buildVisibleColumns(allFolders, hiddenFolders, get().folderState);
                 if (myVersion === loadVersion) {
-                    set({ folderColumns: columns, hasLoaded: true });
+                    set({
+                        allFolders,
+                        folderColumns: columns,
+                        lastSourceConfig: nextSourceConfig,
+                        hasLoaded: true,
+                    });
                 }
             } catch (err) {
                 if ((err as Error)?.name === 'AbortError') return;

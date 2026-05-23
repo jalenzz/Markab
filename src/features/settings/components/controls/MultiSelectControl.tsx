@@ -1,8 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
-import type { FolderItem } from '@/features/bookmarks/types';
-import { browserApiService } from '@/lib/browser';
+import { useBookmarksStore } from '@/features/bookmarks/store';
 import { ANIMATION_CONFIG } from '@/shared/animations';
 
 import type { MultiSelectSettingConfig } from '../../types';
@@ -15,22 +14,12 @@ interface MultiSelectControlProps {
 }
 
 export function MultiSelectControl({ config, value, onChange }: MultiSelectControlProps) {
-    const [folders, setFolders] = useState<FolderItem[]>([]);
     const [isExpanded, setIsExpanded] = useState(false);
-
-    // 加载所有文件夹
-    const loadFolders = useCallback(async () => {
-        try {
-            const allFolders = await browserApiService.getAllFolders();
-            setFolders(allFolders);
-        } catch (error) {
-            console.error('Failed to load folders:', error);
-        }
-    }, []);
-
-    useEffect(() => {
-        loadFolders();
-    }, [loadFolders]);
+    const folders = useBookmarksStore((s) => s.allFolders);
+    const sortedFolders = useMemo(
+        () => [...folders].sort((a, b) => a.title.localeCompare(b.title)),
+        [folders],
+    );
 
     const handleFolderToggle = (folderId: string) => {
         const newValue = value.includes(folderId)
@@ -73,7 +62,7 @@ export function MultiSelectControl({ config, value, onChange }: MultiSelectContr
                         transition={ANIMATION_CONFIG.transitions.ease}
                         className="ml-2 mt-2 space-y-1 overflow-hidden"
                     >
-                        {folders.map((folder) => (
+                        {sortedFolders.map((folder) => (
                             <button
                                 key={folder.id}
                                 onClick={() => handleFolderToggle(folder.id)}
