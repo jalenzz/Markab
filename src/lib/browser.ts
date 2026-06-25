@@ -1,4 +1,5 @@
 import type { BookmarkItem, FolderItem } from '@/features/bookmarks/types';
+import { DEMO_FOLDERS } from '@/fixtures/demoData';
 
 import {
     RECENT_FOLDER_ID,
@@ -6,6 +7,8 @@ import {
     TOPSITE_FOLDER_ID,
     TOPSITE_ITEM_PREFIX,
 } from './constants';
+
+const isDemoMode = () => import.meta.env.VITE_DEMO_MODE === 'true';
 
 class BrowserApiService {
     async getTopSitesAsBookmarkFolder(
@@ -153,6 +156,21 @@ class BrowserApiService {
         recentlyClosedNum: number = 10,
         signal?: AbortSignal,
     ): Promise<FolderItem[]> {
+        if (isDemoMode()) {
+            if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+            return DEMO_FOLDERS.map((folder) => ({
+                ...folder,
+                children: folder.children.slice(
+                    0,
+                    folder.id === TOPSITE_FOLDER_ID
+                        ? topSitesNum
+                        : folder.id === RECENT_FOLDER_ID
+                          ? recentlyClosedNum
+                          : folder.children.length,
+                ),
+            }));
+        }
+
         const [bookmarkFolders, topSitesFolder, recentlyClosedFolder] = await Promise.all([
             this.getBookmarkFolders(signal),
             this.getTopSitesAsBookmarkFolder(topSitesNum, signal),
