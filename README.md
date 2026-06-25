@@ -1,31 +1,44 @@
 # <img src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-2/latest/files/assets/1f60d.webp" width="25"> Markab - Bookmark New Tab
 
-A new tab extension focused on providing clean, elegant bookmark display experience.
+**Bookmark New Tab — never forget your bookmarks again.**
 
-> Never forget your bookmarks again
+A Chrome extension that replaces the new tab page with a flat, multi-column bookmark grid. Clean layout, fast search, zero clutter.
 
-[Chrome Extensions](https://chromewebstore.google.com/detail/markab/edenohjoklbajppddnaimojnemafnkkg)
+[**Install on Chrome Web Store →**](https://chromewebstore.google.com/detail/markab/edenohjoklbajppddnaimojnemafnkkg)
 
-![banner](public/banner.png)
+![Main view](public/main.gif)
 
-## ✨ Features
+## Features
 
-- **Flat Display** - Shows all bookmark folders in a clean multi-column layout
-- **Minimalist Interface** - Focused on bookmark display essentials, removing redundant elements
-- **Quick Search** - Instant bookmark search with intelligent matching and keyboard shortcuts
-- **Dark Mode Support** - Automatically adapts to system theme preferences
-- **Flexible Layout** - Freely reorganize folders by dragging to customize your bookmark layout
-- **State Memory** - Intelligently saves layout preferences and folder expand states
-- **Animated Emoji** - Add lively animated emoji icons to each folder <img src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-2/latest/files/assets/1f60d.webp" width="25"> <img src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-1/latest/files/assets/1f31f.webp" width="25"> <img src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-3/latest/files/assets/1f916.webp" width="25">
+- **Flat layout** — All bookmark folders in a multi-column grid, easy to scan at a glance
+- **Quick search** — Fuzzy matching with pinyin support and keyboard shortcuts
+- **Drag & drop** — Reorder folders freely; layout and expand state are remembered
+- **Light & dark mode** — Follows system theme or override in settings
+- **Animated emoji** — Add a lively emoji icon to each folder <img title="" src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-4/latest/files/assets/1f9d0.webp" alt="" width="25"> <img title="" src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-4/latest/files/assets/2b50.webp" alt="" width="25"> <img title="" src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-1/latest/files/assets/1f44b.webp" alt="" width="25">
+- **Minimal UI** — Focused on bookmarks, nothing extra
 
-## 🛠️ Development
+## Screenshots
+
+<p align="center">
+  <img src="public/search.png" alt="Search" width="49%" />
+  <img src="public/settings.png" alt="Settings" width="49%" />
+</p>
+
+## Development
+
+Requires [Bun](https://bun.sh).
 
 ```bash
 bun install
-
 bun run dev
 ```
 
-## 📝 License
+Then load the `dist/` folder as an unpacked extension in Chrome.
+
+```bash
+bun run build    # production build + zip to release/
+```
+
+## License
 
 [Apache License 2.0](LICENSE)
