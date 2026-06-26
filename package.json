@@ -7,7 +7,11 @@
     "scripts": {
         "dev": "vite",
         "dev:demo": "vite --mode demo",
+        "dev:firefox": "vite build --mode firefox --watch",
+        "firefox:run": "web-ext run --source-dir dist/firefox",
         "build": "tsc -b && vite build",
+        "build:firefox": "tsc -b && vite build --mode firefox",
+        "build:all": "tsc -b && vite build && vite build --mode firefox",
         "build:analyze": "tsc -b && ANALYZE=true vite build",
         "preview": "vite preview",
         "lint": "eslint . && stylelint \"src/**/*.{css,scss,less}\"",
@@ -55,6 +59,7 @@
         "typescript": "~5.8.3",
         "typescript-eslint": "^8.30.1",
         "vite": "^7.0.6",
-        "vite-plugin-zip-pack": "^1.2.4"
+        "vite-plugin-zip-pack": "^1.2.4",
+        "web-ext": "^8.6.0"
     }
 }

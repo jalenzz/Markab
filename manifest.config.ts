@@ -2,38 +2,65 @@ import { defineManifest } from '@crxjs/vite-plugin';
 
 import pkg from './package.json';
 
-export default defineManifest({
-    manifest_version: 3,
-    name: pkg.name,
-    version: pkg.version,
-    description: pkg.description,
+export type ExtensionBrowser = 'chrome' | 'firefox';
 
-    chrome_url_overrides: {
-        newtab: 'index.html',
-    },
+const SHARED_PERMISSIONS = [
+    'storage',
+    'bookmarks',
+    'topSites',
+    'history',
+    'sessions',
+    'search',
+] as const;
 
-    icons: {
-        16: 'public/favicon.ico',
-        32: 'public/favicon.ico',
-        512: 'public/logo.png',
-    },
+export function createManifest(browser: ExtensionBrowser) {
+    const isFirefox = browser === 'firefox';
 
-    permissions: [
-        'storage',
-        'bookmarks',
-        'topSites',
-        'history',
-        'sessions',
-        'favicon',
-        'tabs',
-        'search',
-    ],
+    return defineManifest({
+        manifest_version: 3,
+        name: pkg.name,
+        version: pkg.version,
+        description: pkg.description,
 
-    web_accessible_resources: [
-        {
-            resources: ['_favicon/*'],
-            matches: ['<all_urls>'],
-            use_dynamic_url: true,
+        chrome_url_overrides: {
+            newtab: 'index.html',
         },
-    ],
-});
+
+        icons: isFirefox
+            ? {
+                  48: 'public/favicon.ico',
+                  96: 'public/logo.png',
+              }
+            : {
+                  16: 'public/favicon.ico',
+                  32: 'public/favicon.ico',
+                  512: 'public/logo.png',
+              },
+
+        permissions: [
+            ...SHARED_PERMISSIONS,
+            ...(isFirefox ? [] : (['favicon', 'tabs'] as const)),
+        ],
+
+        ...(isFirefox
+            ? {
+                  browser_specific_settings: {
+                      gecko: {
+                          id: 'markab@bookmark-new-tab',
+                          strict_min_version: '109.0',
+                      },
+                  },
+              }
+            : {
+                  web_accessible_resources: [
+                      {
+                          resources: ['_favicon/*'],
+                          matches: ['<all_urls>'],
+                          use_dynamic_url: true,
+                      },
+                  ],
+              }),
+    });
+}
+
+export default createManifest('chrome');
