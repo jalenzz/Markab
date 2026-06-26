@@ -7,6 +7,7 @@ import {
     TOPSITE_FOLDER_ID,
     TOPSITE_ITEM_PREFIX,
 } from './constants';
+import { webext } from './runtime';
 
 const isDemoMode = () => import.meta.env.VITE_DEMO_MODE === 'true';
 
@@ -16,7 +17,7 @@ class BrowserApiService {
         signal?: AbortSignal,
     ): Promise<FolderItem | null> {
         try {
-            const topSites = await chrome.topSites.get();
+            const topSites = await webext.topSites.get();
             if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
             if (topSites.length === 0) return null;
 
@@ -46,7 +47,7 @@ class BrowserApiService {
         signal?: AbortSignal,
     ): Promise<FolderItem | null> {
         try {
-            const sessions = await chrome.sessions.getRecentlyClosed({
+            const sessions = await webext.sessions.getRecentlyClosed({
                 maxResults: recentlyClosedNum,
             });
             if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
@@ -64,7 +65,7 @@ class BrowserApiService {
                     parentId: RECENT_FOLDER_ID,
                     ...(isWindow && {
                         action: async () => {
-                            await chrome.sessions.restore(session.window?.sessionId);
+                            await webext.sessions.restore(session.window?.sessionId);
                         },
                     }),
                 });
@@ -86,30 +87,17 @@ class BrowserApiService {
 
     async getBookmarkFolders(signal?: AbortSignal): Promise<FolderItem[]> {
         try {
-            const bookmarkTree = await new Promise<chrome.bookmarks.BookmarkTreeNode[]>(
-                (resolve, reject) => {
-                    chrome.bookmarks.getTree((result) => {
-                        if (chrome.runtime.lastError) {
-                            reject(new Error(chrome.runtime.lastError.message));
-                        } else {
-                            resolve(result);
-                        }
-                    });
-                },
-            );
+            const bookmarkTree = await webext.bookmarks.getTree();
 
             if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
 
             const folders: FolderItem[] = [];
 
-            // 递归遍历所有节点
             const traverseNodes = (nodes: chrome.bookmarks.BookmarkTreeNode[]) => {
                 for (const node of nodes) {
-                    // 如果是文件夹且有子项
                     if (!node.url && node.children && node.children.length > 0) {
-                        // 提取直接的书签子项
                         const bookmarks: BookmarkItem[] = node.children
-                            .filter((child) => !!child.url) // 只要有 url 的就是书签
+                            .filter((child) => !!child.url)
                             .map((child) => ({
                                 id: child.id,
                                 title: child.title || 'unnamed',
@@ -117,7 +105,6 @@ class BrowserApiService {
                                 parentId: child.parentId,
                             }));
 
-                        // 如果包含书签，创建文件夹
                         if (bookmarks.length > 0) {
                             folders.push({
                                 id: node.id,
@@ -126,13 +113,11 @@ class BrowserApiService {
                             });
                         }
 
-                        // 递归处理子文件夹
                         traverseNodes(node.children);
                     }
                 }
             };
 
-            // 遍历根节点
             for (const rootNode of bookmarkTree) {
                 if (rootNode.children) {
                     traverseNodes(rootNode.children);
@@ -181,7 +166,6 @@ class BrowserApiService {
 
         const folders: FolderItem[] = [...bookmarkFolders];
 
-        // 添加特殊文件夹到开头
         if (recentlyClosedFolder) folders.unshift(recentlyClosedFolder);
         if (topSitesFolder) folders.unshift(topSitesFolder);
 

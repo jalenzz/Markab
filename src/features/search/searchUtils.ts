@@ -2,6 +2,7 @@ import type { pinyin as PinyinFn } from 'pinyin-pro';
 
 import type { FolderItem } from '@/features/bookmarks/types';
 import { SPECIAL_FOLDER_IDS } from '@/lib/constants';
+import { webext } from '@/lib/runtime';
 
 import type { SearchableBookmark, SearchResult } from './types';
 
@@ -217,7 +218,7 @@ function createWebSearchItem(
         action: async (openInNewTab = true) => {
             try {
                 if (isDefault) {
-                    await chrome.search.query({
+                    await webext.search.query({
                         text: query,
                         disposition: openInNewTab ? 'NEW_TAB' : 'CURRENT_TAB',
                     });
