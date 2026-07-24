@@ -7,7 +7,6 @@ export interface AppSettings {
     lockLayout: boolean;
     linkOpen: 'current-tab' | 'new-tab';
     hiddenFolders: string[];
-    searchEngines: string;
 }
 
 export interface SettingOption {

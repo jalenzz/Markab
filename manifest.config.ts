@@ -22,11 +22,9 @@ export default defineManifest({
         'storage',
         'bookmarks',
         'topSites',
-        'history',
         'sessions',
         'favicon',
         'tabs',
-        'search',
     ],
 
     web_accessible_resources: [

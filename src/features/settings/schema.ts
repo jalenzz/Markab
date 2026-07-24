@@ -7,8 +7,6 @@ export const DEFAULT_SETTINGS = {
     lockLayout: false,
     linkOpen: 'current-tab' as const,
     hiddenFolders: [] as string[],
-    searchEngines:
-        'Google,https://www.google.com/search?q={query};Bing,https://www.bing.com/search?q={query}',
 } as const;
 
 export const SETTINGS_CONFIG = {
@@ -67,13 +65,6 @@ export const SETTINGS_CONFIG = {
                 key: 'lockLayout',
                 label: 'Lock Layout',
                 type: 'toggle',
-            },
-            {
-                key: 'searchEngines',
-                label: 'Search Engines',
-                description: 'Format: Name,URL;Name,URL (use {query} for search term)',
-                type: 'input',
-                placeholder: '',
             },
             {
                 key: 'linkOpen',

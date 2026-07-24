@@ -53,10 +53,7 @@ export const DropZoneInFolder: React.FC<DropZoneInFolderProps> = ({
     const showDropIndicator = isOver && canDrop;
 
     return (
-        <div
-            ref={dropRef}
-            className="flex h-6 items-center transition-colors duration-default"
-        >
+        <div ref={dropRef} className="flex h-6 items-center transition-colors duration-default">
             {showDropIndicator && <div className="h-1 w-full bg-newtab-primary" />}
         </div>
     );

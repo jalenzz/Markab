@@ -2,7 +2,7 @@
 
 **Bookmark New Tab — never forget your bookmarks again.**
 
-A Chrome extension that replaces the new tab page with a flat, multi-column bookmark grid. Clean layout, fast search, zero clutter.
+A Chrome extension that replaces the new tab page with a flat, multi-column bookmark grid. Clean layout, zero clutter.
 
 [**Install on Chrome Web Store →**](https://chromewebstore.google.com/detail/markab/edenohjoklbajppddnaimojnemafnkkg)
 
@@ -11,7 +11,6 @@ A Chrome extension that replaces the new tab page with a flat, multi-column book
 ## Features
 
 - **Flat layout** — All bookmark folders in a multi-column grid, easy to scan at a glance
-- **Quick search** — Fuzzy matching with pinyin support and keyboard shortcuts
 - **Drag & drop** — Reorder folders freely; layout and expand state are remembered
 - **Light & dark mode** — Follows system theme or override in settings
 - **Animated emoji** — Add a lively emoji icon to each folder <img title="" src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-4/latest/files/assets/1f9d0.webp" alt="" width="25"> <img title="" src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-4/latest/files/assets/2b50.webp" alt="" width="25"> <img title="" src="https://registry.npmmirror.com/@lobehub/fluent-emoji-anim-1/latest/files/assets/1f44b.webp" alt="" width="25">
@@ -20,7 +19,6 @@ A Chrome extension that replaces the new tab page with a flat, multi-column book
 ## Screenshots
 
 <p align="center">
-  <img src="public/search.png" alt="Search" width="49%" />
   <img src="public/settings.png" alt="Settings" width="49%" />
 </p>
 

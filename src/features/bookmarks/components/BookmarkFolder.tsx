@@ -62,10 +62,7 @@ const BookmarkFolderComponent: React.FC<BookmarkFolderProps> = ({
     };
 
     return (
-        <div
-            ref={dragRef}
-            className={`group min-w-0 flex-1 ${isDragging ? 'opacity-50' : ''}`}
-        >
+        <div ref={dragRef} className={`group min-w-0 flex-1 ${isDragging ? 'opacity-50' : ''}`}>
             <div>
                 <FolderHeader
                     title={folder.title}

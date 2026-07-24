@@ -13,14 +13,10 @@ type SourceConfig = {
     recentlyClosedNum: number;
 };
 
-function hasSourceConfigChanged(
-    prev: SourceConfig | null,
-    next: SourceConfig,
-): boolean {
+function hasSourceConfigChanged(prev: SourceConfig | null, next: SourceConfig): boolean {
     if (!prev) return true;
     return (
-        prev.topSitesNum !== next.topSitesNum ||
-        prev.recentlyClosedNum !== next.recentlyClosedNum
+        prev.topSitesNum !== next.topSitesNum || prev.recentlyClosedNum !== next.recentlyClosedNum
     );
 }
 
@@ -95,7 +91,9 @@ export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set,
         }
 
         const shouldReloadSource =
-            !!forceReload || !hasLoaded || hasSourceConfigChanged(lastSourceConfig, nextSourceConfig);
+            !!forceReload ||
+            !hasLoaded ||
+            hasSourceConfigChanged(lastSourceConfig, nextSourceConfig);
 
         if (!shouldReloadSource) {
             const { allFolders, folderState } = get();
