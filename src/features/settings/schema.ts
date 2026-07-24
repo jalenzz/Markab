@@ -45,7 +45,7 @@ export const SETTINGS_CONFIG = {
         settings: [
             {
                 key: 'topSitesNum',
-                label: 'Top Sites',
+                label: 'Popular',
                 type: 'slider',
                 min: 5,
                 max: 20,
@@ -54,7 +54,7 @@ export const SETTINGS_CONFIG = {
             },
             {
                 key: 'recentlyClosedNum',
-                label: 'Recently Closed',
+                label: 'Recent',
                 type: 'slider',
                 min: 5,
                 max: 20,

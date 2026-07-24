@@ -56,7 +56,7 @@ Storage keys live in each store module (e.g. `FOLDER_STATE_KEY = 'folderState'`,
 
 ### Data model nuances
 
-- `getAllFolders` (in `lib/browser.ts`) merges three sources: real bookmark folders (recursive walk of `chrome.bookmarks.getTree`), a synthetic "Most Visited" folder from `chrome.topSites`, and a synthetic "Recently Closed" folder from `chrome.sessions`. The synthetic folders use IDs/prefixes from `lib/constants.ts` (`TOPSITE_FOLDER_ID`, `RECENT_FOLDER_ID`, etc.); guard for these when adding folder-aware logic.
+- `getAllFolders` (in `lib/browser.ts`) merges three sources: real bookmark folders (recursive walk of `chrome.bookmarks.getTree`), a synthetic "Popular" folder from `chrome.topSites`, and a synthetic "Recent" folder from `chrome.sessions`. The synthetic folders use IDs/prefixes from `lib/constants.ts` (`TOPSITE_FOLDER_ID`, `RECENT_FOLDER_ID`, etc.); guard for these when adding folder-aware logic.
 - Recently-closed windows (multi-tab sessions) carry an `action` callback instead of a plain URL — opening them calls `chrome.sessions.restore`. Code that opens a bookmark must check `item.action` first (see `BookmarkItem` click handler).
 - Layout state is two-layered: `folderColumns: FolderItem[][]` is the rendered 2D grid; `folderState: Record<id, { columnIndex, indexInColumn, isExpanded, emoji }>` is the persisted source-of-truth keyed by folder ID. `rebuildLayout` in `features/bookmarks/layout.ts` reconstructs columns from `folderState`, smart-distributing any folders that have no saved position.
 

@@ -1,8 +1,10 @@
 import type { FolderItem } from '@/features/bookmarks/types';
 import {
     RECENT_FOLDER_ID,
+    RECENT_FOLDER_TITLE,
     RECENT_ITEM_PREFIX,
     TOPSITE_FOLDER_ID,
+    TOPSITE_FOLDER_TITLE,
     TOPSITE_ITEM_PREFIX,
 } from '@/lib/constants';
 
@@ -167,7 +169,7 @@ const demoBookmarkFolders: FolderItem[] = [
 
 const demoTopSitesFolder: FolderItem = {
     id: TOPSITE_FOLDER_ID,
-    title: 'Most Visited',
+    title: TOPSITE_FOLDER_TITLE,
     children: [
         {
             id: `${TOPSITE_ITEM_PREFIX}0`,
@@ -210,7 +212,7 @@ const demoTopSitesFolder: FolderItem = {
 
 const demoRecentlyClosedFolder: FolderItem = {
     id: RECENT_FOLDER_ID,
-    title: 'Recently Closed',
+    title: RECENT_FOLDER_TITLE,
     children: [
         {
             id: `${RECENT_ITEM_PREFIX}0`,

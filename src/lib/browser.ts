@@ -3,8 +3,10 @@ import { DEMO_FOLDERS } from '@/fixtures/demoData';
 
 import {
     RECENT_FOLDER_ID,
+    RECENT_FOLDER_TITLE,
     RECENT_ITEM_PREFIX,
     TOPSITE_FOLDER_ID,
+    TOPSITE_FOLDER_TITLE,
     TOPSITE_ITEM_PREFIX,
 } from './constants';
 
@@ -31,7 +33,7 @@ class BrowserApiService {
 
             return {
                 id: TOPSITE_FOLDER_ID,
-                title: 'Most Visited',
+                title: TOPSITE_FOLDER_TITLE,
                 children,
             };
         } catch (error) {
@@ -74,7 +76,7 @@ class BrowserApiService {
 
             return {
                 id: RECENT_FOLDER_ID,
-                title: 'Recently Closed',
+                title: RECENT_FOLDER_TITLE,
                 children: recentTabs,
             };
         } catch (error) {
