@@ -77,7 +77,6 @@ export const useBookmarksStore = create<BookmarksState & BookmarksActions>((set,
             set({ folderState: saved, isFolderStateHydrated: true });
         } catch (error) {
             console.error('Failed to hydrate folder state:', error);
-            set({ isFolderStateHydrated: true });
         }
     },
 

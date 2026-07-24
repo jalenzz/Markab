@@ -13,7 +13,7 @@ class StorageService {
             }
         } catch (error) {
             console.error(`Error loading config for key "${key}":`, error);
-            return defaultValue;
+            throw error;
         }
     }
 
