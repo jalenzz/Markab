@@ -25,8 +25,8 @@ export function ToggleControl({ config, value, onChange }: ToggleControlProps) {
                         }`}
                     >
                         <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-newtab-surface-elevated shadow-sm transition-transform duration-default ${
-                                value ? 'translate-x-6' : 'translate-x-1'
+                            className={`inline-block h-4 w-5 transform rounded-full bg-newtab-surface-elevated shadow-sm transition-transform duration-default ${
+                                value ? 'translate-x-5' : 'translate-x-1'
                             }`}
                         />
                     </div>

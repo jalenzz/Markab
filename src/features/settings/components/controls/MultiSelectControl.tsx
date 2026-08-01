@@ -60,13 +60,14 @@ export function MultiSelectControl({ config, value, onChange }: MultiSelectContr
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={ANIMATION_CONFIG.transitions.ease}
-                        className="ml-2 mt-2 space-y-1 overflow-hidden"
+                        className="ml-2 mt-2 flex flex-wrap gap-x-3 gap-y-1 overflow-hidden"
                     >
                         {sortedFolders.map((folder) => (
                             <button
                                 key={folder.id}
+                                type="button"
                                 onClick={() => handleFolderToggle(folder.id)}
-                                className="px-2 py-1 text-newtab-text-secondary transition-all duration-default hover:text-newtab-text-primary hover:opacity-60"
+                                className="py-0.5 text-body text-newtab-text-secondary transition-colors duration-default hover:text-newtab-text-primary"
                             >
                                 <span
                                     className={
