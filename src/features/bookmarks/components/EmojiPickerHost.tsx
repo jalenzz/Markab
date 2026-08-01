@@ -3,7 +3,6 @@ import React, {
     startTransition,
     Suspense,
     useEffect,
-    useLayoutEffect,
     useMemo,
     useRef,
     useState,
@@ -11,7 +10,7 @@ import React, {
 } from 'react';
 import { createPortal } from 'react-dom';
 
-import type { EmojiCatalog, EmojiEntry } from './emojiPickerStore';
+import type { EmojiCatalogBundle, EmojiEntry, EmojiMotionTab } from './emojiPickerStore';
 import {
     closeEmojiPicker,
     getEmojiPickerSnapshot,
@@ -21,240 +20,131 @@ import {
 } from './emojiPickerStore';
 
 const COLS = 8;
-const ROW_HEIGHT = 40;
-const HEADER_HEIGHT = 28;
-const CATEGORY_GAP = 4;
-const PADDING = 8;
-const BUFFER = 5;
 
-type VirtualRow =
-    | { type: 'header'; key: string; label: string; top: number; height: number }
-    | { type: 'emojis'; key: string; items: EmojiEntry[]; top: number; height: number };
+const TABS: { id: EmojiMotionTab; label: string }[] = [
+    { id: 'animated', label: 'Animated' },
+    { id: 'static', label: 'Static' },
+];
 
-function buildRows(
-    catalog: EmojiCatalog,
-    filtered: EmojiEntry[] | null,
-): { rows: VirtualRow[]; total: number } {
-    const rows: VirtualRow[] = [];
-    let top = PADDING;
-
-    if (filtered) {
-        for (let i = 0; i < filtered.length; i += COLS) {
-            const slice = filtered.slice(i, i + COLS);
-            rows.push({
-                type: 'emojis',
-                key: `s-${i}`,
-                items: slice,
-                top,
-                height: ROW_HEIGHT,
-            });
-            top += ROW_HEIGHT;
-        }
-    } else {
-        for (const cat of catalog.categories) {
-            rows.push({
-                type: 'header',
-                key: `h-${cat.id}`,
-                label: cat.label,
-                top,
-                height: HEADER_HEIGHT,
-            });
-            top += HEADER_HEIGHT;
-            for (let i = 0; i < cat.emojis.length; i += COLS) {
-                const slice = cat.emojis.slice(i, i + COLS);
-                rows.push({
-                    type: 'emojis',
-                    key: `${cat.id}-${i}`,
-                    items: slice,
-                    top,
-                    height: ROW_HEIGHT,
-                });
-                top += ROW_HEIGHT;
-            }
-            top += CATEGORY_GAP;
-        }
-    }
-    top += PADDING;
-    return { rows, total: top };
-}
-
-function findFirstVisible(rows: VirtualRow[], visibleTop: number): number {
-    let lo = 0;
-    let hi = rows.length - 1;
-    while (lo < hi) {
-        const mid = (lo + hi) >> 1;
-        const r = rows[mid];
-        if (r.top + r.height > visibleTop) hi = mid;
-        else lo = mid + 1;
-    }
-    return lo;
-}
-
-function handleGridClick(event: React.MouseEvent) {
-    const btn = (event.target as HTMLElement).closest('button[data-native]');
-    if (!btn) return;
-    const native = btn.getAttribute('data-native');
+function onGridClick(event: React.MouseEvent) {
+    const native = (event.target as HTMLElement)
+        .closest('button[data-native]')
+        ?.getAttribute('data-native');
     if (native) handleEmojiPickerSelect(native);
 }
 
-let cachedCatalog: EmojiCatalog | null = null;
+function EmojiButtons({ items }: { items: EmojiEntry[] }) {
+    return (
+        <div
+            className="grid gap-1"
+            style={{ gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))` }}
+            onClick={onGridClick}
+        >
+            {items.map((e) => (
+                <button
+                    key={e.id}
+                    type="button"
+                    title={e.name}
+                    data-native={e.native}
+                    className="flex h-9 items-center justify-center text-xl leading-none"
+                >
+                    {e.native}
+                </button>
+            ))}
+        </div>
+    );
+}
+
+let cachedCatalog: EmojiCatalogBundle | null = null;
 
 const CustomPicker: React.FC = () => {
-    const catalog = cachedCatalog;
+    const bundle = cachedCatalog;
     const { isOpen } = useSyncExternalStore(subscribeEmojiPicker, getEmojiPickerSnapshot);
+    const [tab, setTab] = useState<EmojiMotionTab>('animated');
     const [query, setQuery] = useState('');
-    const [scrollTop, setScrollTop] = useState(0);
-    const [viewportH, setViewportH] = useState(0);
     const scrollRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
-    const rafRef = useRef<number | null>(null);
+
+    const catalog = bundle?.[tab] ?? null;
+
+    const filtered = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        if (!q || !catalog) return null;
+        return catalog.all.filter(
+            (e) => e.name.toLowerCase().includes(q) || e.keywords.some((k) => k.includes(q)),
+        );
+    }, [query, catalog]);
 
     useEffect(() => {
         if (isOpen) {
             inputRef.current?.focus();
             inputRef.current?.select();
             if (scrollRef.current) scrollRef.current.scrollTop = 0;
-            setScrollTop(0);
         } else {
             setQuery('');
+            setTab('animated');
         }
     }, [isOpen]);
 
-    useLayoutEffect(() => {
-        const el = scrollRef.current;
-        if (!el) return;
-        const update = () => setViewportH(el.clientHeight);
-        update();
-        const ro = new ResizeObserver(update);
-        ro.observe(el);
-        return () => ro.disconnect();
-    }, []);
-
-    const filtered = useMemo(() => {
-        const q = query.trim().toLowerCase();
-        if (!q || !catalog) return null;
-        const out: EmojiEntry[] = [];
-        for (const e of catalog.all) {
-            if (e.name.toLowerCase().includes(q) || e.keywords.some((k) => k.includes(q))) {
-                out.push(e);
-                if (out.length >= 300) break;
-            }
-        }
-        return out;
-    }, [query, catalog]);
-
-    const { rows, total } = useMemo(
-        () => (catalog ? buildRows(catalog, filtered) : { rows: [], total: 0 }),
-        [catalog, filtered],
-    );
-
     useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = 0;
-            setScrollTop(0);
-        }
-    }, [query]);
+        if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    }, [query, tab]);
 
-    const onScroll = () => {
-        if (rafRef.current != null) return;
-        rafRef.current = requestAnimationFrame(() => {
-            rafRef.current = null;
-            if (scrollRef.current) setScrollTop(scrollRef.current.scrollTop);
-        });
-    };
-
-    useEffect(() => {
-        return () => {
-            if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
-        };
-    }, []);
-
-    if (!catalog) return null;
-
-    let startIdx = 0;
-    let endIdx = 0;
-    if (rows.length > 0) {
-        const effectiveViewport = viewportH || 360;
-        const visibleBottom = scrollTop + effectiveViewport;
-        startIdx = findFirstVisible(rows, scrollTop);
-        endIdx = startIdx;
-        while (endIdx < rows.length && rows[endIdx].top < visibleBottom) endIdx++;
-        startIdx = Math.max(0, startIdx - BUFFER);
-        endIdx = Math.min(rows.length, endIdx + BUFFER);
-    }
-
-    const visibleRows = rows.slice(startIdx, endIdx);
-    const isEmptyResult = filtered !== null && filtered.length === 0;
+    if (!bundle || !catalog) return null;
 
     return (
-        <div
-            className="flex h-[420px] w-[360px] flex-col bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)]"
-            style={{ borderRadius: 12 }}
-        >
-            <div className="border-b border-[var(--color-border)] p-2">
+        <div className="flex h-[420px] w-[360px] flex-col rounded-xl bg-newtab-surface-elevated text-newtab-text-primary">
+            <div className="flex items-center gap-4 border-b border-newtab-border px-3 pt-2">
+                {TABS.map(({ id, label }) => {
+                    const selected = tab === id;
+                    return (
+                        <button
+                            key={id}
+                            type="button"
+                            onClick={() => setTab(id)}
+                            aria-pressed={selected}
+                            className={`py-1.5 text-sm transition-colors duration-default ${
+                                selected
+                                    ? 'font-medium text-newtab-text-primary shadow-[inset_0_-2px_0_0_var(--color-primary)]'
+                                    : 'text-newtab-text-secondary hover:text-newtab-text-primary'
+                            }`}
+                        >
+                            {label}
+                        </button>
+                    );
+                })}
+            </div>
+
+            <div className="border-b border-newtab-border p-2">
                 <input
                     ref={inputRef}
                     type="text"
                     placeholder="Search"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-primary)]"
+                    className="w-full rounded-md border border-newtab-border bg-newtab-surface px-3 py-1.5 text-sm text-newtab-text-primary outline-none placeholder:text-newtab-text-secondary focus:border-newtab-primary"
                 />
             </div>
-            <div
-                ref={scrollRef}
-                onScroll={onScroll}
-                className="picker-scroll flex-1 overflow-y-auto"
-            >
-                {isEmptyResult ? (
-                    <div className="py-10 text-center text-sm text-[var(--color-text-secondary)]">
-                        No results
-                    </div>
+
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-2">
+                {filtered ? (
+                    filtered.length === 0 ? (
+                        <div className="py-10 text-center text-sm text-newtab-text-secondary">
+                            No results
+                        </div>
+                    ) : (
+                        <EmojiButtons items={filtered} />
+                    )
                 ) : (
-                    <div style={{ position: 'relative', height: total }} onClick={handleGridClick}>
-                        {visibleRows.map((row) =>
-                            row.type === 'header' ? (
-                                <div
-                                    key={row.key}
-                                    style={{
-                                        position: 'absolute',
-                                        top: row.top,
-                                        left: PADDING,
-                                        right: PADDING,
-                                        height: row.height,
-                                    }}
-                                    className="flex items-end px-1 pb-1 text-xs font-medium text-[var(--color-text-secondary)]"
-                                >
-                                    {row.label}
+                    <div className="flex flex-col gap-1">
+                        {catalog.categories.map((cat) => (
+                            <section key={cat.id}>
+                                <div className="px-1 py-1 text-xs font-medium text-newtab-text-secondary">
+                                    {cat.label}
                                 </div>
-                            ) : (
-                                <div
-                                    key={row.key}
-                                    style={{
-                                        position: 'absolute',
-                                        top: row.top,
-                                        left: PADDING,
-                                        right: PADDING,
-                                        height: row.height,
-                                        display: 'grid',
-                                        gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))`,
-                                        gap: '4px',
-                                    }}
-                                >
-                                    {row.items.map((e) => (
-                                        <button
-                                            key={e.id}
-                                            type="button"
-                                            title={e.name}
-                                            data-native={e.native}
-                                            className="flex h-9 items-center justify-center rounded-md text-xl leading-none hover:bg-[var(--color-surface-hover)]"
-                                        >
-                                            {e.native}
-                                        </button>
-                                    ))}
-                                </div>
-                            ),
-                        )}
+                                <EmojiButtons items={cat.emojis} />
+                            </section>
+                        ))}
                     </div>
                 )}
             </div>
@@ -267,23 +157,13 @@ const LazyPicker = lazy(async () => {
     return { default: CustomPicker };
 });
 
-const PickerSlot = React.memo(() => (
-    <Suspense fallback={null}>
-        <LazyPicker />
-    </Suspense>
-));
-PickerSlot.displayName = 'PickerSlot';
-
 export const EmojiPickerHost: React.FC = () => {
     const current = useSyncExternalStore(subscribeEmojiPicker, getEmojiPickerSnapshot);
     const [hasMounted, setHasMounted] = useState(false);
 
     useEffect(() => {
-        if (current.isOpen) {
-            setHasMounted(true);
-        } else if (current.isReady) {
-            startTransition(() => setHasMounted(true));
-        }
+        if (current.isOpen) setHasMounted(true);
+        else if (current.isReady) startTransition(() => setHasMounted(true));
     }, [current.isOpen, current.isReady]);
 
     useEffect(() => {
@@ -292,11 +172,10 @@ export const EmojiPickerHost: React.FC = () => {
         const onMouseDown = (event: MouseEvent) => {
             const root = document.getElementById('emoji-picker-root');
             const target = event.target as Node;
-            if (root && root.contains(target)) return;
-            if (current.anchor && current.anchor.contains(target)) return;
+            if (root?.contains(target)) return;
+            if (current.anchor?.contains(target)) return;
             closeEmojiPicker();
         };
-
         const onKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape') closeEmojiPicker();
         };
@@ -314,23 +193,18 @@ export const EmojiPickerHost: React.FC = () => {
     return createPortal(
         <div
             id="emoji-picker-root"
+            className="fixed z-50 overflow-hidden rounded-xl border border-newtab-border shadow-lg transition-opacity duration-[120ms] ease-out"
             style={{
-                position: 'fixed',
                 top: current.position.top,
                 left: current.position.left,
-                zIndex: 50,
                 visibility: current.isOpen ? 'visible' : 'hidden',
                 opacity: current.isOpen ? 1 : 0,
-                transition: 'opacity 120ms ease-out',
-                borderRadius: 12,
-                overflow: 'hidden',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
-                border: '1px solid var(--color-border)',
-                contain: 'layout style',
             }}
             onClick={(e) => e.stopPropagation()}
         >
-            <PickerSlot />
+            <Suspense fallback={null}>
+                <LazyPicker />
+            </Suspense>
         </div>,
         document.body,
     );

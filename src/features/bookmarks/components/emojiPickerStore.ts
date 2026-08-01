@@ -75,6 +75,10 @@ export type EmojiCatalog = {
     all: EmojiEntry[];
 };
 
+export type EmojiMotionTab = 'animated' | 'static';
+
+export type EmojiCatalogBundle = Record<EmojiMotionTab, EmojiCatalog>;
+
 type RawData = {
     categories: { id: string; emojis: string[] }[];
     emojis: Record<
@@ -94,10 +98,27 @@ const CATEGORY_LABELS: Record<string, string> = {
     flags: 'Flags',
 };
 
-let preloadPromise: Promise<EmojiCatalog> | null = null;
-export function preloadEmojiPicker(): Promise<EmojiCatalog> {
+function filterCatalog(
+    categories: EmojiCategory[],
+    all: EmojiEntry[],
+    predicate: (entry: EmojiEntry) => boolean,
+): EmojiCatalog {
+    return {
+        categories: categories
+            .map((cat) => ({
+                ...cat,
+                emojis: cat.emojis.filter(predicate),
+            }))
+            .filter((cat) => cat.emojis.length > 0),
+        all: all.filter(predicate),
+    };
+}
+
+let preloadPromise: Promise<EmojiCatalogBundle> | null = null;
+export function preloadEmojiPicker(): Promise<EmojiCatalogBundle> {
     if (preloadPromise) return preloadPromise;
     preloadPromise = (async () => {
+        const { isAnimatedEmoji } = await import('../animatedEmojiCodes');
         const dataMod = await import('@emoji-mart/data/sets/15/native.json');
         const raw = dataMod.default as RawData;
 
@@ -120,9 +141,15 @@ export function preloadEmojiPicker(): Promise<EmojiCatalog> {
                 emojis: items,
             });
         }
+
+        const bundle: EmojiCatalogBundle = {
+            animated: filterCatalog(categories, all, (e) => isAnimatedEmoji(e.native)),
+            static: filterCatalog(categories, all, (e) => !isAnimatedEmoji(e.native)),
+        };
+
         snapshot = { ...snapshot, isReady: true };
         emit();
-        return { categories, all };
+        return bundle;
     })();
     return preloadPromise;
 }

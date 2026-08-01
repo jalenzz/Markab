@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 
+import { emojiToCode } from '../emojiCode';
+
 // @lobehub/fluent-emoji
 function getEmojiUrl(emoji: string): string {
-    const unicode = [...emoji].map((char) => char?.codePointAt(0)?.toString(16)).join('-');
+    const unicode = emojiToCode(emoji);
 
     const mainPart = unicode.split('-')[0];
     let pkg: string;

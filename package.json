@@ -13,7 +13,8 @@
         "lint": "eslint . && stylelint \"src/**/*.{css,scss,less}\"",
         "lint:fix": "eslint . --fix && stylelint \"src/**/*.{css,scss,less}\" --fix && prettier --write .",
         "format": "prettier --write .",
-        "type-check": "tsc --noEmit"
+        "type-check": "tsc --noEmit",
+        "generate:animated-emoji": "node scripts/generate-animated-emoji-codes.mjs"
     },
     "dependencies": {
         "@emoji-mart/data": "^1.2.1",

@@ -45,3 +45,4 @@ test-output
 # misc
 # add other ignore file below
 release
+scripts/.cache
