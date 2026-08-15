@@ -72,3 +72,10 @@ Storage keys live in each store module (e.g. `FOLDER_STATE_KEY = 'folderState'`,
 - Keep new features inside an existing feature when possible. Spin up a new `src/features/<name>/` directory only when the capability is genuinely independent.
 - New persistence: add field to store → hydrate it → subscribe-to-write. Don't break the pattern.
 - New cross-feature reads: use `getState()` inside an action, not a hook inside a hook.
+
+## Cursor Cloud specific instructions
+
+- `bun` lives at `~/.bun/bin` (installed during environment setup; PATH is set in `~/.bashrc`). The startup update script runs `bun install`. If a command can't find `bun`, call it as `~/.bun/bin/bun ...`.
+- There is no test framework. Verify with `bun run type-check` and `bun run lint` (both pass on a clean checkout). Standard commands are in `## Commands` above.
+- To run the app in the cloud browser without the Chrome extension host, use `bun run dev:demo` (sets `VITE_DEMO_MODE=true`, serves demo fixtures from `src/fixtures/demoData` at http://localhost:5173/). Plain `bun run dev` also serves there but with empty data since Chrome bookmark APIs are absent.
+- Non-obvious demo caveat: in browser (`dev`/`dev:demo`) mode, expanding a bookmark folder throws `Cannot read properties of undefined (reading 'getURL')`. This is expected — `getFaviconUrl` in `features/bookmarks/utils.ts` calls `chrome.runtime.getURL`, which only exists inside the real extension host. It is NOT a bug; do not "fix" it to make demo folder expansion work. The grid, settings panel, theme switching, and font-size controls all work in demo mode.
